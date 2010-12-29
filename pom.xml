@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.porpoise</groupId>
+	<artifactId>common</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<properties>
+		<git.url>scm:git:file:///Users/aaron/dev/sandbox/common</git.url>
+		<publish.to.url>file:///Users/aaron/.m2/repository</publish.to.url>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<distributionId>dao</distributionId>
+		<javaDocVersion>2.5</javaDocVersion>
+		<findbugsVersion>2.0.1</findbugsVersion>
+	</properties>
+	
+	<scm>
+		<connection>${git.url}</connection>
+		<url>${git.url}</url>
+		<developerConnection>${git.url}</developerConnection>
+	</scm>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+		</dependency>
+		<!--
+			<dependency> <groupId>com.google.collections</groupId>
+			<artifactId>google-collections</artifactId> <version>1.0</version>
+			</dependency>
+		-->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>r07</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<inherit>true</inherit>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<testFailureIgnore>false</testFailureIgnore>
+				</configuration>
+			</plugin>
+
+
+		</plugins>
+
+
+		<pluginManagement>
+			<plugins>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>dashboard-maven-plugin</artifactId>
+					<version>1.0-SNAPSHOT</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>2.0</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>2.0</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>${findbugsVersion}</version>
+					<configuration>
+						<findbugsXmlOutput>true</findbugsXmlOutput>
+						<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+						<xmlOutput>true</xmlOutput>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>${javaDocVersion}</version>
+				</plugin>
+				<!--
+					<plugin> <groupId>com.xebia.mojo</groupId>
+					<artifactId>maven-dashboard-plugin</artifactId> <configuration>
+					<destinationFile>${project.reporting.outputDirectory}/maven-dashboard-report.html</destinationFile>
+					</configuration> </plugin>
+				-->
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<executions>
+						<execution>
+							<goals>
+								<goal>test-jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<includes>
+							<include>**/*Test.java</include>
+						</includes>
+					</configuration>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>maven repo</id>
+			<name>Local Repository</name>
+			<url>${publish.to.url}</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshot repo</id>
+			<name>Snapshot Repository Name</name>
+			<url>${publish.to.url}</url>
+		</snapshotRepository>
+	</distributionManagement>
+</project>
