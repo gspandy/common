@@ -206,4 +206,11 @@ public class SequencesTest {
         Assert.assertEquals(250, multiplied.get("gamma").intValue());
         Assert.assertEquals(10, multiplied.get("delta").intValue());
     }
+
+    @Test
+    public void testSum() {
+        final ImmutableList<BigDecimal> decs = ImmutableList.of(new BigDecimal(2), new BigDecimal(3));
+        final BigDecimal sum = Sequences.foldDec(decs, Sequences.SUM_DEC);
+        Assert.assertTrue(sum.compareTo(new BigDecimal(5)) == 0);
+    }
 }

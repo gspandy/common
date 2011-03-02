@@ -92,11 +92,19 @@ public enum Sequences {
     }
 
     public static BigDecimal foldDec(final Iterable<BigDecimal> things, final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> fnc) {
-        return foldLeft(BigDecimal.ZERO, things, fnc);
+        return foldDec(BigDecimal.ZERO, things, fnc);
+    }
+
+    public static BigDecimal foldDec(final BigDecimal initial, final Iterable<BigDecimal> things, final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> fnc) {
+        return foldLeft(initial, things, fnc);
     }
 
     public static Number foldNum(final Iterable<? extends Number> things, final Function<Pair<Number, Number>, Number> fnc) {
-        return foldLeft(Integer.valueOf(0), things, fnc);
+        return foldNum(Integer.valueOf(0), things, fnc);
+    }
+
+    public static Number foldNum(final Integer initial, final Iterable<? extends Number> things, final Function<Pair<Number, Number>, Number> fnc) {
+        return foldLeft(initial, things, fnc);
     }
 
     public static <K, V> Map<K, V> mergeMaps(final Map<K, V> map1, final Map<K, V> map2, final Function<Pair<V, V>, V> collate) {
