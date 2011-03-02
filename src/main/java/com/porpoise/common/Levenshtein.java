@@ -14,10 +14,9 @@ import com.google.common.collect.Table;
 /**
  * A slow implementation of the Levenstein algorithm
  * 
- * @author aaron
- * 
+ * see http://www.levenshtein.net/
  */
-public enum Levenstein {
+public enum Levenshtein {
 
     ;// uninstantiable
 
