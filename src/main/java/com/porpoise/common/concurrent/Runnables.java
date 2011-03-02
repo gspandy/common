@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Preconditions;
-import com.porpoise.common.Log4J;
+import com.porpoise.common.Log;
 
 /**
  * Utility class for {@link Runnable}s
@@ -35,16 +35,16 @@ public enum Runnables {
         final Runnable wrappedRunnable = new Runnable() {
             @Override
             public void run() {
-                Log4J.debug("Executing Runnable");
+                Log.debug("Executing Runnable");
                 final long start = System.currentTimeMillis();
                 try {
                     runnable.run();
                 } catch (final RuntimeException e) {
-                    Log4J.debug("Runnable threw an exception: %s", e.getMessage());
+                    Log.debug("Runnable threw an exception: %s", e.getMessage());
                     throw e;
                 } finally {
                     final long diff = System.currentTimeMillis() - start;
-                    Log4J.debug("lookup logic took %dms", Long.valueOf(diff));
+                    Log.debug("lookup logic took %dms", Long.valueOf(diff));
                 }
             }
         };

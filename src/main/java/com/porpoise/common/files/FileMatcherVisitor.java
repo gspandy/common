@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.porpoise.common.Log4J;
+import com.porpoise.common.Log;
 
 /**
  * @author Aaron
@@ -29,10 +29,10 @@ public class FileMatcherVisitor extends FileVistiorAdapter {
     @Override
     public void onFile(final File file) {
         if (filter.apply(file.getName())) {
-            Log4J.debug("visiting matching file %s", file.getPath());
+            Log.debug("visiting matching file %s", file.getPath());
             delegate.onFile(file);
         } else {
-            Log4J.debug("skipping file %s", file.getPath());
+            Log.debug("skipping file %s", file.getPath());
         }
     }
 

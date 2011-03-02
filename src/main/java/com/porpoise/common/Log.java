@@ -14,20 +14,20 @@ import com.porpoise.common.concurrent.Threads;
  * 
  * @author Aaron
  */
-public class Log4J {
-    private static final Log4J INSTANCE;
+public class Log {
+    private static final Log INSTANCE;
 
     private final Logger       log;
 
     static {
-        INSTANCE = new Log4J();
+        INSTANCE = new Log();
     }
 
-    private Log4J() {
+    private Log() {
         log = getLogger(getClass());
     }
 
-    public static Log4J getInstance() {
+    public static Log getInstance() {
         return INSTANCE;
     }
 
@@ -191,7 +191,7 @@ public class Log4J {
     }
 
     private static String prependCaller(final String messageParam) {
-        final String call = Threads.getFirstPriorCallAsString(Log4J.class);
+        final String call = Threads.getFirstPriorCallAsString(Log.class);
         return String.format("%s: %s", call, messageParam);
     }
 

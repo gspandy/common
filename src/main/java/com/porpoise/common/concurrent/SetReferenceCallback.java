@@ -3,7 +3,7 @@ package com.porpoise.common.concurrent;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.common.base.Preconditions;
-import com.porpoise.common.Log4J;
+import com.porpoise.common.Log;
 
 /**
  * Callback which will update an atomic reference once complete
@@ -25,7 +25,7 @@ class SetReferenceCallback<K, T> extends CallableListenerAdapter<K, T> {
     public void onComplete(final K key, final T result) {
         final boolean success = reference.compareAndSet(originalValue, result);
         if (!success) {
-            Log4J.debug("Couldn not set '%s' reference to '%s' as the value had been altered since instantiation", key,
+            Log.debug("Couldn not set '%s' reference to '%s' as the value had been altered since instantiation", key,
                     result);
         }
     }

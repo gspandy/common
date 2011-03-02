@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadFactory;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.porpoise.common.Log4J;
+import com.porpoise.common.Log;
 
 public enum Threads {
     ;
@@ -97,14 +97,14 @@ public enum Threads {
                 final Runnable wrappedRunnable = Runnables.proxyWithLogging(runnable);
                 final Thread thread = new Thread(wrappedRunnable);
                 final String name = String.format("Thread-Pool #%d", Integer.valueOf(count++));
-                Log4J.debug("Starting thread %s", name);
+                Log.debug("Starting thread %s", name);
                 thread.setName(name);
                 thread.setDaemon(true);
                 thread.setPriority(Thread.MIN_PRIORITY);
                 final UncaughtExceptionHandler handler = new UncaughtExceptionHandler() {
                     @Override
                     public void uncaughtException(final Thread thread, final Throwable error) {
-                        Log4J.error("Uncaught exception %s received on thread %s", error, thread);
+                        Log.error("Uncaught exception %s received on thread %s", error, thread);
                     }
                 };
                 thread.setUncaughtExceptionHandler(handler);

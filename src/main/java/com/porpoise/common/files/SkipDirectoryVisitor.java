@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.porpoise.common.Log4J;
+import com.porpoise.common.Log;
 
 /**
  * @author Aaron
@@ -31,7 +31,7 @@ public class SkipDirectoryVisitor extends FileVistiorAdapter {
     @Override
     public boolean onDirectory(final File directory) {
         if (blackList.contains(directory.getName().toLowerCase())) {
-            Log4J.debug("skipping matching (blacklisted) directory %s", directory.getPath());
+            Log.debug("skipping matching (blacklisted) directory %s", directory.getPath());
             return false;
         }
         return delegate.onDirectory(directory);

@@ -4,7 +4,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.porpoise.common.Log4J;
+import com.porpoise.common.Log;
 
 /**
  * As only one uncaught exception handler is allowed, this handler allows delegate handlers to be registered with it.
@@ -60,7 +60,7 @@ public class DelegatingUncaughtHandler implements UncaughtExceptionHandler {
         return new UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(final Thread thread, final Throwable error) {
-                Log4J.error("Uncaught exception %s on thread %s", error, thread.getName());
+                Log.error("Uncaught exception %s on thread %s", error, thread.getName());
             }
         };
     }

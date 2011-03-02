@@ -8,7 +8,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
-import com.porpoise.common.Log4J;
+import com.porpoise.common.Log;
 
 /**
  * @author Aaron
@@ -42,9 +42,9 @@ public class TextReplaceVisitor extends FileVistiorAdapter {
             final File to = targetFileFunction.apply(file);
             final CharSequence replaced = contentsTransform.apply(contents);
             if (contents.equals(replaced)) {
-                Log4J.debug("skipping file '%s' as the function hasn't changed owt", file.getAbsolutePath());
+                Log.debug("skipping file '%s' as the function hasn't changed owt", file.getAbsolutePath());
             } else {
-                Log4J.info("writing '%s' from '%s'", file.getAbsolutePath(), to.getAbsolutePath());
+                Log.info("writing '%s' from '%s'", file.getAbsolutePath(), to.getAbsolutePath());
                 Files.write(replaced, to, charset);
             }
         } catch (final IOException e) {

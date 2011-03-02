@@ -2,7 +2,7 @@ package com.porpoise.common.files;
 
 import java.io.File;
 
-import com.porpoise.common.Log4J;
+import com.porpoise.common.Log;
 
 public enum FileIterator {
     ;// uninstantiable
@@ -21,11 +21,11 @@ public enum FileIterator {
                 } else if (file.isDirectory()) {
                     depthFirst(file, visitor);
                 } else {
-                    Log4J.debug("Skipping '%s' as it is not a file or directory", file);
+                    Log.debug("Skipping '%s' as it is not a file or directory", file);
                 }
             }
         } else {
-            Log4J.debug("Skipping directory '%s'", directory);
+            Log.debug("Skipping directory '%s'", directory);
         }
     }
 
