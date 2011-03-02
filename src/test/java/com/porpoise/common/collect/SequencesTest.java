@@ -191,7 +191,7 @@ public class SequencesTest {
                 .put("gamma", 50).build();
 
         // call the method under test
-        final Map<String, Integer> added = Sequences.mergeMaps(SUM, mapOne, mapTwo);
+        final Map<String, Integer> added = Sequences.mergeMaps(mapOne, mapTwo, SUM);
         Assert.assertEquals(4, added.size());
         Assert.assertEquals(3, added.get("alpha").intValue());
         Assert.assertEquals(44, added.get("beta").intValue());
@@ -199,7 +199,7 @@ public class SequencesTest {
         Assert.assertEquals(10, added.get("delta").intValue());
 
         // just double check - this time multiple the map contents
-        final Map<String, Integer> multiplied = Sequences.mergeMaps(MULTIPLY, mapOne, mapTwo);
+        final Map<String, Integer> multiplied = Sequences.mergeMaps(mapOne, mapTwo, MULTIPLY);
         Assert.assertEquals(4, multiplied.size());
         Assert.assertEquals(3, multiplied.get("alpha").intValue());
         Assert.assertEquals(160, multiplied.get("beta").intValue());

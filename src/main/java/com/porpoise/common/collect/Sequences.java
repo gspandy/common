@@ -1,5 +1,6 @@
 package com.porpoise.common.collect;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -21,6 +23,28 @@ import com.porpoise.common.Pair;
  */
 public enum Sequences {
     ;//
+
+    public static final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> SUM_DEC;
+    public static final Function<Pair<Number, Number>, Number>             SUM_NUM;
+
+    static {
+        SUM_DEC = new Function<Pair<BigDecimal, BigDecimal>, BigDecimal>() {
+            @Override
+            public BigDecimal apply(final Pair<BigDecimal, BigDecimal> input) {
+                final BigDecimal x = Objects.firstNonNull(input.getFirst(), BigDecimal.ZERO);
+                final BigDecimal y = Objects.firstNonNull(input.getSecond(), BigDecimal.ZERO);
+                return x.add(y);
+            }
+        };
+        SUM_NUM = new Function<Pair<Number, Number>, Number>() {
+            @Override
+            public Number apply(final Pair<Number, Number> input) {
+                final Number x = Objects.firstNonNull(input.getFirst(), BigDecimal.ZERO);
+                final Number y = Objects.firstNonNull(input.getSecond(), BigDecimal.ZERO);
+                return Long.valueOf(x.longValue() + y.longValue());
+            }
+        };
+    }
 
     public static String toString(final Collection<? extends Object> list) {
         if (list == null) {
@@ -53,6 +77,26 @@ public enum Sequences {
             }
         }
         return intersection;
+    }
+
+    public static <T, N> T foldLeft(final T initial, final Iterable<? extends N> things, final Function<Pair<T, N>, T> fnc) {
+        T value = initial;
+        for (final N next : things) {
+            value = fnc.apply(Pair.valueOf(value, next));
+        }
+        return value;
+    }
+
+    public static <T, N> T foldRight(final T initial, final Iterable<? extends N> things, final Function<Pair<T, N>, T> fnc) {
+        return foldLeft(initial, Iterables.reverse(Lists.newArrayList(things)), fnc);
+    }
+
+    public static BigDecimal foldDec(final Iterable<BigDecimal> things, final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> fnc) {
+        return foldLeft(BigDecimal.ZERO, things, fnc);
+    }
+
+    public static Number foldNum(final Iterable<? extends Number> things, final Function<Pair<Number, Number>, Number> fnc) {
+        return foldLeft(Integer.valueOf(0), things, fnc);
     }
 
     public static <K, V> Map<K, V> mergeMaps(final Map<K, V> map1, final Map<K, V> map2, final Function<Pair<V, V>, V> collate) {
