@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.porpoise</groupId>
 	<artifactId>common</artifactId>
@@ -13,7 +14,7 @@
 		<javaDocVersion>2.5</javaDocVersion>
 		<findbugsVersion>2.0.1</findbugsVersion>
 	</properties>
-	
+
 	<scm>
 		<connection>${git.url}</connection>
 		<url>${git.url}</url>
@@ -31,18 +32,15 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
 		</dependency>
-		<!--
-			<dependency> <groupId>com.google.collections</groupId>
-			<artifactId>google-collections</artifactId> <version>1.0</version>
-			</dependency>
-		-->
+		<!-- <dependency> <groupId>com.google.collections</groupId> <artifactId>google-collections</artifactId> 
+			<version>1.0</version> </dependency> -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>r07</version>
+			<version>r08</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -102,12 +100,9 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>${javaDocVersion}</version>
 				</plugin>
-				<!--
-					<plugin> <groupId>com.xebia.mojo</groupId>
-					<artifactId>maven-dashboard-plugin</artifactId> <configuration>
-					<destinationFile>${project.reporting.outputDirectory}/maven-dashboard-report.html</destinationFile>
-					</configuration> </plugin>
-				-->
+				<!-- <plugin> <groupId>com.xebia.mojo</groupId> <artifactId>maven-dashboard-plugin</artifactId> 
+					<configuration> <destinationFile>${project.reporting.outputDirectory}/maven-dashboard-report.html</destinationFile> 
+					</configuration> </plugin> -->
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

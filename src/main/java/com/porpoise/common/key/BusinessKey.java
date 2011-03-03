@@ -1,4 +1,4 @@
-package com.tullettprebon.dms.key;
+package com.porpoise.common.key;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,8 +9,7 @@ import java.lang.annotation.Target;
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface BusinessKey
-{
-	boolean required() default true;
+@Target(ElementType.METHOD)
+public @interface BusinessKey {
+    boolean required() default true;
 }
