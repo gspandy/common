@@ -215,4 +215,80 @@ public class BusinessKeys<T> {
         };
     }
 
+    /**
+     * @return a function which will convert objects into keys
+     */
+    public Function<T, Object> keyFunction() {
+        return new Function<T, Object>() {
+            @Override
+            public Object apply(final T input) {
+                return makeKey(input);
+            }
+        };
+    }
+
+    /**
+     * @param objects
+     *            the input objects
+     * @return a map containing the objects by their common key
+     */
+    public Map<Object, Collection<T>> group(final Iterable<T> objects) {
+        return Sequences.groupBy(objects, keyFunction());
+    }
+
+    /**
+     * @param objects
+     *            the input objects
+     * @return a map containing the objects by their unique key
+     */
+    public Map<Object, T> groupUnique(final Iterable<T> objects) {
+        return Sequences.groupByUnique(objects, keyFunction());
+    }
+
+    /**
+     * @param objects
+     *            the input objects
+     * @return a map containing the objects by their unique key
+     */
+    public Collection<T> merge(final Iterable<T> first, final Iterable<T> second) {
+
+        return null;
+    }
+
+    /**
+     * Create a key which can be used to store instances of this object in maps, sets, etc.
+     * 
+     * @param obj
+     *            the object for which to make a key
+     * @return an object which can be used as a key for the given object
+     */
+    public Object makeKey(final T obj) {
+        return new Object() {
+            @Override
+            public int hashCode() {
+                return BusinessKeys.this.hashCode(obj);
+            }
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean equals(final Object other) {
+                if (other == null) {
+                    return false;
+                }
+                if (other == obj) {
+                    return true;
+                }
+                if (other.getClass() == c1ass) {
+                    return BusinessKeys.this.equals(obj, (T) other);
+                }
+                return false;
+            }
+
+            @Override
+            public String toString() {
+                return "KEY FOR " + BusinessKeys.this.toString(obj);
+            }
+        };
+    }
+
 }
