@@ -92,4 +92,12 @@ public class Pair<T1, T2> {
         return true;
     }
 
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return String.format("[%s,%s]", getFirst(), getSecond());
+    }
 }
