@@ -245,50 +245,82 @@ public class BusinessKeys<T> {
         return Sequences.groupByUnique(objects, keyFunction());
     }
 
-    /**
-     * @param objects
-     *            the input objects
-     * @return a map containing the objects by their unique key
-     */
-    public Collection<T> merge(final Iterable<T> first, final Iterable<T> second) {
 
-        return null;
-    }
+	/**
+	 * @param first
+	 *            the input objects
+	 * @param second
+	 *            the input objects
+	 * @param merge
+	 * @return a map containing the objects by their unique key
+	 */
+	public Collection<T> merge(final Iterable<T> first, final Iterable<T> second, final Function<Pair<T, T>, T> merge)
+	{
+		final Map<Object, T> map1 = groupUnique(first);
+		final Map<Object, T> map2 = groupUnique(second);
+		return Sequences.mergeMaps(merge, map1, map2).values();
+	}
 
-    /**
-     * Create a key which can be used to store instances of this object in maps, sets, etc.
-     * 
-     * @param obj
-     *            the object for which to make a key
-     * @return an object which can be used as a key for the given object
-     */
-    public Object makeKey(final T obj) {
-        return new Object() {
-            @Override
-            public int hashCode() {
-                return BusinessKeys.this.hashCode(obj);
-            }
+	class HashKey
+	{
+		private final T			wrappedObject;
+		private final int		hashCode;
+		private final Class<T>	keyedClass;
 
-            @SuppressWarnings("unchecked")
-            @Override
-            public boolean equals(final Object other) {
-                if (other == null) {
-                    return false;
-                }
-                if (other == obj) {
-                    return true;
-                }
-                if (other.getClass() == c1ass) {
-                    return BusinessKeys.this.equals(obj, (T) other);
-                }
-                return false;
-            }
+		@SuppressWarnings("synthetic-access")
+		HashKey(final T obj)
+		{
+			this.keyedClass = BusinessKeys.this.c1ass;
+			this.wrappedObject = obj;
+			this.hashCode = BusinessKeys.this.hashCode(this.wrappedObject);
+		}
 
-            @Override
-            public String toString() {
-                return "KEY FOR " + BusinessKeys.this.toString(obj);
-            }
-        };
-    }
+		@Override
+		public int hashCode()
+		{
+			return this.hashCode;
+		}
+
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@Override
+		public boolean equals(final Object other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			if (other == this.wrappedObject)
+			{
+				return true;
+			}
+			if (other instanceof BusinessKeys.HashKey)
+			{
+				final BusinessKeys.HashKey otherKey = (BusinessKeys.HashKey) other;
+				if (otherKey.keyedClass.isAssignableFrom(this.keyedClass))
+				{
+					return BusinessKeys.this.equals(this.wrappedObject, (T) otherKey.wrappedObject);
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public String toString()
+		{
+			return "KEY FOR " + BusinessKeys.this.toString(this.wrappedObject);
+		}
+	}
+
+	/**
+	 * Create a key which can be used to store instances of this object in maps, sets, etc.
+	 * 
+	 * @param obj
+	 *            the object for which to make a key
+	 * @return an object which can be used as a key for the given object
+	 */
+	public Object makeKey(final T obj)
+	{
+		return new HashKey(obj);
+	}
 
 }
