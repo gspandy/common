@@ -74,7 +74,7 @@ public class Pair<T1, T2> {
         if (!(obj instanceof Pair)) {
             return false;
         }
-        final Pair other = (Pair) obj;
+        final Pair<?,?> other = (Pair<?,?>) obj;
         if (first == null) {
             if (other.first != null) {
                 return false;
