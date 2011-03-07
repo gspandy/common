@@ -15,13 +15,24 @@ public class BusinessKeysMultiKeyTest {
             this.alpha = a;
             this.beta = b;
         }
+
+        @Override
+        public String toString() {
+            return String.format("A[%s,%s]", alpha, beta);
+        }
+
     }
 
     class B extends AbstractBusinessEquality<B> {
         @BusinessKey(type = { "alpha" })
-        public A parent;
+        public A   parent;
         @BusinessKey(type = { "alpha", "just b" })
         public int property;
+
+        @Override
+        public String toString() {
+            return String.format("B{%s,%s}", parent, property);
+        }
     }
 
     private final BusinessKeys<A> keyForA = BusinessKeys.valueOf(A.class);
@@ -92,9 +103,11 @@ public class BusinessKeysMultiKeyTest {
         }
 
         Assert.assertEquals(key1, key2);
+        Assert.assertTrue(key1.equals(key2));
         Assert.assertTrue(key1.hashCode() == key2.hashCode());
 
-        Assert.assertFalse(key1.equals(key2));
+        Assert.assertFalse(key1.equals(keyDiffers));
+        Assert.assertFalse(keyDiffers.equals(key1));
         Assert.assertFalse(key1.hashCode() == keyDiffers.hashCode());
     }
 }
