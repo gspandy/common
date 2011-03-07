@@ -47,7 +47,7 @@ public enum Sequences {
         };
     }
 
-    public static String toString(final Collection<? extends Object> list) {
+    public static String toString(final Iterable<? extends Object> list) {
         if (list == null) {
             return "";
         }
@@ -92,7 +92,7 @@ public enum Sequences {
 
     public static <T, N> T foldRight(final T initial, final Iterable<? extends N> things,
             final Function<Pair<T, N>, T> fnc) {
-        return foldLeft(initial, Iterables.reverse(Lists.newArrayList(things)), fnc);
+        return foldLeft(initial, Lists.reverse(Lists.newArrayList(things)), fnc);
     }
 
     public static BigDecimal foldDec(final Iterable<BigDecimal> things,

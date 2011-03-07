@@ -61,4 +61,40 @@ public class BusinessKeysMultiKeyTest {
         final String string = this.keyForB.toString("alpha", child);
         Assert.assertEquals("B{parent*=A{alpha*=A1}, property*=123}", string);
     }
+
+    /**
+     * Test equality using two different equals types
+     */
+    @Test
+    public void testHashCode() {
+        final Object key1;
+        {
+            final B child = new B();
+            child.property = 123;
+            child.parent = new A("A1", "B1");
+            key1 = this.keyForB.makeKey("alpha", child);
+        }
+
+        final Object key2;
+        {
+            final B child2 = new B();
+            child2.property = 123;
+            child2.parent = new A("A1", "B differs");
+            key2 = this.keyForB.makeKey("alpha", child2);
+        }
+
+        final Object keyDiffers;
+        {
+            final B child3 = new B();
+            child3.property = 123;
+            child3.parent = new A("Alpha property differs", "B1");
+            keyDiffers = this.keyForB.makeKey("alpha", child3);
+        }
+
+        Assert.assertEquals(key1, key2);
+        Assert.assertTrue(key1.hashCode() == key2.hashCode());
+
+        Assert.assertFalse(key1.equals(key2));
+        Assert.assertFalse(key1.hashCode() == keyDiffers.hashCode());
+    }
 }
