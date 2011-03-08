@@ -35,8 +35,8 @@ import com.porpoise.common.Pair;
 import com.porpoise.common.collect.Sequences;
 
 abstract class BusinessKeyAccessor<T, V> implements Function<T, V> {
-    private final String             name;
-    private final boolean            required;
+    private final String name;
+    private final boolean required;
     private final Collection<String> types;
 
     BusinessKeyAccessor(final String name, final boolean required, final String... typeArray) {
@@ -82,8 +82,10 @@ class KeySupplier<T, V> implements Supplier<BusinessKeyAccessor<T, V>> {
     private final BusinessKeyAccessor<T, V> instance;
 
     public KeySupplier(final Method m, final boolean required, final String... types) {
-        Preconditions.checkArgument(m.getReturnType() != null, "Annotated method %s must have a non-null return type", m.getName());
-        Preconditions.checkArgument(m.getParameterTypes().length == 0, "Annotated method %s cannot take any parameters", m.getName());
+        Preconditions.checkArgument(m.getReturnType() != null, "Annotated method %s must have a non-null return type",
+                m.getName());
+        Preconditions.checkArgument(m.getParameterTypes().length == 0,
+                "Annotated method %s cannot take any parameters", m.getName());
         final String name = m.getName();
         this.instance = new BusinessKeyAccessor<T, V>(name, required, types) {
             @SuppressWarnings("unchecked")
@@ -132,8 +134,8 @@ class KeySupplier<T, V> implements Supplier<BusinessKeyAccessor<T, V>> {
  */
 public class BusinessKeys<T> {
 
-    private final Class<T>                                                      c1ass;
-    private final Map<String, BusinessKeyAccessor<T, Object>>                   keyByName;
+    private final Class<T> c1ass;
+    private final Map<String, BusinessKeyAccessor<T, Object>> keyByName;
     private final Function<String, Map<String, BusinessKeyAccessor<T, Object>>> keysByType;
 
     /**
@@ -162,7 +164,8 @@ public class BusinessKeys<T> {
                 keys.add(new KeySupplier<T, Object>(f, key.required(), key.type()));
             }
         }
-        final Function<Supplier<BusinessKeyAccessor<T, Object>>, BusinessKeyAccessor<T, Object>> sf = Suppliers.supplierFunction();
+        final Function<Supplier<BusinessKeyAccessor<T, Object>>, BusinessKeyAccessor<T, Object>> sf = Suppliers
+                .supplierFunction();
         final Collection<BusinessKeyAccessor<T, Object>> businessKeys = Collections2.transform(keys, sf);
         this.keyByName = ImmutableMap.copyOf(Sequences.groupByUnique(businessKeys, getNameFunction()));
         final ConcurrentMap<String, Map<String, BusinessKeyAccessor<T, Object>>> byType = new MapMaker()
@@ -402,7 +405,8 @@ public class BusinessKeys<T> {
      * @param second
      * @return
      */
-    private Map<String, Pair<Object, Object>> diff(final String type, final Map<String, BusinessKeyAccessor<T, Object>> keys, final T first, final T second) {
+    private Map<String, Pair<Object, Object>> diff(final String type,
+            final Map<String, BusinessKeyAccessor<T, Object>> keys, final T first, final T second) {
         final Map<String, Pair<Object, Object>> valuesByName = Maps.transformValues(keys, getValues(first, second));
         Predicate<Pair<Object, Object>> predicate;
         if (Strings.isNullOrEmpty(type)) {
@@ -417,7 +421,7 @@ public class BusinessKeys<T> {
         return new Predicate<Pair<Object, Object>>() {
             @Override
             public boolean apply(final Pair<Object, Object> input) {
-                return typeAwareEquals(type, input.getFirst(), input.getSecond());
+                return !typeAwareEquals(type, input.getFirst(), input.getSecond());
             }
         };
     }
@@ -430,7 +434,7 @@ public class BusinessKeys<T> {
      * @return the diff
      */
     public Map<String, Pair<Object, Object>> differences(final String type, final T first, final T second) {
-        final Map<String, BusinessKeyAccessor<T, Object>> filteredDeyByName = this.keysByType.apply(type);
+        final Map<String, BusinessKeyAccessor<T, Object>> filteredDeyByName = lookupForType(type);
         return diff(type, filteredDeyByName, first, second);
     }
 
@@ -442,10 +446,11 @@ public class BusinessKeys<T> {
         return Maps.filterValues(valuesByName(first), Predicates.isNull()).keySet();
     }
 
-    private Function<BusinessKeyAccessor<T, Object>, Pair<Object, Object>> getValues(final T first, final T second) {
-        return new Function<BusinessKeyAccessor<T, Object>, Pair<Object, Object>>() {
+    private static <K> Function<BusinessKeyAccessor<K, Object>, Pair<Object, Object>> getValues(final K first,
+            final K second) {
+        return new Function<BusinessKeyAccessor<K, Object>, Pair<Object, Object>>() {
             @Override
-            public Pair<Object, Object> apply(final BusinessKeyAccessor<T, Object> key) {
+            public Pair<Object, Object> apply(final BusinessKeyAccessor<K, Object> key) {
                 final Object alpha = key.apply(first);
                 final Object beta = key.apply(second);
                 return Pair.valueOf(alpha, beta);
@@ -492,12 +497,33 @@ public class BusinessKeys<T> {
     }
 
     /**
+     * @return a function which will convert objects into keys
+     */
+    public Function<T, Object> keyFunction(final String type) {
+        return new Function<T, Object>() {
+            @Override
+            public Object apply(final T input) {
+                return makeKey(type, input);
+            }
+        };
+    }
+
+    /**
      * @param objects
      *            the input objects
      * @return a map containing the objects by their common key
      */
     public Map<Object, Collection<T>> group(final Iterable<T> objects) {
-        return Sequences.groupBy(objects, keyFunction());
+        return group(null, objects);
+    }
+
+    /**
+     * @param objects
+     *            the input objects
+     * @return a map containing the objects by their common key
+     */
+    public Map<Object, Collection<T>> group(final String type, final Iterable<T> objects) {
+        return Sequences.groupBy(objects, keyFunction(type));
     }
 
     /**
@@ -506,11 +532,21 @@ public class BusinessKeys<T> {
      * @return a map containing the objects by their unique key
      */
     public Map<Object, T> groupUnique(final Iterable<T> objects) {
+        return groupUnique(null, objects);
+    }
+
+    /**
+     * @param objects
+     *            the input objects
+     * @return a map containing the objects by their unique key
+     */
+    public Map<Object, T> groupUnique(final String type, final Iterable<T> objects) {
         try {
-            return Sequences.groupByUnique(objects, keyFunction());
+            return Sequences.groupByUnique(objects, keyFunction(type));
         } catch (final IllegalArgumentException notUnique) {
             final String error = invalidBusinessKeyError(objects);
-            throw new IllegalArgumentException(String.format("%s%nBusiness Values Are:%n%s", notUnique.getMessage(), error));
+            throw new IllegalArgumentException(String.format("%s%nBusiness Values Are:%n%s", notUnique.getMessage(),
+                    error));
         }
     }
 
@@ -547,7 +583,8 @@ public class BusinessKeys<T> {
      * @param merge
      * @return a map containing the objects by their unique key
      */
-    public Collection<T> mergeUnique(final Iterable<T> first, final Iterable<T> second, final Function<Pair<T, T>, T> merge) {
+    public Collection<T> mergeUnique(final Iterable<T> first, final Iterable<T> second,
+            final Function<Pair<T, T>, T> merge) {
         final Map<Object, T> map1 = groupUnique(first);
         final Map<Object, T> map2 = groupUnique(second);
         return Sequences.mergeMaps(map1, map2, merge).values();
@@ -559,16 +596,17 @@ public class BusinessKeys<T> {
      * @return a function which will return the value for the given property
      */
     @SuppressWarnings("unchecked")
-    public <K> Function<T, K> groupingFunctionForProperty(final String propertyName) {
-        return (Function<T, K>) Preconditions.checkNotNull(this.keyByName.get(propertyName), "Invalid property name '%s'. Available properties are: %s", propertyName,
+    public <K> Function<T, K> getPropertyFunction(final String propertyName) {
+        return (Function<T, K>) Preconditions.checkNotNull(this.keyByName.get(propertyName),
+                "Invalid property name '%s'. Available properties are: %s", propertyName,
                 Sequences.toString(this.keyByName.keySet()));
     }
 
     class HashKey {
-        private final T        wrappedObject;
-        private final int      hashCode;
+        private final T wrappedObject;
+        private final int hashCode;
         private final Class<T> keyedClass;
-        private final String   type;
+        private final String type;
 
         @SuppressWarnings("synthetic-access")
         HashKey(final String type, final T obj) {
@@ -636,8 +674,8 @@ public class BusinessKeys<T> {
      * @param values
      * @return the values by the given property
      */
-    public <K> Map<K, T> groupByUnique(final String propertyName, final Iterable<T> values) {
-        final Function<T, K> fnc = groupingFunctionForProperty(propertyName);
+    public <K> Map<K, T> groupByPropertyUnique(final String propertyName, final Iterable<T> values) {
+        final Function<T, K> fnc = getPropertyFunction(propertyName);
         return Sequences.groupByUnique(values, fnc);
     }
 
@@ -649,8 +687,8 @@ public class BusinessKeys<T> {
      * @param values
      * @return the values by the given property
      */
-    public <K> Map<K, Collection<T>> groupBy(final String propertyName, final Iterable<T> values) {
-        final Function<T, K> fnc = groupingFunctionForProperty(propertyName);
+    public <K> Map<K, Collection<T>> groupByProperty(final String propertyName, final Iterable<T> values) {
+        final Function<T, K> fnc = getPropertyFunction(propertyName);
         return Sequences.groupBy(values, fnc);
     }
 
@@ -661,7 +699,8 @@ public class BusinessKeys<T> {
     public void validate(final T value) throws ValidationException {
         final Set<String> missing = missingRequiredValues(value);
         if (!missing.isEmpty()) {
-            throw new IllegalStateException(String.format("%s missing required properties: %s", toString(value), Sequences.toString(missing)));
+            throw new IllegalStateException(String.format("%s missing required properties: %s", toString(value),
+                    Sequences.toString(missing)));
         }
     }
 
