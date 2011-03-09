@@ -1,10 +1,39 @@
 package com.porpoise.common.core;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
+/**
+ * @param <T1>
+ * @param <T2>
+ */
 public class Pair<T1, T2> {
+
+    /**
+     * @return a function which will remove the first element
+     */
+    public static <A, B> Function<Pair<A, B>, A> first() {
+        return new Function<Pair<A, B>, A>() {
+            @Override
+            public A apply(final Pair<A, B> input) {
+                return input.getFirst();
+            }
+        };
+    }
+
+    /**
+     * @return a function which will remove the second element
+     */
+    public static <A, B> Function<Pair<A, B>, B> second() {
+        return new Function<Pair<A, B>, B>() {
+            @Override
+            public B apply(final Pair<A, B> input) {
+                return input.getSecond();
+            }
+        };
+    }
 
     /**
      * @param <A>
@@ -39,15 +68,25 @@ public class Pair<T1, T2> {
     private final T1 first;
     private final T2 second;
 
+    /**
+     * @param a
+     * @param b
+     */
     public Pair(final T1 a, final T2 b) {
         this.first = a;
         this.second = b;
     }
 
+    /**
+     * @return the first value
+     */
     public T1 getFirst() {
         return this.first;
     }
 
+    /**
+     * @return the second value
+     */
     public T2 getSecond() {
         return this.second;
     }

@@ -14,6 +14,7 @@ import com.google.common.base.CaseFormat;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Preconditions;
@@ -26,6 +27,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
 import com.porpoise.common.collect.Sequences;
 import com.porpoise.common.core.Pair;
 
@@ -292,10 +295,16 @@ public class BusinessKeys<T> {
     }
 
     /**
+     * @param type
+     *            an optional business key type
      * @param instance
      * @return a string consisting of all the business keys
      */
     public String toString(final String type, final T instance) {
+        return toStringInternal(type, instance);
+    }
+
+    String toStringInternal(final String type, final T instance) {
         if (instance == null) {
             return "NULL";
         }
@@ -305,12 +314,29 @@ public class BusinessKeys<T> {
             final String requiredStr = accessor.isRequired() ? "*" : "";
             final String name = getName(accessor.getName());
 
-            String str;
+            String str = null;
             final Object obj = accessor.apply(instance);
-            if (hasType && obj instanceof BusinessEquality) {
-                final BusinessEquality be = (BusinessEquality) obj;
-                str = be.businessToString(type);
-            } else {
+            if (hasType) {
+                if (obj instanceof BusinessEquality) {
+                    final BusinessEquality be = (BusinessEquality) obj;
+                    str = be.businessToString(type);
+                } else if (obj instanceof Iterable<?>) {
+                    final Iterable<?> collection = (Iterable<?>) obj;
+                    final Iterable<?> parts = Iterables.transform(collection, new Function<Object, String>() {
+                        @Override
+                        public String apply(final Object input) {
+                            if (input instanceof BusinessEquality) {
+                                final BusinessEquality be = (BusinessEquality) input;
+                                return be.businessToString(type);
+                            }
+                            return input == null ? "null" : input.toString();
+                        }
+                    });
+                    str = Joiner.on(",").join(parts);
+                }
+            }
+
+            if (str == null) {
                 str = obj.toString();
             }
             helper.add(name + requiredStr, str);
@@ -318,46 +344,57 @@ public class BusinessKeys<T> {
         return helper.toString();
     }
 
+    /**
+     * @param instance
+     * @return the hash code for the given instance
+     */
     public int hashCode(final T instance) {
         return hashCode(null, instance);
     }
 
     /**
+     * @param type
+     *            an optional type specifier
      * @param instance
      * @return a hash code consisting of all the business keys
      */
     public int hashCode(final String type, final T instance) {
         final Map<String, BusinessKeyAccessor<T, Object>> map = lookupForType(type);
-        if (map.isEmpty()) {
-            return System.identityHashCode(instance);
-        }
+        Preconditions.checkArgument(!map.isEmpty(), "No keys found for type '%s' in %s", type, this.c1ass);
 
         final Iterable<Object> values = Iterables.transform(map.values(), accessorFunction(instance));
+        final Iterable<Integer> hashes = Iterables.transform(values, hashFunction(type));
+        return hashAll(hashes);
 
-        if (Strings.isNullOrEmpty(type)) {
-            return Objects.hashCode(Iterables.toArray(values, Object.class));
-        }
-        /**
-         * Function which takes into account objects which implement the "BusinessEqquality" interface, preferring to
-         * use that over standard Object#hashCode if found.
-         */
-        final Function<Pair<Integer, Object>, Integer> hashingFunction = new Function<Pair<Integer, Object>, Integer>() {
+    }
+
+    Function<Object, Integer> hashFunction(final String type) {
+        return new Function<Object, Integer>() {
             @Override
-            public Integer apply(final Pair<Integer, Object> input) {
-                final Integer oldHash = input.getFirst();
-                final Object obj = input.getSecond();
-                int newHash;
-                if (obj instanceof BusinessEquality) {
-                    final BusinessEquality be = (BusinessEquality) obj;
-                    newHash = be.businessHashCode(type);
-                } else {
-                    newHash = Objects.hashCode(obj);
-                }
-                final int result = Objects.hashCode(oldHash, Integer.valueOf(newHash));
-                return Integer.valueOf(result);
+            public Integer apply(final Object input) {
+                return Integer.valueOf(hash(type, input));
             }
         };
-        return Sequences.foldLeft(Integer.valueOf(17), values, hashingFunction).intValue();
+    }
+
+    int hash(final String type, final Object obj) {
+        int newHash;
+        if (obj instanceof BusinessEquality) {
+            final BusinessEquality be = (BusinessEquality) obj;
+            newHash = be.businessHashCode(type);
+        } else if (obj instanceof Iterable<?>) {
+            @SuppressWarnings("unchecked")
+            final Iterable<Object> collection = (Iterable<Object>) obj;
+            final Iterable<Integer> hashes = Iterables.transform(collection, hashFunction(type));
+            newHash = hashAll(hashes);
+        } else {
+            newHash = Objects.hashCode(obj);
+        }
+        return newHash;
+    }
+
+    private int hashAll(final Iterable<? extends Object> hashes) {
+        return Objects.hashCode(Iterables.toArray(hashes, Object.class));
     }
 
     private Map<String, BusinessKeyAccessor<T, Object>> lookupForType(final String type) {
@@ -617,12 +654,29 @@ public class BusinessKeys<T> {
      * @return a map containing the objects by their common key
      */
     public Map<Object, Collection<T>> group(final String type, final Iterable<T> objects) {
-        return Sequences.groupBy(objects, keyFunction(type));
+        final Map<Object, Collection<T>> map = Sequences.groupBy(objects, keyFunction(type));
+        return map;
+    }
+
+    /**
+     * @param objects
+     * @return a function which will return a non-null collection for every input
+     */
+    public Function<Object, Collection<T>> groupFunction(final Iterable<T> objects) {
+        return Functions.forMap(group(objects), Collections.<T> emptySet());
     }
 
     /**
      * @param type
-     *            the optional business key type
+     *            the business key type
+     * @param objects
+     * @return a function which will return a non-null collection for every input
+     */
+    public Function<Object, Collection<T>> groupFunction(final String type, final Iterable<T> objects) {
+        return Functions.forMap(group(type, objects), Collections.<T> emptySet());
+    }
+
+    /**
      * @param objects
      *            the input objects
      * @return a map containing the objects by their unique key
@@ -662,7 +716,7 @@ public class BusinessKeys<T> {
         final Predicate<Iterable<T>> filter = Sequences.sizeGreaterThan(1);
         final Map<Object, Collection<T>> duplicates = Maps.filterValues(all, filter);
         for (final Entry<Object, Collection<T>> duplicateEntry : duplicates.entrySet()) {
-            b.append(String.format("%n==== DUPLICATE FOR HASH %d ====%n", duplicateEntry.getKey()));
+            b.append(String.format("%n==== DUPLICATE HASH %s ====%n", duplicateEntry.getKey()));
             final Collection<T> collisions = duplicateEntry.getValue();
             for (final T collision : collisions) {
                 final Integer hash = Integer.valueOf(hashCode(collision));
@@ -704,6 +758,40 @@ public class BusinessKeys<T> {
     }
 
     /**
+     * @param first
+     * @param second
+     * @param merge
+     * @return the union of the two iterables, preferring the last value of the merged collection as the value to use
+     */
+    public Map<Object, T> union(final Iterable<T> first, final Iterable<T> second,
+            final Function<Collection<T>, T> merge) {
+        return union(null, first, second, merge);
+    }
+
+    /**
+     * @param type
+     *            the optional business key type
+     * @param first
+     *            the input objects
+     * @param second
+     *            the input objects
+     * @param resolver
+     * @return a map containing the the last value of the merged maps
+     */
+    public Map<Object, T> union(final String type, final Iterable<T> first, final Iterable<T> second,
+            final Function<Collection<T>, T> resolver) {
+        final Map<Object, T> map1 = Maps.transformValues(group(type, first), resolver);
+        final Map<Object, T> map2 = Maps.transformValues(group(type, second), resolver);
+        final Function<Pair<T, T>, T> merge = new Function<Pair<T, T>, T>() {
+            @Override
+            public T apply(final Pair<T, T> input) {
+                return resolver.apply(ImmutableList.of(input.getFirst(), input.getSecond()));
+            }
+        };
+        return Sequences.mergeMaps(map1, map2, merge);
+    }
+
+    /**
      * @param <K>
      * @param propertyName
      * @return a function which will return the value for the given property
@@ -728,7 +816,8 @@ public class BusinessKeys<T> {
     /**
      * Create a key which can be used to store instances of this object in maps, sets, etc.
      * 
-     * @param string
+     * @param type
+     *            an optional business key type
      * 
      * @param obj
      *            the object for which to make a key
@@ -775,4 +864,35 @@ public class BusinessKeys<T> {
                     Sequences.toString(missing)));
         }
     }
+
+    /**
+     * @param first
+     * @param second
+     * @return a collection of the union of both sets
+     */
+    public Collection<Pair<T, T>> intersection(final Iterable<T> first, final Iterable<T> second) {
+        // group both together
+        final Map<Object, T> firstSet = groupAsSet(first);
+        final Map<Object, T> secondSet = groupAsSet(second);
+
+        // find the common keys
+        final SetView<Object> commonKeys = Sets.intersection(firstSet.keySet(), secondSet.keySet());
+
+        // return the values for the intersection
+        final Predicate<Object> filter = Sequences.containsPredicate(commonKeys);
+        final Collection<T> firstValues = Maps.filterKeys(firstSet, filter).values();
+        final Collection<T> secondValues = Maps.filterKeys(secondSet, filter).values();
+        return Sequences.zip(firstValues, secondValues);
+    }
+
+    /**
+     * Like group unique, but any recurring elements will default to use the last value in the collection
+     * 
+     * @param values
+     * @return a map of the values by their business keys
+     */
+    public Map<Object, T> groupAsSet(final Iterable<T> values) {
+        return Maps.transformValues(group(values), Sequences.<T> getLast());
+    }
+
 }

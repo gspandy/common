@@ -3,6 +3,7 @@ package com.porpoise.common.collect;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -217,6 +219,81 @@ public enum Sequences {
             @Override
             public boolean apply(final Iterable<T> input) {
                 return Iterables.size(input) > size;
+            }
+        };
+    }
+
+    /**
+     * @param whiteList
+     * @return a predicate which returns true when an element is found within the given collection
+     */
+    public static <T> Predicate<T> containsPredicate(final Collection<T> whiteList) {
+        return new Predicate<T>() {
+            @Override
+            public boolean apply(final T input) {
+                return whiteList.contains(input);
+            }
+        };
+    }
+
+    /**
+     * Zip together both collections, returning a collection of both elements. Any extra elements in either list will be
+     * silently lopped off
+     * 
+     * @param <A>
+     * @param <B>
+     * @param first
+     * @param second
+     * @return a collection of both elements
+     */
+    public static <A, B> Collection<Pair<A, B>> zip(final Iterable<A> first, final Iterable<B> second) {
+        final Collection<Pair<A, B>> zipped = Lists.newArrayList();
+        final Iterator<A> iterOne = first.iterator();
+        final Iterator<B> iterTwo = second.iterator();
+        while (iterOne.hasNext() && iterTwo.hasNext()) {
+            zipped.add(Pair.valueOf(iterOne.next(), iterTwo.next()));
+        }
+        return zipped;
+    }
+
+    /**
+     * @param all
+     *            the elements to unzip
+     * @return the first element of the pair
+     */
+    public static <A, B> Collection<A> unzipFirst(final Collection<Pair<A, B>> all) {
+        return Collections2.transform(all, Pair.<A, B> first());
+    }
+
+    /**
+     * @param all
+     *            the elements to unzip
+     * @return the first element of the pair
+     */
+    public static <A, B> Collection<B> unzipSecond(final Collection<Pair<A, B>> all) {
+        return Collections2.transform(all, Pair.<A, B> second());
+    }
+
+    /**
+     * @return a function which will return the last of the elements in a collection
+     */
+    public static <T> Function<Collection<T>, T> getLast() {
+        return new Function<Collection<T>, T>() {
+            @Override
+            public T apply(final Collection<T> input) {
+                return Iterables.getLast(input);
+            }
+        };
+    }
+
+    /**
+     * @return a function which will return the first of the elements in a collection
+     */
+    public static <T> Function<Collection<T>, T> getFirst() {
+        return new Function<Collection<T>, T>() {
+            @Override
+            public T apply(final Collection<T> input) {
+                return Iterables.getFirst(input, null);
             }
         };
     }
