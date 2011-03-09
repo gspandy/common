@@ -51,8 +51,68 @@ public class BusinessKeysMultiKeyTest {
         public Collection<A> things = Lists.newArrayList();
     }
 
-    private final BusinessKeys<A> keyForA = BusinessKeys.valueOf(A.class);
     private final BusinessKeys<B> keyForB = BusinessKeys.valueOf(B.class);
+
+    C newC1() {
+        final C c = new C();
+        c.things.add(new A("A1", "B1"));
+        c.things.add(new A("A1", "B2"));
+        c.things.add(new A("A2", "B1"));
+        c.things.add(new A("A2", "B2"));
+        return c;
+    }
+
+    C newC2() {
+        final C c = new C();
+        c.things.add(new A("A1", "B1"));
+        c.things.add(new A("A2", "B1"));
+        c.things.add(new A("A2", "B2"));
+        c.things.add(new A("A2", "B3"));
+        return c;
+    }
+
+    /**
+     * Test equality with a collection annotated class
+     */
+    @Test
+    public void testEqualsWithCollections() {
+        final C c1 = newC1();
+        final C c2 = newC2();
+        Assert.assertTrue(c1.businessEquals("alpha", c1));
+        Assert.assertTrue(c1.businessEquals(null, c1));
+        Assert.assertFalse(c1.businessEquals("alpha", c2));
+        Assert.assertFalse(c2.businessEquals("alpha", c1));
+    }
+
+    /**
+     * Test equality with a collection annotated class
+     */
+    @Test
+    public void testHashCodeWithCollections() {
+        final C c1 = newC1();
+        final C c2 = newC2();
+        final C c1WithDifferentBetaValues = new C();
+        c1WithDifferentBetaValues.things.add(new A("A1", "different"));
+        c1WithDifferentBetaValues.things.add(new A("A1", null));
+        c1WithDifferentBetaValues.things.add(new A("A2", "XXX"));
+        c1WithDifferentBetaValues.things.add(new A("A2", "Shold be ignored"));
+
+        Assert.assertEquals(c1.businessHashCode("alpha"), newC1().businessHashCode("alpha"));
+        Assert.assertEquals(c1.businessHashCode("alpha"), c1.businessHashCode("alpha"));
+        Assert.assertEquals(c1.businessHashCode("alpha"), c1WithDifferentBetaValues.businessHashCode("alpha"));
+        Assert.assertFalse(c1.businessHashCode("alpha") == c2.businessHashCode("alpha"));
+    }
+
+    /**
+     * Test toString with a collection annotated class
+     */
+    @Test
+    public void testBusinessToStringWithCollections() {
+        final C c1 = newC1();
+        Assert.assertEquals("C{things*=A{alpha*=A1},A{alpha*=A1},A{alpha*=A2},A{alpha*=A2}}",
+                c1.businessToString("alpha"));
+        Assert.assertEquals("C{things*=[A[A1,B1], A[A1,B2], A[A2,B1], A[A2,B2]]}", c1.businessToString(null));
+    }
 
     /**
      * Test equality using two different equals types
