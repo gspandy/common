@@ -10,8 +10,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.xml.bind.ValidationException;
-
 import com.google.common.base.CaseFormat;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
@@ -737,9 +735,9 @@ public class BusinessKeys<T> {
 
     /**
      * @param value
-     * @throws ValidationException
+     * @throws IllegalStateException
      */
-    public void validate(final T value) throws ValidationException {
+    public void validate(final T value) throws IllegalStateException {
         final Set<String> missing = missingRequiredValues(value);
         if (!missing.isEmpty()) {
             throw new IllegalStateException(String.format("%s missing required properties: %s", toString(value),
