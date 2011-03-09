@@ -128,8 +128,8 @@ enum AccessorFactory {
 public class BusinessKeys<T> {
 
     private final Class<T> c1ass;
-    private final ImmutableMap<String, BusinessKeyAccessor<T, Object>> keyByName;
-    private final Function<String, Map<String, BusinessKeyAccessor<T, Object>>> keysByType;
+    private ImmutableMap<String, BusinessKeyAccessor<T, Object>> keyByName;
+    private Function<String, Map<String, BusinessKeyAccessor<T, Object>>> keysByType;
 
     /**
      * Internal representation of a key object which represents just the values specified by a set of business keys
