@@ -337,7 +337,7 @@ public class BusinessKeys<T> {
             }
 
             if (str == null) {
-                str = obj.toString();
+                str = obj == null ? "" : obj.toString();
             }
             helper.add(name + requiredStr, str);
         }
