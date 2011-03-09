@@ -28,7 +28,7 @@ abstract class AbstractTextReplace {
 
     protected abstract Function<String, String> getTextReplaceFunction();
 
-    protected Function<File, File> getFileFunctionForSuffix(final String suffix) {
+    protected static Function<File, File> getFileFunctionForSuffix(final String suffix) {
         Function<File, File> newFileFunction;
         if (suffix == null) {
             newFileFunction = FileFunctions.fileIdentity();
@@ -48,7 +48,7 @@ abstract class AbstractTextReplace {
         return skipDirectoryVisitor;
     }
 
-    private IFileVisitor createTextReplaceVisitor(final Function<String, String> replace,
+    private static IFileVisitor createTextReplaceVisitor(final Function<String, String> replace,
             final Function<File, File> newFileFunction) {
         final IFileVisitor renameVisitor = new TextReplaceVisitor(replace, newFileFunction);
         return renameVisitor;

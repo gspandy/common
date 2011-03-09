@@ -22,19 +22,19 @@ import java.util.concurrent.TimeUnit;
  */
 class ThrottledRunnable implements Runnable, Delayed {
     /** The runnable logic we are attempting to throttle */
-    private final Runnable                      job;
+    private final Runnable job;
 
     /** The timestamp of the last time the job was run - updated each time the 'job' is invoked */
-    private long                                lastRunTime = -1;
+    private long lastRunTime = -1;
 
     /**
      * the throttle interval, preventing more than one invocation every so often. The 'so often' is determined by the
      * inteval and timeUnit
      */
-    private final int                           interval;
+    private final int interval;
 
     /** the time unit to apply to the throttle interval */
-    private final TimeUnit                      timeUnit;
+    private final TimeUnit timeUnit;
 
     /**
      * the maximum amount of 'extra' invocations to queue. For example, if the throttle is set to one invocation every
@@ -42,10 +42,10 @@ class ThrottledRunnable implements Runnable, Delayed {
      * invocations will be queued. The remaining 4 invocations (1 being executed, 5 are queued) will be handled by the
      * overflow handler
      */
-    private int                                 maxCapacity = 1;
+    private int maxCapacity = 1;
 
     /** handler which deals with invocations which are NOT queued */
-    private final IOverflowHandler              overflowHandler;
+    private final IOverflowHandler overflowHandler;
 
     /**
      * Our delay queue onto which surplus calls are added. They will be taken off the queue by the executor service
@@ -55,7 +55,7 @@ class ThrottledRunnable implements Runnable, Delayed {
     /**
      * An executor service which will submit queued jobs
      */
-    private final ExecutorService               executor;
+    private final ExecutorService executor;
 
     /**
      * An {@link IOverflowHandler} is invoked when the queue 'overflows' with calls.
@@ -110,6 +110,7 @@ class ThrottledRunnable implements Runnable, Delayed {
      * @param runnable
      * @param jobThreshold
      */
+    @SuppressWarnings("synthetic-access")
     public ThrottledRunnable(final ExecutorService executorService, final int minInterval,
             final TimeUnit intervalTimeUnit, final Runnable runnable, final int jobThreshold) {
         this(executorService, minInterval, intervalTimeUnit, runnable, jobThreshold, new IgnoreHandler());
@@ -119,13 +120,13 @@ class ThrottledRunnable implements Runnable, Delayed {
             final TimeUnit intervalTimeUnit, final Runnable runnable, final int jobThreshold,
             final IOverflowHandler handler) {
         checkArgument(minInterval > 0);
-        interval = minInterval;
-        timeUnit = checkNotNull(intervalTimeUnit);
-        job = checkNotNull(runnable);
-        maxCapacity = jobThreshold;
-        overflowHandler = checkNotNull(handler);
-        executor = checkNotNull(executorPool);
-        queue = new DelayQueue<ThrottledRunnable>();
+        this.interval = minInterval;
+        this.timeUnit = checkNotNull(intervalTimeUnit);
+        this.job = checkNotNull(runnable);
+        this.maxCapacity = jobThreshold;
+        this.overflowHandler = checkNotNull(handler);
+        this.executor = checkNotNull(executorPool);
+        this.queue = new DelayQueue<ThrottledRunnable>();
     }
 
     /**
@@ -136,23 +137,24 @@ class ThrottledRunnable implements Runnable, Delayed {
     @Override
     public void run() {
         final long now = System.currentTimeMillis();
-        final long throttleDelay = TimeUnit.MILLISECONDS.convert(interval, timeUnit);
+        final long throttleDelay = TimeUnit.MILLISECONDS.convert(this.interval, this.timeUnit);
 
-        final boolean invokeImmediately = now >= lastRunTime + throttleDelay;
+        final boolean invokeImmediately = now >= this.lastRunTime + throttleDelay;
         if (invokeImmediately) {
-            lastRunTime = now;
-            job.run();
+            this.lastRunTime = now;
+            this.job.run();
         } else {
-            if (maxCapacity <= queue.size()) {
-                overflowHandler.onInvocationExceedsThreshold(maxCapacity, job);
+            if (this.maxCapacity <= this.queue.size()) {
+                this.overflowHandler.onInvocationExceedsThreshold(this.maxCapacity, this.job);
             } else {
                 // queue up another call
-                queue.add(this);
-                executor.submit(new Runnable() {
+                this.queue.add(this);
+                this.executor.submit(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            final ThrottledRunnable task = queue.take();
+                            @SuppressWarnings("synthetic-access")
+                            final ThrottledRunnable task = ThrottledRunnable.this.queue.take();
                             task.run();
                         } catch (final InterruptedException e) {
                             Thread.currentThread().interrupt();
@@ -166,9 +168,9 @@ class ThrottledRunnable implements Runnable, Delayed {
     @Override
     public long getDelay(final TimeUnit unit) {
         final long now = System.currentTimeMillis();
-        final long throttleDelay = TimeUnit.MILLISECONDS.convert(interval, timeUnit);
+        final long throttleDelay = TimeUnit.MILLISECONDS.convert(this.interval, this.timeUnit);
 
-        final long threshold = lastRunTime + throttleDelay;
+        final long threshold = this.lastRunTime + throttleDelay;
         final long delayInMillis = threshold - now;
 
         final long delay = unit.convert(delayInMillis, TimeUnit.MILLISECONDS);
@@ -177,8 +179,8 @@ class ThrottledRunnable implements Runnable, Delayed {
 
     @Override
     public int compareTo(final Delayed other) {
-        final long delay1 = getDelay(timeUnit);
-        final long delay2 = other.getDelay(timeUnit);
+        final long delay1 = getDelay(this.timeUnit);
+        final long delay2 = other.getDelay(this.timeUnit);
 
         if (delay1 == delay2) {
             return 0;
@@ -198,10 +200,10 @@ class ThrottledRunnable implements Runnable, Delayed {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + interval;
-        result = prime * result + (job == null ? 0 : job.hashCode());
-        result = prime * result + maxCapacity;
-        result = prime * result + (timeUnit == null ? 0 : timeUnit.hashCode());
+        result = prime * result + this.interval;
+        result = prime * result + (this.job == null ? 0 : this.job.hashCode());
+        result = prime * result + this.maxCapacity;
+        result = prime * result + (this.timeUnit == null ? 0 : this.timeUnit.hashCode());
         return result;
     }
 
@@ -222,24 +224,24 @@ class ThrottledRunnable implements Runnable, Delayed {
             return false;
         }
         final ThrottledRunnable other = (ThrottledRunnable) obj;
-        if (interval != other.interval) {
+        if (this.interval != other.interval) {
             return false;
         }
-        if (job == null) {
+        if (this.job == null) {
             if (other.job != null) {
                 return false;
             }
-        } else if (!job.equals(other.job)) {
+        } else if (!this.job.equals(other.job)) {
             return false;
         }
-        if (maxCapacity != other.maxCapacity) {
+        if (this.maxCapacity != other.maxCapacity) {
             return false;
         }
-        if (timeUnit == null) {
+        if (this.timeUnit == null) {
             if (other.timeUnit != null) {
                 return false;
             }
-        } else if (!timeUnit.equals(other.timeUnit)) {
+        } else if (!this.timeUnit.equals(other.timeUnit)) {
             return false;
         }
         return true;

@@ -32,14 +32,14 @@ public class DelayedMap<K, V> implements Map<K, V> {
     private final Map<K, V> delegate;
 
     private final Map<K, V> updateMap;
-    private final Set<K>    newSet;
-    private final Set<K>    deleteSet;
+    private final Set<K> newSet;
+    private final Set<K> deleteSet;
 
     //
     // This flag may be used in order to track "new" entries, though
     // it may also be achieved by other means.
     //
-    private final boolean   keepTrackOfNewEntries = false;
+    private final boolean keepTrackOfNewEntries = false;
 
     /**
      * @param underlyingMap

@@ -8,14 +8,14 @@ import org.junit.Test;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.porpoise.common.Pair;
+import com.porpoise.common.core.Pair;
 
 @SuppressWarnings("synthetic-access")
 public class BusinessKeysTest {
 
     public static class Person {
         private final String name;
-        private final int    age;
+        private final int age;
 
         public Person(final String value, final int age) {
             name = value;
@@ -35,7 +35,7 @@ public class BusinessKeysTest {
 
     public static class Employee extends Person {
         private static final BusinessKeys<Employee> KEY = BusinessKeys.valueOf(Employee.class);
-        private final long                          id;
+        private final long id;
 
         public Employee(final long id, final String value, final int age) {
             super(value, age);
@@ -110,7 +110,8 @@ public class BusinessKeysTest {
 
     @Test
     public void testDifferenceByName() {
-        final Map<String, Pair<Object, Object>> diff = Employee.KEY.differences(new Employee(1, "Steve", 6), new Employee(1, "Paul", 123));
+        final Map<String, Pair<Object, Object>> diff = Employee.KEY.differences(new Employee(1, "Steve", 6),
+                new Employee(1, "Paul", 123));
         Assert.assertEquals(1, diff.size());
         Assert.assertEquals(Pair.valueOf("Steve", "Paul"), diff.get("name"));
     }
@@ -118,7 +119,8 @@ public class BusinessKeysTest {
     @SuppressWarnings("boxing")
     @Test
     public void testDifferenceById() {
-        final Map<String, Pair<Object, Object>> diff = Employee.KEY.differences(new Employee(2, "Steve", 6), new Employee(1, "Steve", 16));
+        final Map<String, Pair<Object, Object>> diff = Employee.KEY.differences(new Employee(2, "Steve", 6),
+                new Employee(1, "Steve", 16));
         Assert.assertEquals(1, diff.size());
         Assert.assertEquals(Pair.valueOf(2L, 1L), diff.get("id"));
     }
@@ -134,7 +136,8 @@ public class BusinessKeysTest {
     @Test
     public void testMissingRequiredValues() {
         Assert.assertTrue(Employee.KEY.missingRequiredValues(new Employee(555, "Aaron", 33)).isEmpty());
-        Assert.assertEquals("name", Iterables.getOnlyElement(Employee.KEY.missingRequiredValues(new Employee(555, null, 33))));
+        Assert.assertEquals("name",
+                Iterables.getOnlyElement(Employee.KEY.missingRequiredValues(new Employee(555, null, 33))));
     }
 
     @Test

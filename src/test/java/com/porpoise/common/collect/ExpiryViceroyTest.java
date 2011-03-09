@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.porpoise.common.Pair;
 import com.porpoise.common.collect.ExpiryViceroy.IExpiryAction;
+import com.porpoise.common.core.Pair;
 
 /**
  * Tests for the ExpiryViceroy class

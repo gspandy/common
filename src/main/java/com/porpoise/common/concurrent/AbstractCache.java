@@ -19,9 +19,9 @@ import com.google.common.collect.Maps;
  * @author Aaron
  */
 abstract class AbstractCache<K, T> {
-    static final TimeUnit   DEFAULT_TIME_UNIT = TimeUnit.MINUTES;
+    static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MINUTES;
 
-    static final int        DEFAULT_TIMEOUT   = 10;
+    static final int DEFAULT_TIMEOUT = 10;
 
     private final Map<K, T> cache;
 
@@ -45,13 +45,13 @@ abstract class AbstractCache<K, T> {
     static MapMaker newMapBuilder(final int expiration, final TimeUnit expirationTimeUnit) {
         final MapMaker builder = new MapMaker().concurrencyLevel(15).softKeys().weakValues();
         if (expirationTimeUnit != null) {
-            builder.expiration(expiration, expirationTimeUnit);
+            builder.expireAfterWrite(expiration, expirationTimeUnit);
         }
         return builder;
     }
 
     public AbstractCache(final MapMaker builder) {
-        cache = builder.makeComputingMap(new Function<K, T>() {
+        this.cache = builder.makeComputingMap(new Function<K, T>() {
             @Override
             public T apply(final K key) {
                 return createValue(key);
@@ -72,14 +72,14 @@ abstract class AbstractCache<K, T> {
      * @return the value for a given key
      */
     public T get(final K key) {
-        return cache.get(key);
+        return this.cache.get(key);
     }
 
     /**
      * @return a copy of the current cache as a map
      */
     public Map<K, T> asMap() {
-        return Maps.newHashMap(cache);
+        return Maps.newHashMap(this.cache);
     }
 
 }

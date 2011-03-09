@@ -2,7 +2,7 @@ package com.porpoise.common.files;
 
 import java.io.File;
 
-import com.porpoise.common.Log;
+import com.porpoise.common.log.Log;
 
 public enum FileIterator {
     ;// uninstantiable

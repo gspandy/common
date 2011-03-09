@@ -1,14 +1,17 @@
-package com.porpoise.common;
+package com.porpoise.common.core;
 
 /**
- * Borrowed from Scala, an Option is a type of "Monad". It serves as a container, and is used to replace potential null values.
+ * Borrowed from Scala, an Option is a type of "Monad". It serves as a container, and is used to replace potential null
+ * values.
  * 
- * For instance, if a method returns a Long which can be null, that intention isn't obvious except perhaps by reading the Javadoc.
+ * For instance, if a method returns a Long which can be null, that intention isn't obvious except perhaps by reading
+ * the Javadoc.
  * 
- * If instead, however, it returns an Option<Long>, not only is it clear that that return value might not be a Long, but also it is possible to call methods on the returned option
- * (as the method now returns an object, not a null)
+ * If instead, however, it returns an Option<Long>, not only is it clear that that return value might not be a Long, but
+ * also it is possible to call methods on the returned option (as the method now returns an object, not a null)
  * 
- * Use {@link Options#none()} and {@link Options#some(Object)} to represent no value (null) or a valid value, respectively.
+ * Use {@link Options#none()} and {@link Options#some(Object)} to represent no value (null) or a valid value,
+ * respectively.
  * 
  * @author aaron.pritzlaff
  * 
@@ -33,6 +36,7 @@ public enum Options {
      * @param <T>
      * @return the none option (no value)
      */
+    @SuppressWarnings("synthetic-access")
     public static <T> Option<T> none() {
         return new None<T>();
     }
@@ -101,24 +105,29 @@ public enum Options {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ((value == null) ? 0 : value.hashCode());
+            result = prime * result + ((this.value == null) ? 0 : this.value.hashCode());
             return result;
         }
 
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
             final Some<?> other = (Some<?>) obj;
-            if (value == null) {
-                if (other.value != null)
+            if (this.value == null) {
+                if (other.value != null) {
                     return false;
-            } else if (!value.equals(other.value))
+                }
+            } else if (!this.value.equals(other.value)) {
                 return false;
+            }
             return true;
         }
 
@@ -128,7 +137,7 @@ public enum Options {
 
         @Override
         public T get() throws IllegalStateException {
-            return value;
+            return this.value;
         }
 
         @Override

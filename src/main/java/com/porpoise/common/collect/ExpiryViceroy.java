@@ -64,6 +64,7 @@ public class ExpiryViceroy<T> {
             this.timeoutAction = Preconditions.checkNotNull(timeoutAction, "timeoutAction");
         }
 
+        @SuppressWarnings("synthetic-access")
         @Override
         public void run() {
             while (ExpiryViceroy.this.running.get()) {
@@ -87,23 +88,23 @@ public class ExpiryViceroy<T> {
     /**
      * The task which will read from the delayed queue, notifying the call-back when tasks expire
      */
-    private final Runnable                   task;
+    private final Runnable task;
 
     /**
      * typical "running" flag. When stopped, this flag will be set and a "poison value" will be inserted into the
      * delayed queue to ensure it does not continue to wait (block) for another message
      */
-    private final AtomicBoolean              running   = new AtomicBoolean(true);
+    private final AtomicBoolean running = new AtomicBoolean(true);
 
     /**
      * The default timeout which tasks will be created with
      */
-    private final long                       timeout;
+    private final long timeout;
 
     /**
      * The default time unit applied to the timeout
      */
-    private final TimeUnit                   units;
+    private final TimeUnit units;
 
     /**
      * An expiry action will be invoked when a task has taken too long to complete.

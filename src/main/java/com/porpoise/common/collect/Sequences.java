@@ -17,7 +17,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
-import com.porpoise.common.Pair;
+import com.porpoise.common.core.Pair;
 
 /**
  * 

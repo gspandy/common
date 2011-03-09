@@ -4,6 +4,7 @@ public abstract class AbstractBusinessEquality<T> implements BusinessEquality {
 
     private BusinessKeys<T> cachedKey;
 
+    @SuppressWarnings("unchecked")
     protected BusinessKeys<T> key() {
         if (this.cachedKey == null) {
             this.cachedKey = (BusinessKeys<T>) BusinessKeys.valueOf(getClass());

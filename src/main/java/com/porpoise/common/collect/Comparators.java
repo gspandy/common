@@ -1,4 +1,4 @@
-package com.porpoise.common;
+package com.porpoise.common.collect;
 
 import static com.google.common.base.CharMatcher.DIGIT;
 
@@ -30,11 +30,11 @@ public enum Comparators {
      */
     static final class StringComparator implements Comparator<String>, Serializable {
         /** required by Serializable */
-        private static final long serialVersionUID     = 1L;
+        private static final long serialVersionUID = 1L;
 
-        private static final int  SECOND_STRING_LONGER = -1;
+        private static final int SECOND_STRING_LONGER = -1;
 
-        private static final int  FIRST_STRING_LONGER  = 1;
+        private static final int FIRST_STRING_LONGER = 1;
 
         @Override
         public int compare(final String arg0, final String arg1) {
@@ -89,7 +89,7 @@ public enum Comparators {
          * @param arg1
          * @return the comparison result
          */
-        private int compareWithDigits(final String arg0, final String arg1) {
+        private static int compareWithDigits(final String arg0, final String arg1) {
             // split the strings into ([string][number])* groupings. If there are no numbers present,
             // then each string may only contain a single entry
             final Iterator<String> iterOne = split(arg0);

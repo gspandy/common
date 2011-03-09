@@ -16,19 +16,19 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.porpoise.common.Pair;
+import com.porpoise.common.core.Pair;
 
 public class SequencesTest {
     /** a test function to sum inputs */
-    private static final Function<Pair<Integer, Integer>, Integer>   SUM;
+    private static final Function<Pair<Integer, Integer>, Integer> SUM;
     /** a test function to convert inputs into an equation string */
     private static final Function<Pair<Integer, BigDecimal>, String> EQUATION;
     /** a test function to multiple inputs */
-    private static final Function<Pair<Integer, Integer>, Integer>   MULTIPLY;
+    private static final Function<Pair<Integer, Integer>, Integer> MULTIPLY;
 
     /**
      */
-    private static final Function<String, Collection<String>>        STRING_TO_REVERSE;
+    private static final Function<String, Collection<String>> STRING_TO_REVERSE;
     static {
         SUM = new Function<Pair<Integer, Integer>, Integer>() {
             @SuppressWarnings("boxing")
@@ -41,7 +41,8 @@ public class SequencesTest {
             @SuppressWarnings("boxing")
             @Override
             public String apply(final Pair<Integer, BigDecimal> input) {
-                return String.format("%s X %s = %s", input.getFirst(), input.getSecond(), input.getSecond().multiply(new BigDecimal(input.getFirst()).setScale(1)));
+                return String.format("%s X %s = %s", input.getFirst(), input.getSecond(),
+                        input.getSecond().multiply(new BigDecimal(input.getFirst()).setScale(1)));
             }
         };
         MULTIPLY = new Function<Pair<Integer, Integer>, Integer>() {
@@ -66,7 +67,8 @@ public class SequencesTest {
     @Test
     public void testCompareWithNulls() {
         // create an unsorted list
-        final List<Integer> list = Lists.newArrayList(Integer.valueOf(4), Integer.valueOf(1), null, Integer.valueOf(3), Integer.valueOf(2), null);
+        final List<Integer> list = Lists.newArrayList(Integer.valueOf(4), Integer.valueOf(1), null, Integer.valueOf(3),
+                Integer.valueOf(2), null);
         final Comparator<Integer> c = new Comparator<Integer>() {
             @Override
             public int compare(final Integer a, final Integer b) {
@@ -148,7 +150,8 @@ public class SequencesTest {
     }
 
     /**
-     * test {@link Sequences#groupByUnique(Iterable, Function)} throws an exception if in fact the keys produced are NOT unique
+     * test {@link Sequences#groupByUnique(Iterable, Function)} throws an exception if in fact the keys produced are NOT
+     * unique
      */
     @Test
     public void testGroupByUniqueThrowsExceptionIfNotIndeedUnique() {

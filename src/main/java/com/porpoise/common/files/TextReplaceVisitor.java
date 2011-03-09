@@ -8,15 +8,15 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
-import com.porpoise.common.Log;
+import com.porpoise.common.log.Log;
 
 /**
  * @author Aaron
  */
 public class TextReplaceVisitor extends FileVistiorAdapter {
-    private final Charset                  charset;
+    private final Charset charset;
 
-    private final Function<File, File>     targetFileFunction;
+    private final Function<File, File> targetFileFunction;
 
     private final Function<String, String> contentsTransform;
 
@@ -30,22 +30,22 @@ public class TextReplaceVisitor extends FileVistiorAdapter {
 
     public TextReplaceVisitor(final Charset encoding, final Function<File, File> newFileFunction,
             final Function<String, String> textTransform) {
-        charset = Preconditions.checkNotNull(encoding);
-        targetFileFunction = Preconditions.checkNotNull(newFileFunction);
-        contentsTransform = Preconditions.checkNotNull(textTransform);
+        this.charset = Preconditions.checkNotNull(encoding);
+        this.targetFileFunction = Preconditions.checkNotNull(newFileFunction);
+        this.contentsTransform = Preconditions.checkNotNull(textTransform);
     }
 
     @Override
     public void onFile(final File file) {
         try {
-            final String contents = Files.toString(file, charset);
-            final File to = targetFileFunction.apply(file);
-            final CharSequence replaced = contentsTransform.apply(contents);
+            final String contents = Files.toString(file, this.charset);
+            final File to = this.targetFileFunction.apply(file);
+            final CharSequence replaced = this.contentsTransform.apply(contents);
             if (contents.equals(replaced)) {
                 Log.debug("skipping file '%s' as the function hasn't changed owt", file.getAbsolutePath());
             } else {
                 Log.info("writing '%s' from '%s'", file.getAbsolutePath(), to.getAbsolutePath());
-                Files.write(replaced, to, charset);
+                Files.write(replaced, to, this.charset);
             }
         } catch (final IOException e) {
             throw new RuntimeException(e);

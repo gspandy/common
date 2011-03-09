@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Preconditions;
-import com.porpoise.common.Log;
+import com.porpoise.common.log.Log;
 
 /**
  * Utility class for {@link Runnable}s
@@ -44,7 +44,7 @@ public enum Runnables {
                     throw e;
                 } finally {
                     final long diff = System.currentTimeMillis() - start;
-                    Log.debug("lookup logic took %dms", Long.valueOf(diff));
+                    Log.debug("execution took %dms", Long.valueOf(diff));
                 }
             }
         };

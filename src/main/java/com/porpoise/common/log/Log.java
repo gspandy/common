@@ -1,4 +1,4 @@
-package com.porpoise.common;
+package com.porpoise.common.log;
 
 import static org.apache.log4j.Logger.getLogger;
 
@@ -17,14 +17,14 @@ import com.porpoise.common.concurrent.Threads;
 public class Log {
     private static final Log INSTANCE;
 
-    private final Logger       log;
+    private final Logger log;
 
     static {
         INSTANCE = new Log();
     }
 
     private Log() {
-        log = getLogger(getClass());
+        this.log = getLogger(getClass());
     }
 
     public static Log getInstance() {

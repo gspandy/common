@@ -16,9 +16,9 @@ import org.junit.Test;
  */
 public class DelayedMapTest {
 
-    private static final String        VALUE = "value";
-    private static final String        KEY   = "key";
-    private Map<String, String>        underlyingMap;
+    private static final String VALUE = "value";
+    private static final String KEY = "key";
+    private Map<String, String> underlyingMap;
     private DelayedMap<String, String> dMap;
 
     /**

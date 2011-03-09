@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.MapMaker;
 import com.google.common.util.concurrent.Callables;
-import com.porpoise.common.IDisposable;
 
 /**
  * The DelayedCache is an implementation of {@link AbstractCache}. The implementation of {@link #createValue(Object)}
@@ -21,28 +20,27 @@ import com.porpoise.common.IDisposable;
  * they can update their values.
  * 
  * 
- * @author Aaron
  * @param <K>
  * @param <T>
  */
-public abstract class DelayedCache<K, T> extends AbstractCache<K, AtomicReference<T>> implements IDisposable {
+public abstract class DelayedCache<K, T> extends AbstractCache<K, AtomicReference<T>> {
     /** collection of listeners who are notified when values are calculated */
     private final Collection<ICallableListener<K, T>> listeners;
 
     /** The executor service used to start computation threads */
-    private ExecutorService                           pool;
+    private ExecutorService pool;
 
     /** once disposed, we should disallow use */
-    private final AtomicBoolean                       disposed     = new AtomicBoolean(false);
+    private final AtomicBoolean disposed = new AtomicBoolean(false);
 
     /** The default return value used when a value is not found in the cache */
-    private T                                         defaultValue = null;
+    private T defaultValue = null;
 
     /**
      * @return the defaultValue
      */
     public T getDefaultValue() {
-        return defaultValue;
+        return this.defaultValue;
     }
 
     /**
@@ -87,8 +85,8 @@ public abstract class DelayedCache<K, T> extends AbstractCache<K, AtomicReferenc
      */
     protected DelayedCache(final MapMaker builder, final ExecutorService threadPool) {
         super(builder);
-        pool = Preconditions.checkNotNull(threadPool);
-        listeners = new CopyOnWriteArraySet<ICallableListener<K, T>>();
+        this.pool = Preconditions.checkNotNull(threadPool);
+        this.listeners = new CopyOnWriteArraySet<ICallableListener<K, T>>();
     }
 
     /**
@@ -104,7 +102,7 @@ public abstract class DelayedCache<K, T> extends AbstractCache<K, AtomicReferenc
         if (listener == null) {
             return false;
         }
-        return listeners.add(listener);
+        return this.listeners.add(listener);
     }
 
     private void checkDisposed() {
@@ -114,7 +112,7 @@ public abstract class DelayedCache<K, T> extends AbstractCache<K, AtomicReferenc
     }
 
     private boolean isDisposed() {
-        return disposed.get();
+        return this.disposed.get();
     }
 
     /**
@@ -125,19 +123,16 @@ public abstract class DelayedCache<K, T> extends AbstractCache<K, AtomicReferenc
      * @return true if the listener was added successfully
      */
     public boolean removeListener(final ICallableListener<K, T> listener) {
-        return listeners.remove(listener);
+        return this.listeners.remove(listener);
     }
 
     /**
-     * {@inheritDoc}
      * 
-     * @see com.porpoise.common.IDisposable#dispose()
      */
-    @Override
     public void dispose() {
-        if (disposed.compareAndSet(false, true)) {
-            listeners.clear();
-            pool.shutdown();
+        if (this.disposed.compareAndSet(false, true)) {
+            this.listeners.clear();
+            this.pool.shutdown();
         }
     }
 
@@ -164,10 +159,10 @@ public abstract class DelayedCache<K, T> extends AbstractCache<K, AtomicReferenc
         logic.addListener(new SetReferenceCallback<K, T>(reference));
 
         // also append any general listeners who have registered with the cache
-        logic.addListeners(listeners);
+        logic.addListeners(this.listeners);
 
         // finally submit our task to the thread pool.
-        pool.submit(logic);
+        this.pool.submit(logic);
 
         // return the reference which later will be updated by the worker
         return reference;

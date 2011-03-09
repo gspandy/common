@@ -1,4 +1,4 @@
-package com.porpoise.common;
+package com.porpoise.common.strings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -46,7 +46,7 @@ public enum Levenshtein {
                     return arg0.compareTo(arg1);
                 }
             };
-            final Ordering<String> dist = Ordering.from(c).onResultOf(distanceFunction(input));
+            final Ordering<String> dist = Ordering.from(c).onResultOf(distanceFunction(this.input));
             return dist;
         }
 
@@ -56,27 +56,27 @@ public enum Levenshtein {
     private static class Matrix {
 
         Table<Integer, Integer, Integer> matrix;
-        private final int                width;
-        private final int                height;
-        private final String             one;
-        private final String             two;
+        private final int width;
+        private final int height;
+        private final String one;
+        private final String two;
 
         public Matrix(final String one, final String two) {
             this.one = one;
             this.two = two;
-            width = one.length();
-            height = two.length();
-            matrix = HashBasedTable.create(width, height);
+            this.width = one.length();
+            this.height = two.length();
+            this.matrix = HashBasedTable.create(this.width, this.height);
 
-            for (int i = 0; i <= width; i++) {
+            for (int i = 0; i <= this.width; i++) {
                 put(i, 0, i);
             }
-            for (int j = 0; j <= height; j++) {
+            for (int j = 0; j <= this.height; j++) {
                 put(0, j, j);
             }
 
-            final int lenOne = width;
-            final int lenTwo = height;
+            final int lenOne = this.width;
+            final int lenTwo = this.height;
             for (int i = 1; i <= lenOne; i++) {
                 final int firstIndex = i - 1;
                 for (int j = 1; j <= lenTwo; j++) {
@@ -96,7 +96,7 @@ public enum Levenshtein {
         }
 
         public int get(final int row, final int col) {
-            Integer value = matrix.get(row, col);
+            Integer value = this.matrix.get(row, col);
             if (value == null) {
                 value = put(row, col, 0);
             }
@@ -104,25 +104,25 @@ public enum Levenshtein {
         }
 
         private int put(final int row, final int col, final int value) {
-            matrix.put(row, col, value);
+            this.matrix.put(row, col, value);
             return value;
         }
 
         @Override
         public String toString() {
             final StringBuilder b = new StringBuilder();
-            final String divider = Strings.repeat("-", 4 * (width + 1));
+            final String divider = Strings.repeat("-", 4 * (this.width + 1));
 
             b.append(String.format("|%3s", " ")).append("|");
-            for (int c = 0; c < width; c++) {
-                b.append(String.format("%3s", one.charAt(c))).append("|");
+            for (int c = 0; c < this.width; c++) {
+                b.append(String.format("%3s", this.one.charAt(c))).append("|");
             }
             b.append(String.format("%n"));
-            for (int r = 0; r < height; r++) {
+            for (int r = 0; r < this.height; r++) {
                 b.append(divider);
                 b.append(String.format("%n|"));
-                b.append(String.format("%3s", two.charAt(r))).append("|");
-                for (int c = 0; c < width; c++) {
+                b.append(String.format("%3s", this.two.charAt(r))).append("|");
+                for (int c = 0; c < this.width; c++) {
                     b.append(String.format("%3s", get(r, c))).append("|");
                 }
                 b.append(String.format("%n"));
@@ -132,7 +132,7 @@ public enum Levenshtein {
         }
 
         public int compute() {
-            return get(width, height);
+            return get(this.width, this.height);
         }
 
     }

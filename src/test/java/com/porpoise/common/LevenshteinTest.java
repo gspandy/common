@@ -3,6 +3,8 @@ package com.porpoise.common;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.porpoise.common.strings.Levenshtein;
+
 public class LevenshteinTest {
 
     @Test
@@ -40,7 +42,8 @@ public class LevenshteinTest {
 
     @Test
     public void testBestMatchHarder() {
-        final String result = Levenshtein.match("alpha").pickBestfrom("omega", "beta", "gamma", "alph oh, wait a sec, this doesn't match");
+        final String result = Levenshtein.match("alpha").pickBestfrom("omega", "beta", "gamma",
+                "alph oh, wait a sec, this doesn't match");
         Assert.assertEquals("omega", result);
     }
 

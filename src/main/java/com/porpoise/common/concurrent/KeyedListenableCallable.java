@@ -21,14 +21,14 @@ import com.google.common.collect.Lists;
 class KeyedListenableCallable<K, T> implements Callable<T> {
     private final Collection<ICallableListener<K, T>> listeners;
 
-    private final Callable<T>                         delegate;
+    private final Callable<T> delegate;
 
-    private final K                                   key;
+    private final K key;
 
     public KeyedListenableCallable(final K keyParam, final Callable<T> newCallable) {
         this.key = checkNotNull(keyParam);
         this.delegate = checkNotNull(newCallable);
-        listeners = new CopyOnWriteArrayList<ICallableListener<K, T>>();
+        this.listeners = new CopyOnWriteArrayList<ICallableListener<K, T>>();
     }
 
     /**
@@ -38,13 +38,13 @@ class KeyedListenableCallable<K, T> implements Callable<T> {
      */
     public void addListener(final ICallableListener<K, T> callback) {
         if (callback != null) {
-            listeners.add(callback);
+            this.listeners.add(callback);
         }
     }
 
     public void addListeners(final Iterable<ICallableListener<K, T>> callbackIterable) {
         if (callbackIterable != null) {
-            listeners.addAll(Lists.newArrayList(callbackIterable));
+            this.listeners.addAll(Lists.newArrayList(callbackIterable));
         }
     }
 
@@ -65,13 +65,13 @@ class KeyedListenableCallable<K, T> implements Callable<T> {
          * Notify the listeners of either success or the exception
          */
         if (exception == null) {
-            for (final ICallableListener<K, T> callback : listeners) {
-                callback.onComplete(key, result);
+            for (final ICallableListener<K, T> callback : this.listeners) {
+                callback.onComplete(this.key, result);
             }
         } else {
             boolean rethrow = false;
-            for (final ICallableListener<K, T> callback : listeners) {
-                final boolean doThrow = callback.onException(key, exception);
+            for (final ICallableListener<K, T> callback : this.listeners) {
+                final boolean doThrow = callback.onException(this.key, exception);
                 rethrow = rethrow || doThrow;
             }
             if (rethrow) {

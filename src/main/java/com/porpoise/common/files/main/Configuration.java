@@ -6,30 +6,30 @@ import java.io.IOException;
 import com.google.common.base.Preconditions;
 
 class Configuration {
-    private final File   directory;
+    private final File directory;
 
     private final String suffix;
 
     public Configuration(final File dir, final String replaceSuffix) {
-        directory = Preconditions.checkNotNull(dir);
+        this.directory = Preconditions.checkNotNull(dir);
         if (!dir.isDirectory()) {
             throw new IllegalArgumentException("Invalid directory " + dir);
         }
-        suffix = replaceSuffix;
+        this.suffix = replaceSuffix;
     }
 
     /**
      * @return the directory
      */
     public File getDirectory() {
-        return directory;
+        return this.directory;
     }
 
     /**
      * @return the suffix
      */
     public String getSuffix() {
-        return suffix;
+        return this.suffix;
     }
 
     /**

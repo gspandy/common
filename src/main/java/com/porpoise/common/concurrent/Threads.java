@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadFactory;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.porpoise.common.Log;
+import com.porpoise.common.log.Log;
 
 public enum Threads {
     ;
@@ -96,15 +96,15 @@ public enum Threads {
             public Thread newThread(final Runnable runnable) {
                 final Runnable wrappedRunnable = Runnables.proxyWithLogging(runnable);
                 final Thread thread = new Thread(wrappedRunnable);
-                final String name = String.format("Thread-Pool #%d", Integer.valueOf(count++));
+                final String name = String.format("Thread-Pool #%d", Integer.valueOf(this.count++));
                 Log.debug("Starting thread %s", name);
                 thread.setName(name);
                 thread.setDaemon(true);
                 thread.setPriority(Thread.MIN_PRIORITY);
                 final UncaughtExceptionHandler handler = new UncaughtExceptionHandler() {
                     @Override
-                    public void uncaughtException(final Thread thread, final Throwable error) {
-                        Log.error("Uncaught exception %s received on thread %s", error, thread);
+                    public void uncaughtException(final Thread param, final Throwable error) {
+                        Log.error("Uncaught exception %s received on thread %s", error, param);
                     }
                 };
                 thread.setUncaughtExceptionHandler(handler);

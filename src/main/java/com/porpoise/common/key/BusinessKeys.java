@@ -31,8 +31,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
-import com.porpoise.common.Pair;
 import com.porpoise.common.collect.Sequences;
+import com.porpoise.common.core.Pair;
 
 abstract class BusinessKeyAccessor<T, V> implements Function<T, V> {
     private final String name;

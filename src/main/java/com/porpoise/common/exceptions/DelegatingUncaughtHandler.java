@@ -4,7 +4,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.porpoise.common.Log;
+import com.porpoise.common.log.Log;
 
 /**
  * As only one uncaught exception handler is allowed, this handler allows delegate handlers to be registered with it.
@@ -19,7 +19,7 @@ public class DelegatingUncaughtHandler implements UncaughtExceptionHandler {
      * clients of this class should use {@link #initialise()}
      */
     private DelegatingUncaughtHandler() {
-        handlers = Sets.newHashSet();
+        this.handlers = Sets.newHashSet();
     }
 
     /**
@@ -49,7 +49,7 @@ public class DelegatingUncaughtHandler implements UncaughtExceptionHandler {
         if (handler == null) {
             return false;
         }
-        return handlers.add(handler);
+        return this.handlers.add(handler);
 
     }
 
@@ -72,7 +72,7 @@ public class DelegatingUncaughtHandler implements UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(final Thread thread, final Throwable error) {
-        for (final UncaughtExceptionHandler handler : handlers) {
+        for (final UncaughtExceptionHandler handler : this.handlers) {
             handler.uncaughtException(thread, error);
         }
     }
