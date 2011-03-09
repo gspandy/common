@@ -282,6 +282,11 @@ public class BusinessKeys<T> {
         return lookupForType(type).values();
     }
 
+    /**
+     * @param instance
+     *            the instance to convert to a string
+     * @return a business key string for the given instance
+     */
     public String toString(final T instance) {
         return toString(null, instance);
     }
@@ -291,6 +296,9 @@ public class BusinessKeys<T> {
      * @return a string consisting of all the business keys
      */
     public String toString(final String type, final T instance) {
+        if (instance == null) {
+            return "NULL";
+        }
         final boolean hasType = !Strings.isNullOrEmpty(type);
         final ToStringHelper helper = Objects.toStringHelper(this.c1ass);
         for (final BusinessKeyAccessor<T, Object> accessor : businessKeysForType(type)) {
@@ -579,6 +587,8 @@ public class BusinessKeys<T> {
     }
 
     /**
+     * @param type
+     *            the optional business key type
      * @return a function which will convert objects into keys
      */
     public Function<T, Object> keyFunction(final String type) {
@@ -600,6 +610,8 @@ public class BusinessKeys<T> {
     }
 
     /**
+     * @param type
+     *            the optional business key type
      * @param objects
      *            the input objects
      * @return a map containing the objects by their common key
@@ -609,6 +621,8 @@ public class BusinessKeys<T> {
     }
 
     /**
+     * @param type
+     *            the optional business key type
      * @param objects
      *            the input objects
      * @return a map containing the objects by their unique key
@@ -618,6 +632,8 @@ public class BusinessKeys<T> {
     }
 
     /**
+     * @param type
+     *            the optional business key type
      * @param objects
      *            the input objects
      * @return a map containing the objects by their unique key
@@ -667,8 +683,23 @@ public class BusinessKeys<T> {
      */
     public Collection<T> mergeUnique(final Iterable<T> first, final Iterable<T> second,
             final Function<Pair<T, T>, T> merge) {
-        final Map<Object, T> map1 = groupUnique(first);
-        final Map<Object, T> map2 = groupUnique(second);
+        return mergeUnique(null, first, second, merge);
+    }
+
+    /**
+     * @param type
+     *            the optional business key type
+     * @param first
+     *            the input objects
+     * @param second
+     *            the input objects
+     * @param merge
+     * @return a map containing the objects by their unique key
+     */
+    public Collection<T> mergeUnique(final String type, final Iterable<T> first, final Iterable<T> second,
+            final Function<Pair<T, T>, T> merge) {
+        final Map<Object, T> map1 = groupUnique(type, first);
+        final Map<Object, T> map2 = groupUnique(type, second);
         return Sequences.mergeMaps(map1, map2, merge).values();
     }
 
@@ -744,5 +775,4 @@ public class BusinessKeys<T> {
                     Sequences.toString(missing)));
         }
     }
-
 }

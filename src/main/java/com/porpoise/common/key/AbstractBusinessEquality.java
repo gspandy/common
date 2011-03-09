@@ -1,5 +1,11 @@
 package com.porpoise.common.key;
 
+/**
+ * Base class which may be extended for objects which implement {@link BusinessEquality}
+ * 
+ * @param <T>
+ *            The type of the implementing class (e.g. Person extends AbstractBusinessEquality<Person>)
+ */
 public abstract class AbstractBusinessEquality<T> implements BusinessEquality {
 
     private BusinessKeys<T> cachedKey;
@@ -15,6 +21,7 @@ public abstract class AbstractBusinessEquality<T> implements BusinessEquality {
     /**
      * @see com.tullettprebon.dms.key.BusinessEquality#businessEquals(java.lang.String, java.lang.Object)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public boolean businessEquals(final String type, final Object other) {
         if (other == null) {
@@ -36,6 +43,7 @@ public abstract class AbstractBusinessEquality<T> implements BusinessEquality {
         return key().toString(type, get());
     }
 
+    @SuppressWarnings("unchecked")
     private T get() {
         return (T) this;
     }
