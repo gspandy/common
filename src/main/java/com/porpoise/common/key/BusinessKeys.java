@@ -22,9 +22,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -34,6 +31,16 @@ import com.google.common.collect.Maps;
 import com.porpoise.common.collect.Sequences;
 import com.porpoise.common.core.Pair;
 
+/**
+ * A BusinessKeyAccessor is used internally as a way to access the @BusinessKey annotated fields and methods.
+ * 
+ * This class is for internal use only
+ * 
+ * @param <T>
+ *            The type of the annotated class
+ * @param <V>
+ *            The target type of the annotated value
+ */
 abstract class BusinessKeyAccessor<T, V> implements Function<T, V> {
     private final String name;
     private final boolean required;
@@ -64,11 +71,6 @@ abstract class BusinessKeyAccessor<T, V> implements Function<T, V> {
         return this.required;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return String.format("%s%s %s", this.name, (this.required ? "*" : ""), this.types);
@@ -76,18 +78,18 @@ abstract class BusinessKeyAccessor<T, V> implements Function<T, V> {
 }
 
 /**
+ * Factory class for creating BusinessKeyAccessor
  */
-class KeySupplier<T, V> implements Supplier<BusinessKeyAccessor<T, V>> {
+enum AccessorFactory {
+    ;// uninstantiable
 
-    private final BusinessKeyAccessor<T, V> instance;
-
-    public KeySupplier(final Method m, final boolean required, final String... types) {
+    static <T, V> BusinessKeyAccessor<T, V> valueOf(final Method m, final boolean required, final String... types) {
         Preconditions.checkArgument(m.getReturnType() != null, "Annotated method %s must have a non-null return type",
                 m.getName());
         Preconditions.checkArgument(m.getParameterTypes().length == 0,
                 "Annotated method %s cannot take any parameters", m.getName());
         final String name = m.getName();
-        this.instance = new BusinessKeyAccessor<T, V>(name, required, types) {
+        return new BusinessKeyAccessor<T, V>(name, required, types) {
             @SuppressWarnings("unchecked")
             @Override
             public V apply(final T input) {
@@ -100,14 +102,9 @@ class KeySupplier<T, V> implements Supplier<BusinessKeyAccessor<T, V>> {
         };
     }
 
-    /**
-     * @param f
-     * @param required
-     * @param types
-     */
-    public KeySupplier(final Field f, final boolean required, final String[] types) {
+    static <T, V> BusinessKeyAccessor<T, V> valueOf(final Field f, final boolean required, final String[] types) {
         final String name = f.getName();
-        this.instance = new BusinessKeyAccessor<T, V>(name, required, types) {
+        return new BusinessKeyAccessor<T, V>(name, required, types) {
             @SuppressWarnings("unchecked")
             @Override
             public V apply(final T input) {
@@ -119,11 +116,6 @@ class KeySupplier<T, V> implements Supplier<BusinessKeyAccessor<T, V>> {
             }
         };
     }
-
-    @Override
-    public BusinessKeyAccessor<T, V> get() {
-        return this.instance;
-    }
 }
 
 /**
@@ -132,11 +124,61 @@ class KeySupplier<T, V> implements Supplier<BusinessKeyAccessor<T, V>> {
  * @param <T>
  *            The type for these keys
  */
+@SuppressWarnings("synthetic-access")
 public class BusinessKeys<T> {
 
     private final Class<T> c1ass;
-    private final Map<String, BusinessKeyAccessor<T, Object>> keyByName;
+    private final ImmutableMap<String, BusinessKeyAccessor<T, Object>> keyByName;
     private final Function<String, Map<String, BusinessKeyAccessor<T, Object>>> keysByType;
+
+    /**
+     * Internal representation of a key object which represents just the values specified by a set of business keys
+     */
+    class HashKey {
+        private final T wrappedObject;
+        private final int hashCode;
+        private final Class<T> keyedClass;
+        private final String type;
+
+        HashKey(final String type, final T obj) {
+            this.type = type;
+            this.keyedClass = BusinessKeys.this.c1ass;
+            this.wrappedObject = obj;
+            // we assume that a business key *should* not change -- in particular if we're going to be using
+            // it for a key as we are in this context. Therefore we pre-compute the hashCode here, both for some
+            // small performance benefits AND to protect against a business key property changing AFTER we've stored
+            // it in a map or set
+            this.hashCode = BusinessKeys.this.hashCode(type, this.wrappedObject);
+        }
+
+        @Override
+        public int hashCode() {
+            return this.hashCode;
+        }
+
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @Override
+        public boolean equals(final Object other) {
+            if (other == null) {
+                return false;
+            }
+            if (other == this.wrappedObject) {
+                return true;
+            }
+            if (other instanceof BusinessKeys.HashKey) {
+                final BusinessKeys.HashKey otherKey = (BusinessKeys.HashKey) other;
+                if (otherKey.keyedClass.isAssignableFrom(this.keyedClass)) {
+                    return BusinessKeys.this.equals(this.type, this.wrappedObject, (T) otherKey.wrappedObject);
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return "KEY FOR " + BusinessKeys.this.toString(this.type, this.wrappedObject);
+        }
+    }
 
     /**
      * Factory method for creating business keys
@@ -151,23 +193,36 @@ public class BusinessKeys<T> {
 
     private BusinessKeys(final Class<T> c1ass) {
         this.c1ass = c1ass;
-        final Collection<Supplier<BusinessKeyAccessor<T, Object>>> keys = Lists.newArrayList();
+        final Collection<BusinessKeyAccessor<T, Object>> accessors = Lists.newArrayList();
         for (final Method m : c1ass.getMethods()) {
             final BusinessKey key = m.getAnnotation(BusinessKey.class);
             if (key != null) {
-                keys.add(new KeySupplier<T, Object>(m, key.required(), key.type()));
+                accessors.add(AccessorFactory.<T, Object> valueOf(m, key.required(), key.type()));
             }
         }
         for (final Field f : c1ass.getFields()) {
             final BusinessKey key = f.getAnnotation(BusinessKey.class);
             if (key != null) {
-                keys.add(new KeySupplier<T, Object>(f, key.required(), key.type()));
+                accessors.add(AccessorFactory.<T, Object> valueOf(f, key.required(), key.type()));
             }
         }
-        final Function<Supplier<BusinessKeyAccessor<T, Object>>, BusinessKeyAccessor<T, Object>> sf = Suppliers
-                .supplierFunction();
-        final Collection<BusinessKeyAccessor<T, Object>> businessKeys = Collections2.transform(keys, sf);
-        this.keyByName = ImmutableMap.copyOf(Sequences.groupByUnique(businessKeys, getNameFunction()));
+        this.keyByName = ImmutableMap.copyOf(Sequences.groupByUnique(accessors,
+                new Function<BusinessKeyAccessor<T, Object>, String>() {
+                    @Override
+                    public String apply(final BusinessKeyAccessor<T, Object> key) {
+                        return getName(key.getName());
+                    }
+                }));
+        // our keysByType is actually a function which will return a default value for any undefined keys
+        this.keysByType = Functions
+                .forMap(mapByType(), Collections.<String, BusinessKeyAccessor<T, Object>> emptyMap());
+    }
+
+    /**
+     * @return a map which will in-turn return a mapping between a property name and accessor for a given business key
+     *         type
+     */
+    private ConcurrentMap<String, Map<String, BusinessKeyAccessor<T, Object>>> mapByType() {
         final ConcurrentMap<String, Map<String, BusinessKeyAccessor<T, Object>>> byType = new MapMaker()
                 .makeComputingMap(new Function<String, Map<String, BusinessKeyAccessor<T, Object>>>() {
                     @Override
@@ -175,20 +230,39 @@ public class BusinessKeys<T> {
                         return computeKeyByName(input);
                     }
                 });
-        final Map<String, BusinessKeyAccessor<T, Object>> defaultMap = Collections.emptyMap();
-        this.keysByType = Functions.forMap(byType, defaultMap);
+        return byType;
     }
 
-    private Function<BusinessKeyAccessor<T, Object>, String> getNameFunction() {
-        return new Function<BusinessKeyAccessor<T, Object>, String>() {
-            @SuppressWarnings("synthetic-access")
+    /**
+     * performs a linear search through all knows keys, filtering out only those matching the given type string
+     * 
+     * @param type
+     *            the business key type
+     * @return a subset of the keyByName map which only contains keys for the given type
+     */
+    private Map<String, BusinessKeyAccessor<T, Object>> computeKeyByName(final String type) {
+        final String typeAsKey = asKey(type);
+        return Maps.filterValues(this.keyByName, new Predicate<BusinessKeyAccessor<T, Object>>() {
             @Override
-            public String apply(final BusinessKeyAccessor<T, Object> key) {
-                return getName(key.getName());
+            public boolean apply(final BusinessKeyAccessor<T, Object> input) {
+                final Collection<String> types = input.getTypes();
+                return types.contains(typeAsKey);
             }
-        };
+        });
     }
 
+    /**
+     * @return a consistent string representation for a given string value
+     */
+    static String asKey(final String value) {
+        return CharMatcher.WHITESPACE.removeFrom(value).toUpperCase();
+    }
+
+    /**
+     * @param n
+     *            the source name
+     * @return a lower-camel-case string with the accessor prefix removed if found (e.g. getThing => thing)
+     */
     private String getName(final String n) {
         // sorry - a little obfuscation is good for the sole
         return trim(trim(n, "is"), "get");
@@ -201,21 +275,13 @@ public class BusinessKeys<T> {
         return name;
     }
 
+    /**
+     * @param type
+     *            the business key 'type' (e.g. "logical" in @BusinessKey("logical"))
+     * @return all business key accessors for the given business key type
+     */
     Iterable<BusinessKeyAccessor<T, Object>> businessKeysForType(final String type) {
         return lookupForType(type).values();
-    }
-
-    private Map<String, BusinessKeyAccessor<T, Object>> computeKeyByName(final String type) {
-        final String typeAsKey = asKey(type);
-        final Predicate<BusinessKeyAccessor<T, Object>> filter = new Predicate<BusinessKeyAccessor<T, Object>>() {
-            @Override
-            public boolean apply(final BusinessKeyAccessor<T, Object> input) {
-                final Collection<String> types = input.getTypes();
-                return types.contains(typeAsKey);
-            }
-        };
-        final Map<String, BusinessKeyAccessor<T, Object>> filteredDeyByName = Maps.filterValues(this.keyByName, filter);
-        return filteredDeyByName;
     }
 
     public String toString(final T instance) {
@@ -260,12 +326,16 @@ public class BusinessKeys<T> {
             return System.identityHashCode(instance);
         }
 
-        final Iterable<Object> values = Iterables.transform(map.values(), apply(instance));
+        final Iterable<Object> values = Iterables.transform(map.values(), accessorFunction(instance));
 
         if (Strings.isNullOrEmpty(type)) {
             return Objects.hashCode(Iterables.toArray(values, Object.class));
         }
-        final Function<Pair<Integer, Object>, Integer> hash = new Function<Pair<Integer, Object>, Integer>() {
+        /**
+         * Function which takes into account objects which implement the "BusinessEqquality" interface, preferring to
+         * use that over standard Object#hashCode if found.
+         */
+        final Function<Pair<Integer, Object>, Integer> hashingFunction = new Function<Pair<Integer, Object>, Integer>() {
             @Override
             public Integer apply(final Pair<Integer, Object> input) {
                 final Integer oldHash = input.getFirst();
@@ -277,26 +347,22 @@ public class BusinessKeys<T> {
                 } else {
                     newHash = Objects.hashCode(obj);
                 }
-                final int result = Objects.hashCode(oldHash, newHash);
+                final int result = Objects.hashCode(oldHash, Integer.valueOf(newHash));
                 return Integer.valueOf(result);
             }
         };
-        final Integer hashCode = Sequences.foldLeft(Integer.valueOf(17), values, hash);
-        return hashCode.intValue();
+        return Sequences.foldLeft(Integer.valueOf(17), values, hashingFunction).intValue();
     }
 
     private Map<String, BusinessKeyAccessor<T, Object>> lookupForType(final String type) {
-        Map<String, BusinessKeyAccessor<T, Object>> map;
         if (!Strings.isNullOrEmpty(type)) {
-            map = this.keysByType.apply(type);
-        } else {
-            map = this.keyByName;
+            return this.keysByType.apply(type);
         }
-        return map;
+        return this.keyByName;
     }
 
     /**
-     * @return true if no business keys were defined
+     * @return true if no business keys are defined
      */
     public boolean isEmpty() {
         return this.keyByName.isEmpty();
@@ -304,26 +370,23 @@ public class BusinessKeys<T> {
 
     /**
      * @param first
+     *            the first object to compare
      * @param second
-     * @return true if the two objects are equal according to their business keys
+     *            the second object to compare
+     * @return true if the two objects are equal according to all of their business keys
      */
     public boolean equals(final T first, final T second) {
-        if (first == null) {
-            return second == null;
-        }
-        if (second == null) {
-            return false;
-        }
-        final Iterable<Object> values1 = Iterables.transform(businessKeysForType(null), apply(first));
-        final Iterable<Object> values2 = Iterables.transform(businessKeysForType(null), apply(second));
-        return Iterables.elementsEqual(values1, values2);
+        return equals(null, first, second);
     }
 
     /**
      * @param type
+     *            An optional, specific business key type
      * @param first
+     *            the first object to compare
      * @param second
-     * @return true if the two equal
+     *            the second object to compare
+     * @return true if the two equal according to the business keys of the given type
      */
     public boolean equals(final String type, final T first, final T second) {
         if (first == null) {
@@ -334,27 +397,38 @@ public class BusinessKeys<T> {
         }
         final Map<String, BusinessKeyAccessor<T, Object>> lookup = lookupForType(type);
         final Iterable<BusinessKeyAccessor<T, Object>> keys = lookup.values();
-        if (Iterables.isEmpty(keys)) {
-            return false;
-        }
-        final Iterable<Object> values1 = Iterables.transform(keys, apply(first));
-        final Iterable<Object> values2 = Iterables.transform(keys, apply(second));
-        return elementsEqual(type, values1, values2);
+        Preconditions.checkArgument(!Iterables.isEmpty(keys), "No business keys for type '%s' are defined for %s",
+                type, this.c1ass);
+        final Iterable<Object> values1 = Iterables.transform(keys, accessorFunction(first));
+        final Iterable<Object> values2 = Iterables.transform(keys, accessorFunction(second));
+        return typeAwareElementsEqual(type, values1, values2);
+    }
+
+    private Function<BusinessKeyAccessor<T, Object>, Object> accessorFunction(final T instance) {
+        return new Function<BusinessKeyAccessor<T, Object>, Object>() {
+            @Override
+            public Object apply(final BusinessKeyAccessor<T, Object> key) {
+                return key.apply(instance);
+            }
+        };
     }
 
     /**
-     * @param values1
-     * @param values2
-     * @return
+     * @return true if all elements are equal in the same order, taking objects which implement BusinessEquals into
+     *         consideration
      */
-    static boolean elementsEqual(final String type, final Iterable<Object> values1, final Iterable<Object> values2) {
+    private static boolean typeAwareElementsEqual(final String type, final Iterable<Object> values1,
+            final Iterable<Object> values2) {
+        // this could save us a bit of work: no point comparing 100 elements only to find the collections
+        // are of unequal sizes
+        if (Iterables.size(values1) != Iterables.size(values2)) {
+            return false;
+        }
         final Iterator<Object> iterator1 = values1.iterator();
         final Iterator<Object> iterator2 = values2.iterator();
         final boolean hasType = !Strings.isNullOrEmpty(type);
         while (iterator1.hasNext()) {
-            if (!iterator2.hasNext()) {
-                return false;
-            }
+            assert iterator2.hasNext();
             final Object o1 = iterator1.next();
             final Object o2 = iterator2.next();
             if (hasType) {
@@ -375,13 +449,13 @@ public class BusinessKeys<T> {
             if (!be.businessEquals(type, o2)) {
                 return false;
             }
-        } else if (o1 instanceof Collection<?>) {
-            if (!(o2 instanceof Collection<?>)) {
+        } else if (o1 instanceof Iterable<?>) {
+            if (!(o2 instanceof Iterable<?>)) {
                 return false;
             }
-            final Collection<Object> collectionOne = (Collection<Object>) o1;
-            final Collection<Object> collectionTwo = (Collection<Object>) o2;
-            if (!elementsEqual(type, collectionOne, collectionTwo)) {
+            final Iterable<Object> collectionOne = (Iterable<Object>) o1;
+            final Iterable<Object> collectionTwo = (Iterable<Object>) o2;
+            if (!typeAwareElementsEqual(type, collectionOne, collectionTwo)) {
                 return false;
             }
         } else if (!Objects.equal(o1, o2)) {
@@ -391,62 +465,89 @@ public class BusinessKeys<T> {
     }
 
     /**
+     * @see #differences(String, Object, Object)
+     * 
      * @param first
+     *            the first object to compare
      * @param second
-     * @return a collection of the field names and values which differ
+     *            the second object to compare
+     * @return a collection of values which differ, keyed on their property name
      */
     public Map<String, Pair<Object, Object>> differences(final T first, final T second) {
         return diff(null, this.keyByName, first, second);
     }
 
     /**
-     * @param keys
-     * @param first
-     * @param second
-     * @return
-     */
-    private Map<String, Pair<Object, Object>> diff(final String type,
-            final Map<String, BusinessKeyAccessor<T, Object>> keys, final T first, final T second) {
-        final Map<String, Pair<Object, Object>> valuesByName = Maps.transformValues(keys, getValues(first, second));
-        Predicate<Pair<Object, Object>> predicate;
-        if (Strings.isNullOrEmpty(type)) {
-            predicate = Pair.different();
-        } else {
-            predicate = different(type);
-        }
-        return Maps.filterValues(valuesByName, predicate);
-    }
-
-    static Predicate<Pair<Object, Object>> different(final String type) {
-        return new Predicate<Pair<Object, Object>>() {
-            @Override
-            public boolean apply(final Pair<Object, Object> input) {
-                return !typeAwareEquals(type, input.getFirst(), input.getSecond());
-            }
-        };
-    }
-
-    /**
+     * Return the differences between two types.
+     * 
+     * For instance, given a Person class with the annotated field and method: <code>
+     * 
+     * @BusinessKey({"public", "logical"}) private int age;
+     * 
+     * @BusinessKey("public" ) public String getFirstName() { ... } </code> If two Person instances are given which have
+     *                       different ages and first name values, a call to <code>
+     * diff = KEY.differences("public", person1, person2);
+     * </code> will result in 'diff' containing a map with keys 'firstName' and 'age' whos values contain a pair of the
+     *                       different values
      * 
      * @param type
+     *            the optional business key type
      * @param first
+     *            the first object to compare
      * @param second
-     * @return the diff
+     *            the second object to compare
+     * @return a collection of values which differ, keyed on their property name
      */
     public Map<String, Pair<Object, Object>> differences(final String type, final T first, final T second) {
         final Map<String, BusinessKeyAccessor<T, Object>> filteredDeyByName = lookupForType(type);
         return diff(type, filteredDeyByName, first, second);
     }
 
-    /**
-     * @param first
-     * @return the names of the fields which were annotated as required but are missing
-     */
-    public Set<String> missingRequiredValues(final T first) {
-        return Maps.filterValues(valuesByName(first), Predicates.isNull()).keySet();
+    private Map<String, Pair<Object, Object>> diff(final String type,
+            final Map<String, BusinessKeyAccessor<T, Object>> keys, final T first, final T second) {
+        final Map<String, Pair<Object, Object>> valuesByName = Maps.transformValues(keys,
+                getValueFunction(first, second));
+        Predicate<Pair<Object, Object>> predicate;
+        if (Strings.isNullOrEmpty(type)) {
+            predicate = Pair.different();
+        } else {
+            predicate = new Predicate<Pair<Object, Object>>() {
+                @Override
+                public boolean apply(final Pair<Object, Object> input) {
+                    return !typeAwareEquals(type, input.getFirst(), input.getSecond());
+                }
+            };
+        }
+        return Maps.filterValues(valuesByName, predicate);
     }
 
-    private static <K> Function<BusinessKeyAccessor<K, Object>, Pair<Object, Object>> getValues(final K first,
+    /**
+     * A BusinessKey annotation contains an optional 'required' property:
+     * 
+     * <pre>
+     * &#064;BusinessKey(required = true)
+     * private Long id;
+     * &#064;BusinessKey(required = false)
+     * private String name;
+     * </pre>
+     * 
+     * <p>
+     * This method will return a set of the property names for all BusinessKey properties marked as 'required' which
+     * have null values
+     * </p>
+     * 
+     * @param instance
+     *            The object to check for missing values
+     * @return the names of the fields which were annotated as required but are missing
+     */
+    public Set<String> missingRequiredValues(final T instance) {
+        return Maps.filterValues(valuesByName(instance), Predicates.isNull()).keySet();
+    }
+
+    /**
+     * @return a function which will return the values of the two parameters for any given business key.
+     */
+    private static <K> Function<BusinessKeyAccessor<K, Object>, Pair<Object, Object>> getValueFunction(final K first,
             final K second) {
         return new Function<BusinessKeyAccessor<K, Object>, Pair<Object, Object>>() {
             @Override
@@ -458,42 +559,25 @@ public class BusinessKeys<T> {
         };
     }
 
-    private Function<BusinessKeyAccessor<T, Object>, Object> getValue(final T first) {
-        return new Function<BusinessKeyAccessor<T, Object>, Object>() {
-            @Override
-            public Object apply(final BusinessKeyAccessor<T, Object> key) {
-                return key.apply(first);
-            }
-        };
-    }
-
     /**
-     * @param first
+     * @param instance
+     *            the object instance
      * @return a map of the business key values by their property name
      */
-    public Map<String, Object> valuesByName(final T first) {
-        return Maps.transformValues(this.keyByName, getValue(first));
-    }
-
-    private Function<BusinessKeyAccessor<T, Object>, Object> apply(final T instance) {
-        return new Function<BusinessKeyAccessor<T, Object>, Object>() {
+    public Map<String, Object> valuesByName(final T instance) {
+        return Maps.transformValues(this.keyByName, new Function<BusinessKeyAccessor<T, Object>, Object>() {
             @Override
             public Object apply(final BusinessKeyAccessor<T, Object> key) {
                 return key.apply(instance);
             }
-        };
+        });
     }
 
     /**
      * @return a function which will convert objects into keys
      */
     public Function<T, Object> keyFunction() {
-        return new Function<T, Object>() {
-            @Override
-            public Object apply(final T input) {
-                return makeKey(input);
-            }
-        };
+        return keyFunction(null);
     }
 
     /**
@@ -602,53 +686,12 @@ public class BusinessKeys<T> {
                 Sequences.toString(this.keyByName.keySet()));
     }
 
-    class HashKey {
-        private final T wrappedObject;
-        private final int hashCode;
-        private final Class<T> keyedClass;
-        private final String type;
-
-        @SuppressWarnings("synthetic-access")
-        HashKey(final String type, final T obj) {
-            this.type = type;
-            this.keyedClass = BusinessKeys.this.c1ass;
-            this.wrappedObject = obj;
-            // we assume that a business key *should* not change -- in particular if we're going to be using
-            // it for a key as we are in this context. Therefore we pre-compute the hashCode here, both for some
-            // small performance benefits AND to protect against a business key property changing AFTER we've stored
-            // it in a map or set
-            this.hashCode = BusinessKeys.this.hashCode(type, this.wrappedObject);
-        }
-
-        @Override
-        public int hashCode() {
-            return this.hashCode;
-        }
-
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        @Override
-        public boolean equals(final Object other) {
-            if (other == null) {
-                return false;
-            }
-            if (other == this.wrappedObject) {
-                return true;
-            }
-            if (other instanceof BusinessKeys.HashKey) {
-                final BusinessKeys.HashKey otherKey = (BusinessKeys.HashKey) other;
-                if (otherKey.keyedClass.isAssignableFrom(this.keyedClass)) {
-                    return BusinessKeys.this.equals(this.type, this.wrappedObject, (T) otherKey.wrappedObject);
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return "KEY FOR " + BusinessKeys.this.toString(this.type, this.wrappedObject);
-        }
-    }
-
+    /**
+     * Create a key object for the given object instance based on its business keys
+     * 
+     * @param obj
+     * @return an object whos hashCode and equals methods will resolve to the business key values for the given instance
+     */
     public Object makeKey(final T obj) {
         return makeKey(null, obj);
     }
@@ -660,7 +703,7 @@ public class BusinessKeys<T> {
      * 
      * @param obj
      *            the object for which to make a key
-     * @return an object which can be used as a key for the given object
+     * @return an object whos hashCode and equals methods will resolve to the business key values for the given instance
      */
     public Object makeKey(final String type, final T obj) {
         return new HashKey(type, obj);
@@ -702,10 +745,6 @@ public class BusinessKeys<T> {
             throw new IllegalStateException(String.format("%s missing required properties: %s", toString(value),
                     Sequences.toString(missing)));
         }
-    }
-
-    static String asKey(final String value) {
-        return CharMatcher.WHITESPACE.removeFrom(value).toUpperCase();
     }
 
 }
