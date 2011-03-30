@@ -99,6 +99,7 @@ public final class Delta<T> {
          */
         public <B, N> Builder<B> pushCollection(final String property,
                 final Function<N, ? extends Collection<B>> accessor) {
+            push(property, accessor);
             return null;
         }
     }
