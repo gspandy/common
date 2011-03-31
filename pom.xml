@@ -10,7 +10,7 @@
 		<publish.to.url>file:///Users/aaron/.m2/repository</publish.to.url>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<distributionId>dao</distributionId>
+		<distributionId>common</distributionId>
 		<javaDocVersion>2.5</javaDocVersion>
 		<findbugsVersion>2.0.1</findbugsVersion>
 	</properties>
@@ -32,8 +32,6 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
 		</dependency>
-		<!-- <dependency> <groupId>com.google.collections</groupId> <artifactId>google-collections</artifactId> 
-			<version>1.0</version> </dependency> -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -100,10 +98,6 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>${javaDocVersion}</version>
 				</plugin>
-				<!-- <plugin> <groupId>com.xebia.mojo</groupId> <artifactId>maven-dashboard-plugin</artifactId> 
-					<configuration> <destinationFile>${project.reporting.outputDirectory}/maven-dashboard-report.html</destinationFile> 
-					</configuration> </plugin> -->
-
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>

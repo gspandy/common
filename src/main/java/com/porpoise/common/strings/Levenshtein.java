@@ -21,7 +21,7 @@ public enum Levenshtein {
     ;// uninstantiable
 
     /**
-     * Utility class to aid in chosing the closest string from a group of input strings
+     * Utility class to aid in choosing the closest string from a group of input strings
      */
     public static final class DistanceMatcher {
 
@@ -56,10 +56,10 @@ public enum Levenshtein {
     private static class Matrix {
 
         Table<Integer, Integer, Integer> matrix;
-        private final int width;
-        private final int height;
-        private final String one;
-        private final String two;
+        private final int                width;
+        private final int                height;
+        private final String             one;
+        private final String             two;
 
         public Matrix(final String one, final String two) {
             this.one = one;
