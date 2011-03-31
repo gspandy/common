@@ -53,6 +53,9 @@ public enum DeltaFactory {
                 ctxt.addDiff(prop, left, right);
             }
             return ctxt;
+        } else if (right == null) {
+            ctxt.addDiff(prop, left, right);
+            return ctxt;
         }
         if (isIterable(left)) {
             return diffIterable(prop, (Iterable<?>) left, (Iterable<?>) right, ctxt, visitedSet);
