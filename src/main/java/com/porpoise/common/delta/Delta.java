@@ -1,4 +1,4 @@
-package com.porpoise.common.core;
+package com.porpoise.common.delta;
 
 import java.util.Collection;
 import java.util.Map;
@@ -7,6 +7,8 @@ import java.util.Map.Entry;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.porpoise.common.core.Mutator;
+import com.porpoise.common.core.Pair;
 
 /**
  * representation of the difference between two things

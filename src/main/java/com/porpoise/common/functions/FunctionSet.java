@@ -1,4 +1,4 @@
-package com.porpoise.common.collect;
+package com.porpoise.common.functions;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,6 +16,8 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
 /**
+ * A set implementation which will use a supplied function to create a unique key
+ * 
  * @param <T>
  */
 public class FunctionSet<T> implements Set<T> {

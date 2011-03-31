@@ -1,4 +1,4 @@
-package com.porpoise.common.collect;
+package com.porpoise.common.functions;
 
 import java.util.Collection;
 import java.util.Iterator;

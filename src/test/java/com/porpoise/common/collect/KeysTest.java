@@ -7,8 +7,8 @@ import org.junit.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.porpoise.common.collect.FunctionSet;
-import com.porpoise.common.collect.Keys;
+import com.porpoise.common.functions.FunctionSet;
+import com.porpoise.common.functions.Keys;
 
 /**
  * 
