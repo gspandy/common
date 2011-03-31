@@ -1,5 +1,9 @@
 package com.porpoise.common.core;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Borrowed from Scala, an Option is a type of "Monad". It serves as a container, and is used to replace potential null
  * values.
@@ -21,14 +25,31 @@ public enum Options {
 
     /**
      * The option interface as returned from "some" or "none"
+     * 
+     * @param <T>
      */
-    public static interface Option<T> {
+    public static interface Option<T> extends Iterable<T> {
+        /**
+         * @return the value represented by this option
+         * @throws IllegalStateException
+         */
         public T get() throws IllegalStateException;
 
-        public T getOrElse(T other);
+        /**
+         * @param defaultValue
+         * @return the value represented by this option or the defaultValue parameter if not defined
+         * @throws IllegalStateException
+         */
+        public T getOrElse(T defaultValue);
 
+        /**
+         * @return true if this option represents a value
+         */
         public boolean isDefined();
 
+        /**
+         * @return false if this option is not defined
+         */
         public boolean isNotDefined();
     }
 
@@ -90,6 +111,15 @@ public enum Options {
         @Override
         public boolean isNotDefined() {
             return true;
+        }
+
+        /**
+         * @see java.lang.Iterable#iterator()
+         */
+        @Override
+        public Iterator<T> iterator() {
+            final List<T> emptyList = Collections.emptyList();
+            return emptyList.iterator();
         }
     }
 
@@ -153,6 +183,34 @@ public enum Options {
         @Override
         public T getOrElse(final T other) {
             return get() != null ? get() : other;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Iterable#iterator()
+         */
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                boolean hasNext = true;
+
+                @Override
+                public boolean hasNext() {
+                    return this.hasNext;
+                }
+
+                @Override
+                public T next() {
+                    this.hasNext = false;
+                    return get();
+                }
+
+                @Override
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
         }
     }
 
