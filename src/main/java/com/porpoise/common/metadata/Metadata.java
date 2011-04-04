@@ -10,6 +10,6 @@ public interface Metadata<T> {
 
     Map<String, Function<T, Object>> valuesByName();
 
-    Iterable<MetadataProperty<T, ?>> simpleProperties();
+    Iterable<BaseMetadataProperty<T, ?>> simpleProperties();
 
 }
