@@ -3,7 +3,7 @@ package com.porpoise.common.delta;
 import java.util.Collection;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.porpoise.common.collect.Sequences;
@@ -13,24 +13,15 @@ import com.porpoise.common.core.Pair;
  * 
  */
 public class Delta {
-    private final Collection<Diff<?>> diffs;
-
     private final Map<String, Pair<? extends Object, ? extends Object>> diffByProperty = Maps.newHashMap();
 
-    /**
-     * 
-     */
-    Delta() {
-        this(Lists.<Diff<?>> newArrayList());
-    }
-
-    Delta(final Collection<Diff<?>> diffsParam) {
-        this.diffs = ImmutableList.copyOf(diffsParam);
-    }
+    private final Collection<Delta>                                     children       = Lists.newArrayList();
 
     @Override
     public String toString() {
-        return Sequences.toString(this.diffs);
+        final String ds = Joiner.on(",%n").withKeyValueSeparator("=>").join(this.diffByProperty);
+        final String kids = Sequences.toString(this.children);
+        return String.format("%s%n%s", ds, kids);
     }
 
     // public static <T> Delta valueOf(final T left, final T right, final Metadata difflookup) {
@@ -41,4 +32,9 @@ public class Delta {
         this.diffByProperty.put(property, Pair.valueOf(left, right));
         return this;
     }
+
+    public void addChild(final Delta delta) {
+        this.children.add(delta);
+    }
+
 }

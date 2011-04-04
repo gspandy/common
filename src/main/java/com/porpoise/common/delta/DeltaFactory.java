@@ -1,11 +1,15 @@
 package com.porpoise.common.delta;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
+import com.porpoise.common.core.Pair;
 import com.porpoise.common.metadata.Metadata;
 import com.porpoise.common.metadata.MetadataProperty;
 
@@ -15,7 +19,7 @@ import com.porpoise.common.metadata.MetadataProperty;
 public enum DeltaFactory {
     ; // unintantiable
 
-    public static <T> Delta valueOf(final T left, final T right, final Metadata diffLookup) {
+    public static <T> Delta valueOf(final T left, final T right, final Metadata<T> diffLookup) {
         final Set<Object> visitedSet = Sets.newIdentityHashSet();
         if (left == null) {
             if (right == null) {
@@ -28,76 +32,78 @@ public enum DeltaFactory {
         return valueOf(prop, right, left, diffLookup, visitedSet);
     }
 
-    private static <T> Delta valueOf(final String prop, final T left, final T right, final Metadata<T> diffLookup,
-            final Set<Object> visitedSet) {
-        final Delta base = new Delta();
-        diffRecursive(prop, right, left, base, diffLookup, visitedSet);
-        return base;
+    private static <T> Delta valueOf(final String prop, final T left, final T right, final Metadata<T> diffLookup, final Set<Object> visitedSet) {
+        return diffRecursive(prop, right, left, diffLookup, visitedSet);
     }
 
-    private static <T> Delta diffRecursive(final String prop, final T left, final T right, final Delta ctxt,
-            final Metadata<T> diffLookup, final Set<Object> visitedSet) {
+    private static <T> Delta diffRecursive(final String prop, final Object left, final Object right, final Metadata<T> diffLookup, final Set<Object> visitedSet) {
+        final Delta delta = new Delta();
         if (left == null) {
             if (right != null) {
-                ctxt.addDiff(prop, left, right);
+                delta.addDiff(prop, left, right);
             }
-            return ctxt;
+            return delta;
         } else if (right == null) {
-            ctxt.addDiff(prop, left, right);
-            return ctxt;
+            delta.addDiff(prop, left, right);
+            return delta;
         }
         if (!visitedSet.add(left)) {
-            return ctxt;
+            return delta;
         }
 
-        for (final MetadataProperty<T, ?> simpleProperty : diffLookup.simpleProperties()) {
-            diffSimple(ctxt, simpleProperty, left, right);
-        }
-        return ctxt;
-    }
-
-    private static <T, P> void diffSimple(final Delta delta, final MetadataProperty<T, P> prop, final T left,
-            final T right) {
-
-        final Object a = prop.valueOf(left);
-        final Object b = prop.valueOf(right);
-
-        // diffRecursive(simpleProperty.name(), v1, v2, ctxt, diffLookup, visitedSet
-    }
-
-    private static <T> Delta diffIterable(final String prop, final Iterable<?> left, final Iterable<?> right,
-            final Delta ctxt, final Metadata diffLookup, final Set<Object> visitedSet) {
-        return ctxt;
-    }
-
-    private static <T> Delta diffMap(final String prop, final Map<?, ?> left, final Map<?, ?> right, final Delta ctxt,
-            final Metadata diffLookup, final Set<Object> visitedSet) {
-        return ctxt;
-    }
-
-    private static <T> Delta diff(final String prop, final T left, final T right, final Delta ctxt,
-            final Metadata diffLookup, final Set<Object> visitedSet) {
-
-        final Class<T> class1 = (Class<T>) left.getClass();
-        final Map<String, Function<T, ? extends Object>> propsByName = diffLookup.propertyLookupForClass(class1);
-        if (propsByName.isEmpty()) {
-            ctxt.addDiff(prop, left, right);
-        } else {
-            for (final Entry<String, Function<T, ? extends Object>> entry : propsByName.entrySet()) {
-                final Object a = entry.getValue().apply(left);
-                final Object b = entry.getValue().apply(right);
-                if (visitedSet.add(a)) {
-                    // final Delta subDiff = valueOf(entry.getKey(), a, b, ctxt.diffLookup, visitedSet);
-                    // ctxt.addChild(subDiff);
-                } else {
-                    log("Stopping at circular reference of %s", a);
-                }
+        for (final Entry<String, Function<T, ? extends Object>> entry : diffLookup.valuesByName().entrySet()) {
+            Function<T, ? extends Object> fnc = entry.getValue();
+            final Object a = fnc.apply(left);
+            final Object b = fnc.apply(right);
+            if (!Objects.equal(a, b)) {
+                delta.addDiff(entry.getKey(), a, b);
             }
         }
-        return ctxt;
+
+        for (final MetadataProperty<T> simpleProperty : diffLookup.simpleProperties()) {
+            final String propName = simpleProperty.name();
+
+            if (simpleProperty.isIterable()) {
+                final Pair<Metadata<Object>, Iterable<Object>> a = simpleProperty.iterableValueOf(left);
+                final Pair<Metadata<Object>, Iterable<Object>> b = simpleProperty.iterableValueOf(right);
+
+                int index = 0;
+                final Iterator<Object> iteratorOne = iter(a.getSecond());
+                final Iterator<Object> iteratorTwo = iter(b.getSecond());
+                while (iteratorOne.hasNext() || iteratorTwo.hasNext()) {
+                    final Object alpha = next(iteratorOne);
+                    final Object beta = next(iteratorTwo);
+                    if (!Objects.equal(alpha, beta)) {
+
+                        final Delta kid = diffRecursive(String.format("%s[%s]", propName, index), alpha, beta, a.getFirst(), visitedSet);
+                        delta.addChild(kid);
+                    }
+                    index++;
+                }
+            } else if (simpleProperty.isMap()) {
+                final Pair<Metadata<Object>, Map<Object, Object>> a = simpleProperty.mappedValueOf(left);
+                final Pair<Metadata<Object>, Map<Object, Object>> b = simpleProperty.mappedValueOf(right);
+
+                // TODO - diff maps
+            } else {
+                final Pair<Metadata<?>, ?> a = simpleProperty.valueOf(left);
+                final Pair<Metadata<?>, ?> b = simpleProperty.valueOf(right);
+
+                final Delta kid = diffRecursive(propName, a.getSecond(), b.getSecond(), a.getFirst(), visitedSet);
+                delta.addChild(kid);
+            }
+        }
+        return delta;
     }
 
-    private static void log(final String string, final Object... args) {
-        System.out.println(String.format(string, args));
+    private static <T> T next(final Iterator<T> iter) {
+        return iter.hasNext() ? iter.next() : null;
+    }
+
+    private static <T> Iterator<T> iter(final Iterable<T> iter) {
+        if (iter == null) {
+            return Iterators.emptyIterator();
+        }
+        return iter.iterator();
     }
 }

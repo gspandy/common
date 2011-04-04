@@ -8,8 +8,8 @@ import com.google.common.base.Function;
  */
 public interface Metadata<T> {
 
-    Map<String, Function<T, Object>> valuesByName();
+    Map<String, Function<T, ? extends Object>> valuesByName();
 
-    Iterable<BaseMetadataProperty<T, ?>> simpleProperties();
+    Iterable<MetadataProperty<T>> simpleProperties();
 
 }

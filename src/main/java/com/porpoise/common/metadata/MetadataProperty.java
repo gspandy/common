@@ -8,7 +8,7 @@ import com.porpoise.common.core.Pair;
  * @param <T>
  * @param <V>
  */
-public interface MetadataProperty<T, V> {
+public interface MetadataProperty<T> {
 
     /**
      * @return the property name
@@ -28,19 +28,19 @@ public interface MetadataProperty<T, V> {
      * @param input
      * @return the property value
      */
-    public abstract Pair<Metadata<V>, V> valueOf(final T input);
+    public abstract Pair<Metadata<?>, ?> valueOf(final T input);
 
     /**
      * @param input
      * @return the property value
      */
-    public abstract Pair<Metadata<V>, Iterable<V>> iterableValueOf(final T input);
+    public <V> Pair<Metadata<V>, Iterable<V>> iterableValueOf(final T input);
 
     /**
      * @param input
      * @param <KEY>
      * @return the property value
      */
-    public abstract <KEY> Pair<Metadata<V>, Map<KEY, V>> mappedValueOf(final T input);
+    public abstract <KEY, V> Pair<Metadata<V>, Map<KEY, V>> mappedValueOf(final T input);
 
 }

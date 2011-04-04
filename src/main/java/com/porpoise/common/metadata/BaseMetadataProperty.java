@@ -9,17 +9,17 @@ import com.porpoise.common.core.Pair;
 /**
  * @param <T>
  */
-public class BaseMetadataProperty<T, V> implements MetadataProperty<T, V> {
-    private final String propertyName;
-    private final Metadata<T> metadata;
-    private final Function<T, Pair<Metadata<V>, ?>> valueFunction;
+public class BaseMetadataProperty<T> implements MetadataProperty<T> {
+    private final String                            propertyName;
+    private final Metadata<T>                       metadata;
+    private final Function<T, Pair<Metadata<?>, ?>> valueFunction;
 
     /**
      * @param md
      * @param prop
      * @param value
      */
-    public BaseMetadataProperty(final Metadata<T> md, final String prop, final Function<T, Pair<Metadata<V>, ?>> value) {
+    public BaseMetadataProperty(final Metadata<T> md, final String prop, final Function<T, Pair<Metadata<?>, ?>> value) {
         this.propertyName = Preconditions.checkNotNull(prop);
         this.metadata = Preconditions.checkNotNull(md);
         this.valueFunction = value;
@@ -71,8 +71,9 @@ public class BaseMetadataProperty<T, V> implements MetadataProperty<T, V> {
      * @see com.porpoise.common.metadata.MetadataProperty#valueOf(T)
      */
     @Override
-    public Pair<Metadata<V>, V> valueOf(final T input) {
-        throw new UnsupportedOperationException();
+    public Pair<Metadata<?>, ?> valueOf(final T input) {
+        // throw new UnsupportedOperationException();
+        return this.valueFunction.apply(input);
     }
 
     /*
@@ -81,17 +82,13 @@ public class BaseMetadataProperty<T, V> implements MetadataProperty<T, V> {
      * @see com.porpoise.common.metadata.MetadataProperty#iterableValueOf(T)
      */
     @Override
-    public Pair<Metadata<V>, Iterable<V>> iterableValueOf(final T input) {
+    public <V> Pair<Metadata<V>, Iterable<V>> iterableValueOf(final T input) {
         throw new UnsupportedOperationException();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.porpoise.common.metadata.MetadataProperty#mappedValueOf(T)
-     */
     @Override
-    public <KEY> Pair<Metadata<V>, Map<KEY, V>> mappedValueOf(final T input) {
+    public <KEY, V> Pair<Metadata<V>, Map<KEY, V>> mappedValueOf(final T input) {
         throw new UnsupportedOperationException();
     }
+
 }
