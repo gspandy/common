@@ -15,6 +15,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
@@ -296,5 +297,17 @@ public enum Sequences {
                 return Iterables.getFirst(input, null);
             }
         };
+    }
+
+    /**
+     * @param <T>
+     * @param iterable
+     * @return an iterator for the given iterable. If the iterable is null, an empty iterator is returned
+     */
+    public static <T> Iterator<T> iter(final Iterable<T> iterable) {
+        if (iterable == null) {
+            return Iterators.emptyIterator();
+        }
+        return iterable.iterator();
     }
 }
