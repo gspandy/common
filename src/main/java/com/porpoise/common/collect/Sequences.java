@@ -304,7 +304,7 @@ public enum Sequences {
      * @param iterable
      * @return an iterator for the given iterable. If the iterable is null, an empty iterator is returned
      */
-    public static <T> Iterator<T> iter(final Iterable<T> iterable) {
+    public static <T, C extends Iterable<T>> Iterator<T> iter(final C iterable) {
         if (iterable == null) {
             return Iterators.emptyIterator();
         }
