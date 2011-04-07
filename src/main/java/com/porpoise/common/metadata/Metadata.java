@@ -1,15 +1,14 @@
 package com.porpoise.common.metadata;
 
-import java.util.Map;
-
 import com.google.common.base.Function;
 
 /**
  */
 public interface Metadata<T> {
+    /**
+     * @return the accessor function
+     */
+    Function<T, ?> accessor();
 
-    Map<String, Function<T, ? extends Object>> valuesByName();
-
-    Iterable<MetadataProperty<T>> simpleProperties();
-
+    String propertyName();
 }
