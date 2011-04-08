@@ -4,16 +4,66 @@ import java.util.Map;
 
 import com.porpoise.common.core.Pair;
 
+/**
+ */
 public interface PairVisitor {
 
-    <T> VisitorResult onProperty(Metadata<?> property, T thingOne, T thingTwo);
+    /**
+     * @param <T>
+     * @param <P>
+     * @param property
+     * @param thingOne
+     * @param thingTwo
+     * @return the visitor result
+     */
+    <T, P> VisitorResult onProperty(Metadata<P> property, T thingOne, T thingTwo);
 
-    <T> VisitorResult onIterables(Metadata<?> property, Iterable<T> alpha, Iterable<T> beta);
+    /**
+     * 
+     * 
+     * @param <T>
+     * @param <P>
+     * @param property
+     * @param thingOne
+     * @param thingTwo
+     * @return the visitor result
+     */
+    <T, P> VisitorResult onIterables(Metadata<P> property, Iterable<T> thingOne, Iterable<T> thingTwo);
 
-    <T> VisitorResult onIterableItem(Metadata<?> property, int index, Pair<Iterable<T>, T> pairOne, Pair<Iterable<T>, T> pairTwo);
+    /**
+     * 
+     * @param <T>
+     * @param <P>
+     * @param property
+     * @param index
+     * @param pairOne
+     * @param pairTwo
+     * @return the visitor result
+     */
+    <T, P> VisitorResult onIterableItem(Metadata<P> property, int index, Pair<? extends Iterable<T>, T> pairOne,
+            Pair<? extends Iterable<T>, T> pairTwo);
 
-    <K, V> VisitorResult onMaps(Metadata<?> property, Map<K, V> thingOne, Map<K, V> thingTwo);
+    /**
+     * @param <K>
+     * @param <V>
+     * @param <P>
+     * @param property
+     * @param thingOne
+     * @param thingTwo
+     * @return the visitor result
+     */
+    <K, V, P> VisitorResult onMaps(Metadata<P> property, Pair<P, Map<K, V>> thingOne, Pair<P, Map<K, V>> thingTwo);
 
-    <K, V> VisitorResult onMapEntry(Metadata<?> property, K key, Pair<Map<K, V>, V> first, Pair<Map<K, V>, V> second);
+    /**
+     * @param <K>
+     * @param <V>
+     * @param <P>
+     * @param property
+     * @param key
+     * @param first
+     * @param second
+     * @return the visitor result
+     */
+    <K, V, P> VisitorResult onMapEntry(Metadata<P> property, K key, Pair<Map<K, V>, V> first, Pair<Map<K, V>, V> second);
 
 }
