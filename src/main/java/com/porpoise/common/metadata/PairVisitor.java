@@ -60,10 +60,11 @@ public interface PairVisitor {
      * @param <P>
      * @param property
      * @param key
-     * @param first
-     * @param second
+     * @param pairOne
+     * @param pairTwo
      * @return the visitor result
      */
-    <K, V, P> VisitorResult onMapEntry(Metadata<P> property, K key, Pair<Map<K, V>, V> first, Pair<Map<K, V>, V> second);
+    <K, V, P> VisitorResult onMapEntry(Metadata<P> property, K key, Pair<Map<K, V>, V> pairOne,
+            Pair<Map<K, V>, V> pairTwo);
 
 }
