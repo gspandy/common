@@ -19,6 +19,26 @@ public interface PairVisitor {
     <T, P> VisitorResult onProperty(Metadata<P> property, T thingOne, T thingTwo);
 
     /**
+     * @param <T>
+     * @param <P>
+     * @param property
+     * @param thingOne
+     * @param thingTwo
+     * @return the visitor result
+     */
+    <T, P> VisitorResult beforeMetadataProperty(Metadata<P> property, T thingOne, T thingTwo);
+
+    /**
+     * @param <T>
+     * @param <P>
+     * @param property
+     * @param thingOne
+     * @param thingTwo
+     * @return the visitor result
+     */
+    <T, P> VisitorResult afterMetadataProperty(Metadata<P> property, T thingOne, T thingTwo);
+
+    /**
      * 
      * 
      * @param <T>

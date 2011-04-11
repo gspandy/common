@@ -7,7 +7,7 @@ import com.porpoise.common.core.Pair;
 /**
  * Adapter pattern for the {@link PairVisitor}
  */
-public abstract class VisitorAdapter implements PairVisitor {
+public class VisitorAdapter implements PairVisitor {
 
     /**
      * {@inheritDoc}
@@ -58,6 +58,24 @@ public abstract class VisitorAdapter implements PairVisitor {
     public <K, V, P> VisitorResult onMapEntry(final Metadata<P> property, final K key, final Pair<Map<K, V>, V> first,
             final Pair<Map<K, V>, V> second) {
         log("onMapEntry(%s, %s, %s, %s)", property.propertyName(), key, first.getSecond(), second.getSecond());
+        return VisitorResult.CONTINUE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T, P> VisitorResult beforeMetadataProperty(final Metadata<P> property, final T thingOne, final T thingTwo) {
+        log("beforeMetadataProperty(%s, %s, %s)", property.propertyName(), thingOne, thingTwo);
+        return VisitorResult.CONTINUE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T, P> VisitorResult afterMetadataProperty(final Metadata<P> property, final T thingOne, final T thingTwo) {
+        log("afterMetadataProperty(%s, %s, %s)", property.propertyName(), thingOne, thingTwo);
         return VisitorResult.CONTINUE;
     }
 
