@@ -12,11 +12,11 @@ public interface PairVisitor {
      * @param <T>
      * @param <P>
      * @param property
-     * @param thingOne
-     * @param thingTwo
+     * @param pairOne
+     * @param pairTwo
      * @return the visitor result
      */
-    <T, P> VisitorResult onProperty(Metadata<P> property, T thingOne, T thingTwo);
+    <T, P> VisitorResult onProperty(Metadata<P> property, Pair<P, T> pairOne, Pair<P, T> pairTwo);
 
     /**
      * @param <T>

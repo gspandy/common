@@ -13,7 +13,10 @@ public class VisitorAdapter implements PairVisitor {
      * {@inheritDoc}
      */
     @Override
-    public <T, P> VisitorResult onProperty(final Metadata<P> property, final T thingOne, final T thingTwo) {
+    public <T, P> VisitorResult onProperty(final Metadata<P> property, final Pair<P, T> pairOne,
+            final Pair<P, T> pairTwo) {
+        final T thingOne = pairOne.getSecond();
+        final T thingTwo = pairTwo.getSecond();
         log("onProperty(%s, %s, %s)", property.propertyName(), thingOne, thingTwo);
         return VisitorResult.CONTINUE;
     }
@@ -144,7 +147,7 @@ public class VisitorAdapter implements PairVisitor {
     @Override
     public <K, V, P> VisitorResult beforeMapsWithMetadata(final Metadata<P> property,
             final Pair<P, Map<K, V>> thingOne, final Pair<P, Map<K, V>> thingTwo) {
-        log("beforeMapsWithMetadata(%s, %s, %s, %s)", property.propertyName(), thingOne, thingTwo);
+        log("beforeMapsWithMetadata(%s, %s, %s)", property.propertyName(), thingOne, thingTwo);
         return VisitorResult.CONTINUE;
     }
 
@@ -157,7 +160,7 @@ public class VisitorAdapter implements PairVisitor {
     @Override
     public <K, V, P> VisitorResult afterMapsWithMetadata(final Metadata<P> property, final Pair<P, Map<K, V>> thingOne,
             final Pair<P, Map<K, V>> thingTwo) {
-        log("afterMapsWithMetadata(%s, %s, %s, %s)", property.propertyName(), thingOne, thingTwo);
+        log("afterMapsWithMetadata(%s, %s, %s)", property.propertyName(), thingOne, thingTwo);
         return VisitorResult.CONTINUE;
     }
 
