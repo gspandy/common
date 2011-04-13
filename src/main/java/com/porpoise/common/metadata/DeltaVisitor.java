@@ -7,7 +7,8 @@ import com.google.common.base.Objects;
 import com.porpoise.common.core.Pair;
 
 /**
- * 
+ * @param <D>
+ *            The delta type produced from this visitor
  */
 public class DeltaVisitor<D> extends VisitorAdapter {
 
@@ -59,7 +60,9 @@ public class DeltaVisitor<D> extends VisitorAdapter {
     @Override
     public <T, P> VisitorResult onIterableItem(final Metadata<P> property, final int index,
             final Pair<? extends Iterable<T>, T> pairOne, final Pair<? extends Iterable<T>, T> pairTwo) {
-        return processIterableItem(String.format("%s[%d]", property.propertyName(), index), pairOne, pairTwo);
+        @SuppressWarnings("boxing")
+        final String propName = String.format("%s[%d]", property.propertyName(), index);
+        return processIterableItem(propName, pairOne, pairTwo);
     }
 
     /**
@@ -187,12 +190,22 @@ public class DeltaVisitor<D> extends VisitorAdapter {
     @Override
     public <T, P> VisitorResult beforeIterableItemWithMetadata(final Metadata<P> property, final int index,
             final Pair<? extends Iterable<T>, T> pairOne, final Pair<? extends Iterable<T>, T> pairTwo) {
-
-        push(String.format("%s[%d]", property.propertyName(), index));
-
         @SuppressWarnings("boxing")
-        final String name = String.format("[%d]", index);
-        return VisitorResult.CONTINUE;// processIterableItem(name, pairOne, pairTwo);
+        final String propName = String.format("%s[%d]", property.propertyName(), index);
+
+        if (pairOne.getSecond() == null) {
+            if (pairTwo.getSecond() != null) {
+                processIterableItem(propName, pairOne, pairTwo);
+            }
+            return VisitorResult.SKIP;
+        } else if (pairTwo.getSecond() == null) {
+            processIterableItem(propName, pairOne, pairTwo);
+            return VisitorResult.SKIP;
+        }
+
+        push(propName);
+
+        return VisitorResult.CONTINUE;
     }
 
     /*
@@ -244,8 +257,9 @@ public class DeltaVisitor<D> extends VisitorAdapter {
     @Override
     public <K, V, P> VisitorResult beforeMapEntryWithMetadata(final Metadata<P> property, final K key,
             final Pair<Map<K, V>, V> pairOne, final Pair<Map<K, V>, V> pairTwo) {
-        push(String.format("%s[%s]", property.propertyName(), key));
-        // final VisitorResult result = processMapEntry(String.format("[%s]", key), pairOne, pairTwo);
+        final String propName = String.format("%s[%s]", property.propertyName(), key);
+
+        push(propName);
         return VisitorResult.CONTINUE;
     }
 
