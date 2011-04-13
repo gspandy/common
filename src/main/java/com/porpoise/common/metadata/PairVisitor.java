@@ -52,6 +52,30 @@ public interface PairVisitor {
 
     /**
      * 
+     * 
+     * @param <T>
+     * @param <P>
+     * @param property
+     * @param thingOne
+     * @param thingTwo
+     * @return the visitor result
+     */
+    <T, P> VisitorResult beforeIterablesWithMetadata(Metadata<P> property, Iterable<T> thingOne, Iterable<T> thingTwo);
+
+    /**
+     * 
+     * 
+     * @param <T>
+     * @param <P>
+     * @param property
+     * @param thingOne
+     * @param thingTwo
+     * @return the visitor result
+     */
+    <T, P> VisitorResult afterIterablesWithMetadata(Metadata<P> property, Iterable<T> thingOne, Iterable<T> thingTwo);
+
+    /**
+     * 
      * @param <T>
      * @param <P>
      * @param property
@@ -62,6 +86,32 @@ public interface PairVisitor {
      */
     <T, P> VisitorResult onIterableItem(Metadata<P> property, int index, Pair<? extends Iterable<T>, T> pairOne,
             Pair<? extends Iterable<T>, T> pairTwo);
+
+    /**
+     * 
+     * @param <T>
+     * @param <P>
+     * @param property
+     * @param index
+     * @param pairOne
+     * @param pairTwo
+     * @return the visitor result
+     */
+    <T, P> VisitorResult beforeIterableItemWithMetadata(Metadata<P> property, int index,
+            Pair<? extends Iterable<T>, T> pairOne, Pair<? extends Iterable<T>, T> pairTwo);
+
+    /**
+     * 
+     * @param <T>
+     * @param <P>
+     * @param property
+     * @param index
+     * @param pairOne
+     * @param pairTwo
+     * @return the visitor result
+     */
+    <T, P> VisitorResult afterIterableItemWithMetadata(Metadata<P> property, int index,
+            Pair<? extends Iterable<T>, T> pairOne, Pair<? extends Iterable<T>, T> pairTwo);
 
     /**
      * @param <K>
@@ -79,12 +129,62 @@ public interface PairVisitor {
      * @param <V>
      * @param <P>
      * @param property
+     * @param thingOne
+     * @param thingTwo
+     * @return the visitor result
+     */
+    <K, V, P> VisitorResult beforeMapsWithMetadata(Metadata<P> property, Pair<P, Map<K, V>> thingOne,
+            Pair<P, Map<K, V>> thingTwo);
+
+    /**
+     * @param <K>
+     * @param <V>
+     * @param <P>
+     * @param property
+     * @param thingOne
+     * @param thingTwo
+     * @return the visitor result
+     */
+    <K, V, P> VisitorResult afterMapsWithMetadata(Metadata<P> property, Pair<P, Map<K, V>> thingOne,
+            Pair<P, Map<K, V>> thingTwo);
+
+    /**
+     * @param <K>
+     * @param <V>
+     * @param <P>
+     * @param property
      * @param key
      * @param pairOne
      * @param pairTwo
      * @return the visitor result
      */
     <K, V, P> VisitorResult onMapEntry(Metadata<P> property, K key, Pair<Map<K, V>, V> pairOne,
+            Pair<Map<K, V>, V> pairTwo);
+
+    /**
+     * @param <K>
+     * @param <V>
+     * @param <P>
+     * @param property
+     * @param key
+     * @param pairOne
+     * @param pairTwo
+     * @return the visitor result
+     */
+    <K, V, P> VisitorResult beforeMapEntryWithMetadata(Metadata<P> property, K key, Pair<Map<K, V>, V> pairOne,
+            Pair<Map<K, V>, V> pairTwo);
+
+    /**
+     * @param <K>
+     * @param <V>
+     * @param <P>
+     * @param property
+     * @param key
+     * @param pairOne
+     * @param pairTwo
+     * @return the visitor result
+     */
+    <K, V, P> VisitorResult afterMapEntryWithMetadata(Metadata<P> property, K key, Pair<Map<K, V>, V> pairOne,
             Pair<Map<K, V>, V> pairTwo);
 
 }

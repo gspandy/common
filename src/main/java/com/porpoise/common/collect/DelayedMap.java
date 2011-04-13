@@ -39,7 +39,7 @@ public class DelayedMap<K, V> implements Map<K, V> {
     // This flag may be used in order to track "new" entries, though
     // it may also be achieved by other means.
     //
-    private final boolean keepTrackOfNewEntries = false;
+    private static final boolean keepTrackOfNewEntries = false;
 
     /**
      * @param underlyingMap

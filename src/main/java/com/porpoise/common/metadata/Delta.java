@@ -32,7 +32,7 @@ public class Delta<T> {
      */
     public <C> void addChild(final String propertyName, final Delta<C> child) {
         final Delta<?> replaced = this.childDeltasByProperty.put(propertyName, child);
-        assert replaced == null;
+        assert replaced == null : "already contains child property " + propertyName;
     }
 
     /*

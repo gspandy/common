@@ -79,7 +79,116 @@ public class VisitorAdapter implements PairVisitor {
         return VisitorResult.CONTINUE;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.porpoise.common.metadata.PairVisitor#beforeIterablesWithMetadata(com.porpoise.common.metadata.Metadata,
+     * java.lang.Iterable, java.lang.Iterable)
+     */
+    @Override
+    public <T, P> VisitorResult beforeIterablesWithMetadata(final Metadata<P> property, final Iterable<T> thingOne,
+            final Iterable<T> thingTwo) {
+        log("beforeIterablesWithMetadata(%s,  %s, %s)", property.propertyName(), thingOne, thingTwo);
+        return VisitorResult.CONTINUE;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.porpoise.common.metadata.PairVisitor#afterIterablesWithMetadata(com.porpoise.common.metadata.Metadata,
+     * java.lang.Iterable, java.lang.Iterable)
+     */
+    @Override
+    public <T, P> VisitorResult afterIterablesWithMetadata(final Metadata<P> property, final Iterable<T> thingOne,
+            final Iterable<T> thingTwo) {
+        log("afterIterablesWithMetadata(%s,  %s, %s)", property.propertyName(), thingOne, thingTwo);
+        return VisitorResult.CONTINUE;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.porpoise.common.metadata.PairVisitor#beforeIterableItemWithMetadata(com.porpoise.common.metadata.Metadata,
+     * int, com.porpoise.common.core.Pair, com.porpoise.common.core.Pair)
+     */
+    @Override
+    public <T, P> VisitorResult beforeIterableItemWithMetadata(final Metadata<P> property, final int index,
+            final Pair<? extends Iterable<T>, T> pairOne, final Pair<? extends Iterable<T>, T> pairTwo) {
+        log("beforeIterableItemWithMetadata(%s, %s, %s, %s)", property.propertyName(), Integer.valueOf(index), pairOne,
+                pairTwo);
+        return VisitorResult.CONTINUE;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.porpoise.common.metadata.PairVisitor#afterIterableItemWithMetadata(com.porpoise.common.metadata.Metadata,
+     * int, com.porpoise.common.core.Pair, com.porpoise.common.core.Pair)
+     */
+    @Override
+    public <T, P> VisitorResult afterIterableItemWithMetadata(final Metadata<P> property, final int index,
+            final Pair<? extends Iterable<T>, T> pairOne, final Pair<? extends Iterable<T>, T> pairTwo) {
+        log("afterIterableItemWithMetadata(%s, %s, %s, %s)", property.propertyName(), Integer.valueOf(index), pairOne,
+                pairTwo);
+        return VisitorResult.CONTINUE;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.porpoise.common.metadata.PairVisitor#beforeMapsWithMetadata(com.porpoise.common.metadata.Metadata,
+     * com.porpoise.common.core.Pair, com.porpoise.common.core.Pair)
+     */
+    @Override
+    public <K, V, P> VisitorResult beforeMapsWithMetadata(final Metadata<P> property,
+            final Pair<P, Map<K, V>> thingOne, final Pair<P, Map<K, V>> thingTwo) {
+        log("beforeMapsWithMetadata(%s, %s, %s, %s)", property.propertyName(), thingOne, thingTwo);
+        return VisitorResult.CONTINUE;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.porpoise.common.metadata.PairVisitor#afterMapsWithMetadata(com.porpoise.common.metadata.Metadata,
+     * com.porpoise.common.core.Pair, com.porpoise.common.core.Pair)
+     */
+    @Override
+    public <K, V, P> VisitorResult afterMapsWithMetadata(final Metadata<P> property, final Pair<P, Map<K, V>> thingOne,
+            final Pair<P, Map<K, V>> thingTwo) {
+        log("afterMapsWithMetadata(%s, %s, %s, %s)", property.propertyName(), thingOne, thingTwo);
+        return VisitorResult.CONTINUE;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.porpoise.common.metadata.PairVisitor#beforeMapEntryWithMetadata(com.porpoise.common.metadata.Metadata,
+     * java.lang.Object, com.porpoise.common.core.Pair, com.porpoise.common.core.Pair)
+     */
+    @Override
+    public <K, V, P> VisitorResult beforeMapEntryWithMetadata(final Metadata<P> property, final K key,
+            final Pair<Map<K, V>, V> pairOne, final Pair<Map<K, V>, V> pairTwo) {
+        log("beforeMapEntryWithMetadata(%s, %s, %s, %s)", property.propertyName(), key, pairOne, pairTwo);
+        return VisitorResult.CONTINUE;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.porpoise.common.metadata.PairVisitor#afterMapEntryWithMetadata(com.porpoise.common.metadata.Metadata,
+     * java.lang.Object, com.porpoise.common.core.Pair, com.porpoise.common.core.Pair)
+     */
+    @Override
+    public <K, V, P> VisitorResult afterMapEntryWithMetadata(final Metadata<P> property, final K key,
+            final Pair<Map<K, V>, V> pairOne, final Pair<Map<K, V>, V> pairTwo) {
+        log("afterMapEntryWithMetadata(%s, %s, %s, %s)", property.propertyName(), key, pairOne, pairTwo);
+        return VisitorResult.CONTINUE;
+    }
+
     protected void log(final String format, final Object... args) {
         System.out.println(String.format(format, args));
     }
+
 }
