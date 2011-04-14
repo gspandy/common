@@ -9,11 +9,11 @@ import com.google.common.collect.Maps;
 import com.porpoise.common.collect.Sequences;
 
 public class Delta<T> {
-    private final Map<Metadata<?>, Delta<?>> childDeltasByProperty = Maps.newHashMap();
+    private final Map<String, Delta<?>> childDeltasByProperty = Maps.newHashMap();
 
-    private final Metadata<?>                property;
-    private final T                          left;
-    private final T                          right;
+    private final Metadata<?>           property;
+    private final T                     left;
+    private final T                     right;
 
     /**
      * @param <R>
@@ -43,8 +43,26 @@ public class Delta<T> {
      * @param beta
      * @return
      */
-    public <P> Delta<T> addDiff(final Metadata<P> prop, final P alpha, final P beta) {
+    public <P> Delta<T> addDiff(final Metadata<?> prop, final P alpha, final P beta) {
         return addChild(new Delta<P>(prop, alpha, beta));
+    }
+
+    /**
+     * @param <P>
+     * @param prop
+     * @param alpha
+     * @param beta
+     * @return
+     */
+    public <P> Delta<P> addIterableDiff(final Metadata<?> prop, final int index, final P alpha, final P beta) {
+        final Delta<P> diff = new IterableDelta<P>(prop, index, alpha, beta);
+        addChild(diff);
+        return diff;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <K, V> Delta<Map<K, V>> addMapDiff(final Metadata<?> prop, final K key, final Map<K, V> alpha, final Map<K, V> beta) {
+        return (Delta<Map<K, V>>) addChild(new MapEntryDelta<K, V>(prop, key, alpha, beta));
     }
 
     /**
@@ -52,7 +70,7 @@ public class Delta<T> {
      * @param child
      */
     public <C> Delta<T> addChild(final Delta<C> child) {
-        final Delta<?> replaced = this.childDeltasByProperty.put(child.property, child);
+        final Delta<?> replaced = this.childDeltasByProperty.put(child.getPropertyName(), child);
         assert replaced == null : String.format("duplicate property %s found in %s", child.property, this.property);
         return this;
     }
@@ -76,9 +94,9 @@ public class Delta<T> {
 
     Collection<PathElement<?>> paths(final PathElement<?> parent) {
         final Collection<PathElement<?>> paths = Lists.newArrayList();
-        for (final Entry<Metadata<?>, Delta<?>> entry : this.childDeltasByProperty.entrySet()) {
+        for (final Entry<String, Delta<?>> entry : this.childDeltasByProperty.entrySet()) {
             @SuppressWarnings("unchecked")
-            final PathElement<Object> element = new PathElement<Object>(parent, (Metadata<Object>) entry.getKey(), entry.getValue().left, entry.getValue().right);
+            final PathElement<Object> element = new PathElement<Object>(parent, (Metadata<Object>) entry.getValue().property, entry.getValue().left, entry.getValue().right);
             paths.add(element);
         }
         return paths;
@@ -86,6 +104,10 @@ public class Delta<T> {
 
     public Metadata<?> getProperty() {
         return this.property;
+    }
+
+    public String getPropertyName() {
+        return this.property.propertyName();
     }
 
     public T getLeft() {
