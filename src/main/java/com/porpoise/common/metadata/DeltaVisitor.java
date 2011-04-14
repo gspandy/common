@@ -19,8 +19,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @param left
      * @param right
      */
-    public DeltaVisitor(final String name, final D left, final D right) {
-        this.workingDelta.push(new Delta<D>(name, left, right));
+    public DeltaVisitor(final D left, final D right) {
+        this.workingDelta.push(Delta.root(left, right));
     }
 
     /*
@@ -35,7 +35,7 @@ public class DeltaVisitor<D> extends VisitorAdapter {
         final T thingOne = pairOne.getSecond();
         final T thingTwo = pairTwo.getSecond();
         if (!Objects.equal(thingOne, thingTwo)) {
-            delta().addDiff(property.propertyName(), thingOne, thingTwo);
+            delta().addDiff(property, thingOne, thingTwo);
         }
         return VisitorResult.CONTINUE;
     }

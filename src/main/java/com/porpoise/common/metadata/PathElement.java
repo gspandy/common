@@ -7,11 +7,11 @@ import com.porpoise.common.strings.Trim;
  * @param <T>
  */
 public class PathElement<T> {
-    private final String propertyName;
-    private final T left;
-    private final T right;
+    private final Metadata<T>    metadata;
+    private final T              left;
+    private final T              right;
     private final PathElement<?> parent;
-    private static int MAX = 5;
+    private static int           MAX = 5;
 
     /**
      * @param parent
@@ -20,9 +20,9 @@ public class PathElement<T> {
      * @param rightValue
      * 
      */
-    public PathElement(final PathElement<?> parent, final String prop, final T leftValue, final T rightValue) {
+    public PathElement(final PathElement<?> parent, final Metadata<T> prop, final T leftValue, final T rightValue) {
         this.parent = parent;
-        this.propertyName = Preconditions.checkNotNull(prop);
+        this.metadata = Preconditions.checkNotNull(prop);
         this.left = leftValue;
         this.right = rightValue;
     }
@@ -30,8 +30,8 @@ public class PathElement<T> {
     /**
      * @return the propertyName
      */
-    public String getPropertyName() {
-        return this.propertyName;
+    public Metadata<T> getProperty() {
+        return this.metadata;
     }
 
     /**
@@ -63,9 +63,16 @@ public class PathElement<T> {
      */
     public String getPathString() {
         if (this.parent != null) {
-            return String.format("%s.%s", this.parent.getPathString(), getPropertyName());
+            return String.format("%s.%s", this.parent.getPathString(), getProperty().propertyName());
         }
         return getPropertyName();
+    }
+
+    /**
+     * @return the property name
+     */
+    public String getPropertyName() {
+        return getProperty().propertyName();
     }
 
     /**
@@ -76,8 +83,7 @@ public class PathElement<T> {
         if (this.parent != null) {
             prefix = String.format("%s.", this.parent.getPathValueString());
         }
-        return String.format("%s%s{%s<=>%s}", prefix, getPropertyName(), Trim.right(getLeft(), MAX),
-                Trim.right(getRight(), MAX));
+        return String.format("%s%s{%s<=>%s}", prefix, getProperty().propertyName(), Trim.right(getLeft(), MAX), Trim.right(getRight(), MAX));
     }
 
     /**
