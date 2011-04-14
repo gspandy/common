@@ -4,16 +4,17 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.porpoise.common.collect.Sequences;
 
 public class Delta<T> {
-    private final Map<String, Delta<?>> childDeltasByProperty = Maps.newHashMap();
+    private final Multimap<String, Delta<?>> childDeltasByProperty = ArrayListMultimap.create();
 
-    private final Metadata<?>           property;
-    private final T                     left;
-    private final T                     right;
+    private final Metadata<?>                property;
+    private final T                          left;
+    private final T                          right;
 
     /**
      * @param <R>
@@ -21,7 +22,7 @@ public class Delta<T> {
      * @param right
      * @return
      */
-    public static <R> Delta<R> root(final R left, final R right) {
+    static <R> Delta<R> root(final R left, final R right) {
         return new Delta<R>(null, left, right);
     }
 
@@ -30,7 +31,7 @@ public class Delta<T> {
      * @param left
      * @param right
      */
-    public Delta(final Metadata<?> prop, final T left, final T right) {
+    Delta(final Metadata<?> prop, final T left, final T right) {
         this.property = prop;
         this.left = left;
         this.right = right;
@@ -43,7 +44,7 @@ public class Delta<T> {
      * @param beta
      * @return
      */
-    public <P> Delta<T> addDiff(final Metadata<?> prop, final P alpha, final P beta) {
+    public <P> Delta<P> addDiff(final Metadata<?> prop, final P alpha, final P beta) {
         return addChild(new Delta<P>(prop, alpha, beta));
     }
 
@@ -62,17 +63,17 @@ public class Delta<T> {
 
     @SuppressWarnings("unchecked")
     public <K, V> Delta<Map<K, V>> addMapDiff(final Metadata<?> prop, final K key, final Map<K, V> alpha, final Map<K, V> beta) {
-        return (Delta<Map<K, V>>) addChild(new MapEntryDelta<K, V>(prop, key, alpha, beta));
+        return addChild(new MapEntryDelta<K, V>(prop, key, alpha, beta));
     }
 
     /**
      * @param prop
      * @param child
      */
-    public <C> Delta<T> addChild(final Delta<C> child) {
-        final Delta<?> replaced = this.childDeltasByProperty.put(child.getPropertyName(), child);
-        assert replaced == null : String.format("duplicate property %s found in %s", child.property, this.property);
-        return this;
+    public <C> Delta<C> addChild(final Delta<C> child) {
+        this.childDeltasByProperty.put(child.getPropertyName(), child);
+        // assert replaced == null : String.format("duplicate property '%s' found in %s", child.getPropertyName(), this.property == null ? "root" : this.property.propertyName());
+        return child;
     }
 
     /*
@@ -94,10 +95,12 @@ public class Delta<T> {
 
     Collection<PathElement<?>> paths(final PathElement<?> parent) {
         final Collection<PathElement<?>> paths = Lists.newArrayList();
-        for (final Entry<String, Delta<?>> entry : this.childDeltasByProperty.entrySet()) {
-            @SuppressWarnings("unchecked")
-            final PathElement<Object> element = new PathElement<Object>(parent, (Metadata<Object>) entry.getValue().property, entry.getValue().left, entry.getValue().right);
-            paths.add(element);
+        for (final Entry<String, Collection<Delta<?>>> entry : this.childDeltasByProperty.asMap().entrySet()) {
+            for (final Delta<?> delta : entry.getValue()) {
+                @SuppressWarnings("unchecked")
+                final PathElement<Object> element = new PathElement<Object>(parent, (Metadata<Object>) delta.property, delta.left, delta.right);
+                paths.add(element);
+            }
         }
         return paths;
     }

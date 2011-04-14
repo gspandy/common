@@ -4,7 +4,7 @@ public class IterableDelta<P> extends Delta<P> {
 
     private final int index;
 
-    public IterableDelta(final Metadata<?> prop, final int index, final P left, final P right) {
+    IterableDelta(final Metadata<?> prop, final int index, final P left, final P right) {
         super(prop, left, right);
         this.index = index;
     }
