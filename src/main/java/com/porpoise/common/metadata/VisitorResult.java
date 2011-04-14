@@ -13,7 +13,15 @@ public enum VisitorResult {
             return true;
         }
     },
-    SKIP;
+    SKIP {
+        /**
+         * @return
+         */
+        @Override
+        public boolean isSkip() {
+            return true;
+        }
+    };
 
     public boolean isStop() {
         return false;
@@ -21,5 +29,12 @@ public enum VisitorResult {
 
     public boolean isSkipOrStop() {
         return true;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isSkip() {
+        return false;
     }
 }

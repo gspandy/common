@@ -192,20 +192,21 @@ public class DeltaVisitor<D> extends VisitorAdapter {
             final Pair<? extends Iterable<T>, T> pairOne, final Pair<? extends Iterable<T>, T> pairTwo) {
         @SuppressWarnings("boxing")
         final String propName = String.format("%s[%d]", property.propertyName(), index);
+        VisitorResult result = VisitorResult.CONTINUE;
 
         if (pairOne.getSecond() == null) {
             if (pairTwo.getSecond() != null) {
                 processIterableItem(propName, pairOne, pairTwo);
             }
-            return VisitorResult.SKIP;
+            result = VisitorResult.SKIP;
         } else if (pairTwo.getSecond() == null) {
             processIterableItem(propName, pairOne, pairTwo);
-            return VisitorResult.SKIP;
+            result = VisitorResult.SKIP;
         }
 
         push(propName);
 
-        return VisitorResult.CONTINUE;
+        return result;
     }
 
     /*
