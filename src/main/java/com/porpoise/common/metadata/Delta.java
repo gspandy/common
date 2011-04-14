@@ -1,8 +1,10 @@
 package com.porpoise.common.metadata;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -12,6 +14,20 @@ import com.porpoise.common.core.Pair;
 public class Delta<T> {
     private final Map<String, Delta<?>> childDeltasByProperty = Maps.newHashMap();
     private final Map<String, Pair<?, ?>> diffsByProperty = Maps.newHashMap();
+    private final String propertyName;
+    private final T left;
+    private final T right;
+
+    /**
+     * @param propertyName
+     * @param left
+     * @param right
+     */
+    public Delta(final String propertyName, final T left, final T right) {
+        this.propertyName = propertyName;
+        this.left = left;
+        this.right = right;
+    }
 
     /**
      * @param <P>
@@ -74,5 +90,27 @@ public class Delta<T> {
             }
         }
         return b.toString();
+    }
+
+    /**
+     * @return
+     */
+    public Collection<PathElement<?>> paths() {
+        return paths(null);
+    }
+
+    Collection<PathElement<?>> paths(final PathElement<?> parent) {
+        final Collection<PathElement<?>> paths = Lists.newArrayList();
+        for (final Entry<String, Pair<?, ?>> entry : this.diffsByProperty.entrySet()) {
+            final PathElement<Object> element = new PathElement<Object>(parent, entry.getKey(), entry.getValue()
+                    .getFirst(), entry.getValue().getSecond());
+            paths.add(element);
+        }
+        for (final Entry<String, Delta<?>> entry : this.childDeltasByProperty.entrySet()) {
+            final PathElement<Object> element = new PathElement<Object>(parent, entry.getKey(), entry.getValue().left,
+                    entry.getValue().right);
+            paths.addAll(entry.getValue().paths(element));
+        }
+        return paths;
     }
 }

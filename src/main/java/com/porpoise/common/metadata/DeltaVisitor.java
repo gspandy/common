@@ -15,10 +15,12 @@ public class DeltaVisitor<D> extends VisitorAdapter {
     private final Stack<Delta<?>> workingDelta = new Stack<Delta<?>>();
 
     /**
-     * 
+     * @param name
+     * @param left
+     * @param right
      */
-    public DeltaVisitor() {
-        this.workingDelta.push(new Delta<D>());
+    public DeltaVisitor(final String name, final D left, final D right) {
+        this.workingDelta.push(new Delta<D>(name, left, right));
     }
 
     /*
@@ -138,7 +140,7 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      */
     @Override
     public <T, P> VisitorResult beforeMetadataProperty(final Metadata<P> property, final T thingOne, final T thingTwo) {
-        push(property.propertyName());
+        push(property.propertyName(), thingOne, thingTwo);
         return VisitorResult.CONTINUE;
     }
 
@@ -204,7 +206,7 @@ public class DeltaVisitor<D> extends VisitorAdapter {
             result = VisitorResult.SKIP;
         }
 
-        push(propName);
+        push(propName, pairOne.getFirst(), pairTwo.getFirst());
 
         return result;
     }
@@ -260,7 +262,7 @@ public class DeltaVisitor<D> extends VisitorAdapter {
             final Pair<Map<K, V>, V> pairOne, final Pair<Map<K, V>, V> pairTwo) {
         final String propName = String.format("%s[%s]", property.propertyName(), key);
 
-        push(propName);
+        push(propName, pairOne.getFirst(), pairTwo.getFirst());
         return VisitorResult.CONTINUE;
     }
 
@@ -299,8 +301,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
         return this.workingDelta.peek();
     }
 
-    private <T> Delta<T> push(final String propertyName) {
-        final Delta<T> newDelta = new Delta<T>();
+    private <T> Delta<T> push(final String propertyName, final T left, final T right) {
+        final Delta<T> newDelta = new Delta<T>(propertyName, left, right);
         try {
             delta().addChild(propertyName, newDelta);
         } catch (final AssertionError e) {
