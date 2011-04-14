@@ -99,7 +99,11 @@ public class Delta<T> {
             for (final Delta<?> delta : entry.getValue()) {
                 @SuppressWarnings("unchecked")
                 final PathElement<Object> element = new PathElement<Object>(parent, (Metadata<Object>) delta.property, delta.left, delta.right);
+                final Collection<PathElement<?>> childPaths = delta.paths();
                 paths.add(element);
+                if (!childPaths.isEmpty()) {
+                    paths.addAll(childPaths);
+                }
             }
         }
         return paths;

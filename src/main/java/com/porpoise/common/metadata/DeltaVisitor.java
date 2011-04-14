@@ -191,7 +191,6 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      */
     @Override
     public <K, V, P> VisitorResult beforeMapsWithMetadata(final Metadata<P> property, final Pair<P, Map<K, V>> thingOne, final Pair<P, Map<K, V>> thingTwo) {
-        // push(property.propertyName());
         return result();
     }
 
