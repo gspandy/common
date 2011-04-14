@@ -11,6 +11,14 @@ public class LeafNode<T> implements TreeNode<T> {
     private final T data;
 
     /**
+     * @return the tree as a string
+     */
+    @Override
+    public String toString() {
+        return this.data == null ? "null" : this.data.toString();
+    }
+
+    /**
      */
     public LeafNode(final T data) {
         this(null, data);
