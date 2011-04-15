@@ -13,8 +13,6 @@ import com.google.common.collect.Lists;
 
 /**
  * Utility/Factory class for {@link Comparator}s/ordering.
- * 
- * @author Aaron
  */
 public enum Comparators {
     ;// uninstantiable
@@ -248,6 +246,8 @@ public enum Comparators {
      * <li>...</li>
      * <li>string3</li>
      * </ol>
+     * 
+     * @return a number-aware comparator
      */
     public static Comparator<String> numberAwareStringComparator() {
         return STRING_COMPARATOR;

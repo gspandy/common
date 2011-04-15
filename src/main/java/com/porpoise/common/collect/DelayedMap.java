@@ -39,7 +39,7 @@ public class DelayedMap<K, V> implements Map<K, V> {
     // This flag may be used in order to track "new" entries, though
     // it may also be achieved by other means.
     //
-    private static final boolean keepTrackOfNewEntries = false;
+    private static final boolean TRACK_NEW_ENTITIES = false;
 
     /**
      * @param underlyingMap
@@ -71,7 +71,7 @@ public class DelayedMap<K, V> implements Map<K, V> {
     public void reset() {
         this.updateMap.clear();
         this.deleteSet.clear();
-        if (this.keepTrackOfNewEntries) {
+        if (trackNewEntities()) {
             this.newSet.clear();
         }
     }
@@ -162,12 +162,19 @@ public class DelayedMap<K, V> implements Map<K, V> {
 
     private V putInternal(final K key, final V value) {
         final V oldValue = this.updateMap.put(key, value);
-        if (this.keepTrackOfNewEntries) {
+        if (trackNewEntities()) {
             if (!this.delegate.containsKey(key)) {
                 this.newSet.add(key);
             }
         }
         return oldValue;
+    }
+
+    /**
+     * @return
+     */
+    private boolean trackNewEntities() {
+        return TRACK_NEW_ENTITIES;
     }
 
     /**
@@ -187,7 +194,7 @@ public class DelayedMap<K, V> implements Map<K, V> {
     @Override
     public V remove(final Object key) {
         V removed = this.updateMap.remove(key);
-        if (this.keepTrackOfNewEntries) {
+        if (trackNewEntities()) {
             this.newSet.remove(key);
         }
         if (this.delegate.containsKey(key)) {
