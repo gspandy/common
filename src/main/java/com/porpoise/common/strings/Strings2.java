@@ -1,37 +1,15 @@
-package com.porpoise.common.files;
-
-import java.io.File;
+package com.porpoise.common.strings;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 
 /**
- * A collection of file utilities
+ * EVEN MORE string functions!
  */
-public enum FileFunctions {
-    ;//
+public enum Strings2 {
 
-    /**
-     * @return a function which will return the same file input
-     */
-    public static Function<File, File> fileIdentity() {
-        return Functions.identity();
-    }
-
-    /**
-     * @param suffix
-     * @return a function which will return a new file with the same name and path as the input file, but with the given
-     *         suffix appended
-     */
-    public static Function<File, File> withSuffix(final String suffix) {
-        return new Function<File, File>() {
-            @Override
-            public File apply(final File input) {
-                return new File(input.getParentFile(), input.getName() + suffix);
-            }
-        };
-    }
+    ; // uninstantiable
 
     /**
      * @param suffix

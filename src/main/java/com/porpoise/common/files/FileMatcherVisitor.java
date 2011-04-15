@@ -8,7 +8,7 @@ import com.google.common.base.Predicate;
 import com.porpoise.common.log.Log;
 
 /**
- * @author Aaron
+ * 
  */
 public class FileMatcherVisitor extends FileVistiorAdapter {
 
@@ -16,6 +16,12 @@ public class FileMatcherVisitor extends FileVistiorAdapter {
 
     private final Predicate<String> filter;
 
+    /**
+     * @param nameMatcher
+     *            the file name matcher
+     * @param visitor
+     *            the visitor
+     */
     public FileMatcherVisitor(final Predicate<String> nameMatcher, final IFileVisitor visitor) {
         this.filter = Preconditions.checkNotNull(nameMatcher);
         this.delegate = Preconditions.checkNotNull(visitor);

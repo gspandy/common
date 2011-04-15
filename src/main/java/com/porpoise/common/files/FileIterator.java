@@ -4,9 +4,18 @@ import java.io.File;
 
 import com.porpoise.common.log.Log;
 
+/**
+ * utility to parse the file tree (if you're not using Java7)
+ */
 public enum FileIterator {
     ;// uninstantiable
 
+    /**
+     * perform a depth-first parse of the given directory
+     * 
+     * @param directory
+     * @param visitor
+     */
     public static void depthFirst(final File directory, final IFileVisitor visitor) {
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory + " is not a directory");

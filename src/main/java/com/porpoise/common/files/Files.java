@@ -5,15 +5,19 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 /**
- * 
+ * File utilities
  */
 public enum Files {
     ;// uninstantiable
 
+    /**
+     * 
+     * @param leaves
+     * @return the files for the given directories
+     */
     public static Iterable<File> listFiles(final Iterable<File> leaves) {
         final List<File> files = Lists.newArrayList();
         for (final File dir : leaves) {
@@ -26,19 +30,21 @@ public enum Files {
         return files;
     }
 
-    public static String toString(final Iterable<File> leaves) {
-        return Joiner.on(String.format(",%n")).join(leaves);
-    }
-
-    public static Collection<File> leafDirs(final File parent) {
+    /**
+     * the leaf directories for the given parent
+     * 
+     * @param dir
+     * @return the leaf directories
+     */
+    public static Collection<File> leafDirs(final File dir) {
         final List<File> dirs = Lists.newArrayList();
-        if (parent != null && parent.isDirectory()) {
+        if (dir != null && dir.isDirectory()) {
             final List<File> childDirs = Lists.newArrayList();
-            for (final File f : Arrays.asList(parent.listFiles())) {
+            for (final File f : Arrays.asList(dir.listFiles())) {
                 childDirs.addAll(leafDirs(f));
             }
             if (childDirs.isEmpty()) {
-                childDirs.add(parent);
+                childDirs.add(dir);
             }
             dirs.addAll(childDirs);
         }

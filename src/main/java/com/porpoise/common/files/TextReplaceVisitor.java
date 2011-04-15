@@ -11,7 +11,7 @@ import com.google.common.io.Files;
 import com.porpoise.common.log.Log;
 
 /**
- * @author Aaron
+ * visitor which replaces text content in files
  */
 public class TextReplaceVisitor extends FileVistiorAdapter {
     private final Charset charset;
@@ -20,14 +20,32 @@ public class TextReplaceVisitor extends FileVistiorAdapter {
 
     private final Function<String, String> contentsTransform;
 
+    /**
+     * @param transform
+     *            the text transform
+     */
     public TextReplaceVisitor(final Function<String, String> transform) {
         this(Charsets.UTF_8, FileFunctions.fileIdentity(), transform);
     }
 
+    /**
+     * @param textTransform
+     *            the content transform
+     * @param fileTransform
+     *            a file transform for the new files (i.e. original.txt will be written to original_2.txt)
+     */
     public TextReplaceVisitor(final Function<String, String> textTransform, final Function<File, File> fileTransform) {
         this(Charsets.UTF_8, fileTransform, textTransform);
     }
 
+    /**
+     * @param encoding
+     *            the file encoding
+     * @param newFileFunction
+     *            a file transform for the new files (i.e. original.txt will be written to original_2.txt)
+     * @param textTransform
+     *            the content transform
+     */
     public TextReplaceVisitor(final Charset encoding, final Function<File, File> newFileFunction,
             final Function<String, String> textTransform) {
         this.charset = Preconditions.checkNotNull(encoding);
