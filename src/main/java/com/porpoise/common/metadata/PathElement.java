@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
  * @param <T>
  */
 public class PathElement<T> {
-    private final Metadata<T> metadata;
+    private final Delta<T> delta;
     private final T left;
     private final T right;
     private final PathElement<?> parent;
@@ -18,9 +18,9 @@ public class PathElement<T> {
      * @param rightValue
      * 
      */
-    public PathElement(final PathElement<?> parent, final Metadata<T> prop, final T leftValue, final T rightValue) {
+    PathElement(final PathElement<?> parent, final Delta<T> owner, final T leftValue, final T rightValue) {
         this.parent = parent;
-        this.metadata = Preconditions.checkNotNull(prop);
+        this.delta = Preconditions.checkNotNull(owner);
         this.left = leftValue;
         this.right = rightValue;
     }
@@ -28,8 +28,9 @@ public class PathElement<T> {
     /**
      * @return the propertyName
      */
+    @SuppressWarnings("unchecked")
     public Metadata<T> getProperty() {
-        return this.metadata;
+        return (Metadata<T>) this.delta.getProperty();
     }
 
     /**
@@ -70,7 +71,7 @@ public class PathElement<T> {
      * @return the property name
      */
     public String getPropertyName() {
-        return getProperty().propertyName();
+        return this.delta.getPropertyName();
     }
 
     /**

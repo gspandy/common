@@ -9,6 +9,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.porpoise.common.strings.Trim;
 
+/**
+ * Represents a delta between two objects of type T
+ * 
+ * @param <T>
+ *            the root object type for the delta
+ */
 public class Delta<T> {
     private final Map<String, Delta<?>> childDeltasByProperty = Maps.newHashMap();
 
@@ -42,9 +48,9 @@ public class Delta<T> {
      * @param prop
      * @param alpha
      * @param beta
-     * @return
+     * @return the added delta
      */
-    public <P> Delta<P> addDiff(final Metadata<?> prop, final P alpha, final P beta) {
+    <P> Delta<P> addDiff(final Metadata<?> prop, final P alpha, final P beta) {
         return addChild(new Delta<P>(prop, alpha, beta));
     }
 
@@ -53,9 +59,9 @@ public class Delta<T> {
      * @param prop
      * @param alpha
      * @param beta
-     * @return
+     * @return the newly added diff
      */
-    public <P> Delta<P> addIterableDiff(final Metadata<?> prop, final int index, final P alpha, final P beta) {
+    <P> Delta<P> addIterableDiff(final Metadata<?> prop, final int index, final P alpha, final P beta) {
         final Delta<P> diff = new IterableDelta<P>(prop, index, alpha, beta);
         addChild(diff);
         return diff;
@@ -68,29 +74,26 @@ public class Delta<T> {
      * @param key
      * @param alpha
      * @param beta
-     * @return
+     * @return the newly added delta
      */
-    public <K, V> Delta<Map<K, V>> addMapDiff(final Metadata<?> prop, final K key, final Map<K, V> alpha,
-            final Map<K, V> beta) {
+    <K, V> Delta<Map<K, V>> addMapDiff(final Metadata<?> prop, final K key, final Map<K, V> alpha, final Map<K, V> beta) {
         return addChild(new MapEntryDelta<K, V>(prop, key, alpha, beta));
     }
 
     /**
      * @param <C>
-     * @param prop
      * @param child
+     *            the child delta
      * @return the new delta
      */
-    public <C> Delta<C> addChild(final Delta<C> child) {
+    <C> Delta<C> addChild(final Delta<C> child) {
         this.childDeltasByProperty.put(child.getPropertyName(), child);
         // assert replaced == null : String.format("duplicate property '%s' found in %s", child.getPropertyName(),
         // this.property == null ? "root" : this.property.propertyName());
         return child;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see java.lang.Object#toString()
      */
     @Override
@@ -137,7 +140,7 @@ public class Delta<T> {
         if (getProperty() == null) {
             return (PathElement<T>) parentPath;
         }
-        return new PathElement<T>(parentPath, (Metadata<T>) getProperty(), getLeft(), getRight());
+        return new PathElement<T>(parentPath, this, getLeft(), getRight());
     }
 
     private Collection<PathElement<?>> paths(final PathElement<?> parentParam) {

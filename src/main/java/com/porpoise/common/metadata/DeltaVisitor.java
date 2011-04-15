@@ -15,7 +15,6 @@ public class DeltaVisitor<D> extends VisitorAdapter {
     private final Stack<Delta<?>> workingDelta = new Stack<Delta<?>>();
 
     /**
-     * @param name
      * @param left
      * @param right
      */
@@ -167,14 +166,13 @@ public class DeltaVisitor<D> extends VisitorAdapter {
             final Pair<? extends Iterable<T>, T> pairOne, final Pair<? extends Iterable<T>, T> pairTwo) {
         VisitorResult result = result();
 
-        Delta<T> delta;
         if (pairOne.getSecond() == null) {
             if (pairTwo.getSecond() != null) {
-                delta = processIterableItem(property, index, pairOne, pairTwo);
+                processIterableItem(property, index, pairOne, pairTwo);
             }
             result = VisitorResult.SKIP;
         } else if (pairTwo.getSecond() == null) {
-            delta = processIterableItem(property, index, pairOne, pairTwo);
+            processIterableItem(property, index, pairOne, pairTwo);
             result = VisitorResult.SKIP;
         }
         push(new IterableDelta<Iterable<T>>(property, index, pairOne.getFirst(), pairTwo.getFirst()));

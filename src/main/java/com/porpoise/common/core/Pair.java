@@ -91,6 +91,15 @@ public class Pair<T1, T2> {
         return this.second;
     }
 
+    /**
+     * factory method to create a pair
+     * 
+     * @param <J>
+     * @param <K>
+     * @param thingOne
+     * @param thingTwo
+     * @return a new pair of things
+     */
     public static <J, K> Pair<J, K> valueOf(final J thingOne, final K thingTwo) {
         return new Pair<J, K>(thingOne, thingTwo);
     }

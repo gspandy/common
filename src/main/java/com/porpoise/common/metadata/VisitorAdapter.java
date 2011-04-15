@@ -37,7 +37,8 @@ public class VisitorAdapter implements PairVisitor {
     @Override
     public <T, P> VisitorResult onIterableItem(final Metadata<P> property, final int index,
             final Pair<? extends Iterable<T>, T> pairOne, final Pair<? extends Iterable<T>, T> pairTwo) {
-        log("onIterableItem(%s, %s, %s, %s)", property.propertyName(), index, pairOne.getSecond(), pairTwo.getSecond());
+        log("onIterableItem(%s, %s, %s, %s)", property.propertyName(), Integer.valueOf(index), pairOne.getSecond(),
+                pairTwo.getSecond());
         return VisitorResult.CONTINUE;
     }
 
