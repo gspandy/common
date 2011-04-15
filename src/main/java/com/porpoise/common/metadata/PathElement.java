@@ -1,17 +1,15 @@
 package com.porpoise.common.metadata;
 
 import com.google.common.base.Preconditions;
-import com.porpoise.common.strings.Trim;
 
 /**
  * @param <T>
  */
 public class PathElement<T> {
-    private final Metadata<T>    metadata;
-    private final T              left;
-    private final T              right;
+    private final Metadata<T> metadata;
+    private final T left;
+    private final T right;
     private final PathElement<?> parent;
-    private static int           MAX = 5;
 
     /**
      * @param parent
@@ -55,7 +53,7 @@ public class PathElement<T> {
      */
     @Override
     public String toString() {
-        return getPathValueString();
+        return getLeafValueString();
     }
 
     /**
@@ -63,7 +61,7 @@ public class PathElement<T> {
      */
     public String getPathString() {
         if (this.parent != null) {
-            return String.format("%s.%s", this.parent.getPathString(), getProperty().propertyName());
+            return String.format("%s.%s", this.parent.getPathString(), getPropertyName());
         }
         return getPropertyName();
     }
@@ -83,7 +81,18 @@ public class PathElement<T> {
         if (this.parent != null) {
             prefix = String.format("%s.", this.parent.getPathValueString());
         }
-        return String.format("%s%s{%s<=>%s}", prefix, getProperty().propertyName(), Trim.right(getLeft(), MAX), Trim.right(getRight(), MAX));
+        return String.format("%s%s{%s != %s}", prefix, getProperty().propertyName(), getLeft(), getRight());
+    }
+
+    /**
+     * @return the path string for this element
+     */
+    public String getLeafValueString() {
+        String prefix = "";
+        if (this.parent != null) {
+            prefix = String.format("%s.", this.parent.getPathString());
+        }
+        return String.format("%s%s{%s != %s}", prefix, getPropertyName(), getLeft(), getRight());
     }
 
     /**

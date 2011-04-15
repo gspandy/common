@@ -29,7 +29,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#onProperty(Metadata, java.lang.Object, java.lang.Object)
      */
     @Override
-    public <T, P> VisitorResult onProperty(final Metadata<P> property, final Pair<P, T> pairOne, final Pair<P, T> pairTwo) {
+    public <T, P> VisitorResult onProperty(final Metadata<P> property, final Pair<P, T> pairOne,
+            final Pair<P, T> pairTwo) {
         final T thingOne = pairOne.getSecond();
         final T thingTwo = pairTwo.getSecond();
         if (!Objects.equal(thingOne, thingTwo)) {
@@ -44,7 +45,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#onIterables(Metadata, java.lang.Iterable, java.lang.Iterable)
      */
     @Override
-    public <T, P> VisitorResult onIterables(final Metadata<P> property, final Iterable<T> thingOne, final Iterable<T> thingTwo) {
+    public <T, P> VisitorResult onIterables(final Metadata<P> property, final Iterable<T> thingOne,
+            final Iterable<T> thingTwo) {
         return result();
     }
 
@@ -54,14 +56,14 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#onIterableItem(Metadata, int, Pair, Pair)
      */
     @Override
-    public <T, P> VisitorResult onIterableItem(final Metadata<P> property, final int index, final Pair<? extends Iterable<T>, T> pairOne,
-            final Pair<? extends Iterable<T>, T> pairTwo) {
+    public <T, P> VisitorResult onIterableItem(final Metadata<P> property, final int index,
+            final Pair<? extends Iterable<T>, T> pairOne, final Pair<? extends Iterable<T>, T> pairTwo) {
         processIterableItem(property, index, pairOne, pairTwo);
         return result();
     }
 
-    private <T, P> Delta<T> processIterableItem(final Metadata<P> property, final int index, final Pair<? extends Iterable<T>, T> pairOne,
-            final Pair<? extends Iterable<T>, T> pairTwo) {
+    private <T, P> Delta<T> processIterableItem(final Metadata<P> property, final int index,
+            final Pair<? extends Iterable<T>, T> pairOne, final Pair<? extends Iterable<T>, T> pairTwo) {
         final T thingOne = pairOne.getSecond();
         final T thingTwo = pairTwo.getSecond();
         if (!Objects.equal(thingOne, thingTwo)) {
@@ -76,7 +78,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#onMaps(Metadata, Pair, Pair)
      */
     @Override
-    public <K, V, P> VisitorResult onMaps(final Metadata<P> property, final Pair<P, Map<K, V>> thingOne, final Pair<P, Map<K, V>> thingTwo) {
+    public <K, V, P> VisitorResult onMaps(final Metadata<P> property, final Pair<P, Map<K, V>> thingOne,
+            final Pair<P, Map<K, V>> thingTwo) {
         return result();
     }
 
@@ -86,7 +89,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#onMapEntry(Metadata, java.lang.Object, Pair, Pair)
      */
     @Override
-    public <K, V, P> VisitorResult onMapEntry(final Metadata<P> property, final K key, final Pair<Map<K, V>, V> pairOne, final Pair<Map<K, V>, V> pairTwo) {
+    public <K, V, P> VisitorResult onMapEntry(final Metadata<P> property, final K key,
+            final Pair<Map<K, V>, V> pairOne, final Pair<Map<K, V>, V> pairTwo) {
         return processMapEntry(property, key, pairOne, pairTwo);
     }
 
@@ -99,7 +103,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @param pairTwo
      * @return
      */
-    private <V, K, P> VisitorResult processMapEntry(final Metadata<P> property, final K key, final Pair<Map<K, V>, V> pairOne, final Pair<Map<K, V>, V> pairTwo) {
+    private <V, K, P> VisitorResult processMapEntry(final Metadata<P> property, final K key,
+            final Pair<Map<K, V>, V> pairOne, final Pair<Map<K, V>, V> pairTwo) {
         final V thingOne = pairOne.getSecond();
         final V thingTwo = pairTwo.getSecond();
         if (!Objects.equal(thingOne, thingTwo)) {
@@ -136,7 +141,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#beforeIterablesWithMetadata(Metadata, java.lang.Iterable, java.lang.Iterable)
      */
     @Override
-    public <T, P> VisitorResult beforeIterablesWithMetadata(final Metadata<P> property, final Iterable<T> thingOne, final Iterable<T> thingTwo) {
+    public <T, P> VisitorResult beforeIterablesWithMetadata(final Metadata<P> property, final Iterable<T> thingOne,
+            final Iterable<T> thingTwo) {
         return result();
     }
 
@@ -146,7 +152,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#afterIterablesWithMetadata(Metadata, java.lang.Iterable, java.lang.Iterable)
      */
     @Override
-    public <T, P> VisitorResult afterIterablesWithMetadata(final Metadata<P> property, final Iterable<T> thingOne, final Iterable<T> thingTwo) {
+    public <T, P> VisitorResult afterIterablesWithMetadata(final Metadata<P> property, final Iterable<T> thingOne,
+            final Iterable<T> thingTwo) {
         return result();
     }
 
@@ -156,8 +163,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#beforeIterableItemWithMetadata(Metadata, int, Pair, Pair)
      */
     @Override
-    public <T, P> VisitorResult beforeIterableItemWithMetadata(final Metadata<P> property, final int index, final Pair<? extends Iterable<T>, T> pairOne,
-            final Pair<? extends Iterable<T>, T> pairTwo) {
+    public <T, P> VisitorResult beforeIterableItemWithMetadata(final Metadata<P> property, final int index,
+            final Pair<? extends Iterable<T>, T> pairOne, final Pair<? extends Iterable<T>, T> pairTwo) {
         VisitorResult result = result();
 
         Delta<T> delta;
@@ -170,7 +177,6 @@ public class DeltaVisitor<D> extends VisitorAdapter {
             delta = processIterableItem(property, index, pairOne, pairTwo);
             result = VisitorResult.SKIP;
         }
-
         push(new IterableDelta<Iterable<T>>(property, index, pairOne.getFirst(), pairTwo.getFirst()));
 
         return result;
@@ -180,8 +186,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#afterIterableItemWithMetadata(Metadata, int, Pair, Pair)
      */
     @Override
-    public <T, P> VisitorResult afterIterableItemWithMetadata(final Metadata<P> property, final int index, final Pair<? extends Iterable<T>, T> pairOne,
-            final Pair<? extends Iterable<T>, T> pairTwo) {
+    public <T, P> VisitorResult afterIterableItemWithMetadata(final Metadata<P> property, final int index,
+            final Pair<? extends Iterable<T>, T> pairOne, final Pair<? extends Iterable<T>, T> pairTwo) {
         this.workingDelta.pop();
         return result();
     }
@@ -190,7 +196,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#beforeMapsWithMetadata(Metadata, Pair, Pair)
      */
     @Override
-    public <K, V, P> VisitorResult beforeMapsWithMetadata(final Metadata<P> property, final Pair<P, Map<K, V>> thingOne, final Pair<P, Map<K, V>> thingTwo) {
+    public <K, V, P> VisitorResult beforeMapsWithMetadata(final Metadata<P> property,
+            final Pair<P, Map<K, V>> thingOne, final Pair<P, Map<K, V>> thingTwo) {
         return result();
     }
 
@@ -198,7 +205,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#afterMapsWithMetadata(Metadata, Pair, Pair)
      */
     @Override
-    public <K, V, P> VisitorResult afterMapsWithMetadata(final Metadata<P> property, final Pair<P, Map<K, V>> thingOne, final Pair<P, Map<K, V>> thingTwo) {
+    public <K, V, P> VisitorResult afterMapsWithMetadata(final Metadata<P> property, final Pair<P, Map<K, V>> thingOne,
+            final Pair<P, Map<K, V>> thingTwo) {
         return result();
     }
 
@@ -206,7 +214,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#beforeMapEntryWithMetadata(Metadata, java.lang.Object, Pair, Pair)
      */
     @Override
-    public <K, V, P> VisitorResult beforeMapEntryWithMetadata(final Metadata<P> property, final K key, final Pair<Map<K, V>, V> pairOne, final Pair<Map<K, V>, V> pairTwo) {
+    public <K, V, P> VisitorResult beforeMapEntryWithMetadata(final Metadata<P> property, final K key,
+            final Pair<Map<K, V>, V> pairOne, final Pair<Map<K, V>, V> pairTwo) {
         push(new MapEntryDelta<K, V>(property, key, pairOne.getFirst(), pairTwo.getFirst()));
         return result();
     }
@@ -215,7 +224,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#afterMapEntryWithMetadata(Metadata, java.lang.Object, Pair, Pair)
      */
     @Override
-    public <K, V, P> VisitorResult afterMapEntryWithMetadata(final Metadata<P> property, final K key, final Pair<Map<K, V>, V> pairOne, final Pair<Map<K, V>, V> pairTwo) {
+    public <K, V, P> VisitorResult afterMapEntryWithMetadata(final Metadata<P> property, final K key,
+            final Pair<Map<K, V>, V> pairOne, final Pair<Map<K, V>, V> pairTwo) {
         this.workingDelta.pop();
         return result();
     }

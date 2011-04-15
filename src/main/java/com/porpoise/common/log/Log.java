@@ -27,6 +27,9 @@ public class Log {
         this.log = getLogger(getClass());
     }
 
+    /**
+     * @return the singleton instance
+     */
     public static Log getInstance() {
         return INSTANCE;
     }
@@ -45,7 +48,7 @@ public class Log {
     /**
      * Log a message at info level
      * 
-     * @param message
+     * @param format
      *            a Message which may contain a format string (see {@link Formatter})
      * @param args
      *            the optional format arguments
@@ -163,7 +166,7 @@ public class Log {
     /**
      * Log a message at error level
      * 
-     * @param message
+     * @param format
      *            a Message which may contain a format string (see {@link Formatter})
      * @param args
      *            the optional format arguments
@@ -176,7 +179,7 @@ public class Log {
     /**
      * Log a message at warning level
      * 
-     * @param message
+     * @param format
      *            a Message which may contain a format string (see {@link Formatter})
      * @param args
      *            the optional format arguments

@@ -1,5 +1,10 @@
 package com.porpoise.common.metadata;
 
+/**
+ * A delta between two iterables
+ * 
+ * @param <P>
+ */
 public class IterableDelta<P> extends Delta<P> {
 
     private final int index;
@@ -9,6 +14,9 @@ public class IterableDelta<P> extends Delta<P> {
         this.index = index;
     }
 
+    /**
+     * @return the index of this iterable delta
+     */
     public int getIndex() {
         return this.index;
     }
