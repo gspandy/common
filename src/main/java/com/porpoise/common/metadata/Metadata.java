@@ -5,11 +5,11 @@ import com.google.common.base.Function;
 /**
  * @param <T>
  */
-public interface Metadata<T> {
+public interface Metadata<T, V> {
 	/**
 	 * @return the accessor function
 	 */
-	Function<T, ?> accessor();
+	Function<T, V> accessor();
 
 	/**
 	 * @return the property name
@@ -20,9 +20,9 @@ public interface Metadata<T> {
 	 * @param <V>
 	 * @param input
 	 * @param newValue
-	 * @return
+	 * @return true if this method had any affect
 	 */
-	// <V> boolean update(T input, V newValue);
+	boolean update(T input, V newValue);
 
 	/**
 	 * @return true if this metadata can also update its data
