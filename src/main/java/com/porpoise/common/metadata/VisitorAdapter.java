@@ -69,7 +69,8 @@ public class VisitorAdapter implements PairVisitor {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <T, P> VisitorResult beforeMetadataProperty(final Metadata<P, T> property, final T thingOne, final T thingTwo) {
+	public <T, P> VisitorResult beforeMetadataProperty(final Metadata<P, T> property, final Pair<P, T> thingOne,
+	        final Pair<P, T> thingTwo) {
 		log("beforeMetadataProperty(%s, %s, %s)", property.propertyName(), thingOne, thingTwo);
 		return VisitorResult.CONTINUE;
 	}
@@ -78,7 +79,8 @@ public class VisitorAdapter implements PairVisitor {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <T, P> VisitorResult afterMetadataProperty(final Metadata<P, T> property, final T thingOne, final T thingTwo) {
+	public <T, P> VisitorResult afterMetadataProperty(final Metadata<P, T> property, final Pair<P, T> thingOne,
+	        final Pair<P, T> thingTwo) {
 		log("afterMetadataProperty(%s, %s, %s)", property.propertyName(), thingOne, thingTwo);
 		return VisitorResult.CONTINUE;
 	}
