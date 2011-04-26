@@ -1,6 +1,7 @@
 package com.porpoise.common.strings;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 /**
@@ -66,5 +67,36 @@ public enum Trim {
                 return input;
             }
         };
+    }
+
+    /**
+     * trims the middle characters
+     * 
+     * @param text
+     * @param maxLength
+     * @param middleText
+     * @return a trimmed string whos max length is the given length. The middle characters will be replaced
+     */
+    public static Object middle(final String text, final int maxLength, final String middleText) {
+        Preconditions.checkNotNull("middleText cannot be null", middleText);
+        if (Strings.isNullOrEmpty(text)) {
+            return text;
+        }
+        final int origLen = text.length();
+        if (origLen > maxLength) {
+            final int midLen = middleText.length();
+            final int charsToTrim = origLen + midLen - maxLength;
+            final int frontCharsToTrim = charsToTrim / 2;
+            final int endCharsToTrim = charsToTrim - frontCharsToTrim;
+            final int halfLen = origLen / 2;
+            final int frontIndex = halfLen - frontCharsToTrim;
+            final int endIndex = halfLen + endCharsToTrim;
+            final String front = text.substring(0, frontIndex);
+            final String end = text.substring(endIndex, origLen);
+            final String result = String.format("%s%s%s", front, middleText, end);
+            assert result.length() == maxLength;
+            return result;
+        }
+        return text;
     }
 }
