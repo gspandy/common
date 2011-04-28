@@ -12,7 +12,7 @@ import com.google.common.util.concurrent.ValueFuture;
  */
 public final class CallableRunnable<T> implements Runnable {
     /** The callable being run */
-    private final Callable<T> callable;
+    private final Callable<T>    callable;
 
     /** The Future which will hold the return value */
     private final ValueFuture<T> future = ValueFuture.create();

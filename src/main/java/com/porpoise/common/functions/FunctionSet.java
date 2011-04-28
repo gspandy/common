@@ -23,7 +23,7 @@ import com.google.common.collect.Sets.SetView;
 public class FunctionSet<T> implements Set<T> {
 
     private final Function<T, ? extends Object> keyFunction;
-    private final ConcurrentMap<Object, T> delegate;
+    private final ConcurrentMap<Object, T>      delegate;
 
     /**
      * @param keyFunction

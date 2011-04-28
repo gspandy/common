@@ -58,8 +58,7 @@ public class Tree {
      */
     public static <T> Node<T> newTree(final String rootNodeName) {
         if (rootNodeName.indexOf(TreeTrait.TREE_PATH_DELIM) >= 0) {
-            throw new IllegalArgumentException(
-                    "slashes are not allowed in the root name. Use parse for creating trees with initial child nodes");
+            throw new IllegalArgumentException("slashes are not allowed in the root name. Use parse for creating trees with initial child nodes");
         }
         return new Node<T>(null, rootNodeName);
     }
@@ -118,15 +117,15 @@ public class Tree {
      */
     public static class Node<T> implements Iterable<Node<T>>, TreeNode<T> {
 
-        private final String name;
+        private final String               name;
 
-        private T data;
+        private T                          data;
 
-        private final Node<T> parent;
+        private final Node<T>              parent;
 
         private final Map<String, Node<T>> childrenByName;
 
-        private Integer cachedDepth;
+        private Integer                    cachedDepth;
 
         protected Node(final Node<T> parentNode, final String nodeName) {
             this(parentNode, nodeName, null);
@@ -141,8 +140,7 @@ public class Tree {
         }
 
         /**
-         * similar to parse, but without creating nodes along the way. If at any point a node in the tree does not
-         * exist, a null node is returned
+         * similar to parse, but without creating nodes along the way. If at any point a node in the tree does not exist, a null node is returned
          * 
          * @param path
          *            the slash-separated path for the node
@@ -413,8 +411,8 @@ public class Tree {
         }
 
         /**
-         * Create N multiples of this node (appending the copy number as a suffix to the new node names), then
-         * proceeding up the tree, having each parent create N multiples of their children.
+         * Create N multiples of this node (appending the copy number as a suffix to the new node names), then proceeding up the tree, having each parent create N multiples of
+         * their children.
          * 
          * 
          * @param numberOfChildrenToAdd

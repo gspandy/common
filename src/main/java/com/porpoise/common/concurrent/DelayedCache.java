@@ -14,10 +14,9 @@ import com.google.common.collect.MapMaker;
 import com.google.common.util.concurrent.Callables;
 
 /**
- * The DelayedCache is an implementation of {@link AbstractCache}. The implementation of {@link #createValue(Object)}
- * does not compute missing values directly, but rather delegates their computation to a worker (a {@link Callable}
- * instance) and returns a default value immediately. Once the worker is complete, registered listeners are notified so
- * they can update their values.
+ * The DelayedCache is an implementation of {@link AbstractCache}. The implementation of {@link #createValue(Object)} does not compute missing values directly, but rather delegates
+ * their computation to a worker (a {@link Callable} instance) and returns a default value immediately. Once the worker is complete, registered listeners are notified so they can
+ * update their values.
  * 
  * 
  * @param <K>
@@ -28,13 +27,13 @@ public abstract class DelayedCache<K, T> extends AbstractCache<K, AtomicReferenc
     private final Collection<ICallableListener<K, T>> listeners;
 
     /** The executor service used to start computation threads */
-    private ExecutorService pool;
+    private ExecutorService                           pool;
 
     /** once disposed, we should disallow use */
-    private final AtomicBoolean disposed = new AtomicBoolean(false);
+    private final AtomicBoolean                       disposed     = new AtomicBoolean(false);
 
     /** The default return value used when a value is not found in the cache */
-    private T defaultValue = null;
+    private T                                         defaultValue = null;
 
     /**
      * @return the defaultValue
@@ -169,11 +168,9 @@ public abstract class DelayedCache<K, T> extends AbstractCache<K, AtomicReferenc
     }
 
     /**
-     * Create a worker task (Callable). The default implementation is simply to ask subclasses for the value directly
-     * (effectively making the cache a Callable themselves).
+     * Create a worker task (Callable). The default implementation is simply to ask subclasses for the value directly (effectively making the cache a Callable themselves).
      * 
-     * subclasses may override this method to create a worker (callable) implementation to compute the value for the
-     * given key
+     * subclasses may override this method to create a worker (callable) implementation to compute the value for the given key
      * 
      * @param key
      *            the map key for which to compute a value

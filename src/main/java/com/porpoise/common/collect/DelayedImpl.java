@@ -6,15 +6,14 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.base.Objects;
 
 /**
- * A basic implementation of {@link Delayed} which can be set to expire after a given amount of time. The expiry will be
- * computed from the point that the delayed object is created.
+ * A basic implementation of {@link Delayed} which can be set to expire after a given amount of time. The expiry will be computed from the point that the delayed object is created.
  * 
  * @param <T>
  *            The payload type
  */
 public class DelayedImpl<T> implements Delayed {
     private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.SECONDS;
-    private static final int DEFAULT_TIMEOUT = 2;
+    private static final int      DEFAULT_TIMEOUT   = 2;
 
     /**
      * @return the payload
@@ -24,7 +23,7 @@ public class DelayedImpl<T> implements Delayed {
     }
 
     private final long expiryTimestampInMilliconds;
-    private final T payload;
+    private final T    payload;
 
     /**
      * @param data

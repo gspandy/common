@@ -7,8 +7,8 @@ import com.google.common.collect.Sets;
 import com.porpoise.common.log.Log;
 
 /**
- * As only one uncaught exception handler is allowed, this handler allows delegate handlers to be registered with it.
- * This way new uncaught exception handlers may be registered without having to replace others.
+ * As only one uncaught exception handler is allowed, this handler allows delegate handlers to be registered with it. This way new uncaught exception handlers may be registered
+ * without having to replace others.
  * 
  * @author Aaron
  */
