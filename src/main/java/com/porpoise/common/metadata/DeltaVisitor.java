@@ -53,12 +53,12 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#onIterableItem(Metadata, int, Pair, Pair)
      */
     @Override
-    public <T, P, I extends Iterable<T>> VisitorResult onIterableItem(final Metadata<P, I> property, final int index, final Pair<I, T> pairOne, final Pair<I, T> pairTwo) {
+    public <T, P, I extends Iterable<? extends T>> VisitorResult onIterableItem(final Metadata<P, I> property, final int index, final Pair<I, T> pairOne, final Pair<I, T> pairTwo) {
         processIterableItem(property, index, pairOne, pairTwo);
         return result();
     }
 
-    private <T, P, I extends Iterable<T>> Delta<T> processIterableItem(final Metadata<P, I> property, final int index, final Pair<I, T> pairOne, final Pair<I, T> pairTwo) {
+    private <T, P, I extends Iterable<? extends T>> Delta<T> processIterableItem(final Metadata<P, I> property, final int index, final Pair<I, T> pairOne, final Pair<I, T> pairTwo) {
         final T thingOne = pairOne.getSecond();
         final T thingTwo = pairTwo.getSecond();
         if (!Objects.equal(thingOne, thingTwo)) {

@@ -84,7 +84,7 @@ public interface PairVisitor {
      * @param pairTwo
      * @return the visitor result
      */
-    <T, P, I extends Iterable<T>> VisitorResult onIterableItem(Metadata<P, I> property, int index, Pair<I, T> pairOne, Pair<I, T> pairTwo);
+    <T, P, I extends Iterable<? extends T>> VisitorResult onIterableItem(Metadata<P, I> property, int index, Pair<I, T> pairOne, Pair<I, T> pairTwo);
 
     /**
      * 
