@@ -48,7 +48,7 @@ public interface PairVisitor {
 	 * @param thingTwo
 	 * @return the visitor result
 	 */
-	<T, P, I extends Iterable<T>> VisitorResult onIterables(Metadata<P, I> property, I thingOne, I thingTwo);
+	<P, I extends Iterable<?>> VisitorResult onIterables(Metadata<P, I> property, I thingOne, I thingTwo);
 
 	/**
 	 * 
