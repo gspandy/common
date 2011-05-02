@@ -40,8 +40,7 @@ public class Pair<T1, T2> {
      *            the first type
      * @param <B>
      *            the second type
-     * @return a predicate which returns true if the pair contains values which differ according to
-     *         {@link Object#equals(Object)}
+     * @return a predicate which returns true if the pair contains values which differ according to {@link Object#equals(Object)}
      */
     public static final <A, B> Predicate<Pair<A, B>> different() {
         final Predicate<Pair<A, B>> same = same();
@@ -53,8 +52,7 @@ public class Pair<T1, T2> {
      *            the first type
      * @param <B>
      *            the second type
-     * @return a predicate which returns true if the pair contains values which are the same according to
-     *         {@link Object#equals(Object)}
+     * @return a predicate which returns true if the pair contains values which are the same according to {@link Object#equals(Object)}
      */
     public static final <A, B> Predicate<Pair<A, B>> same() {
         return new Predicate<Pair<A, B>>() {

@@ -12,7 +12,7 @@ import com.porpoise.common.log.Log;
  */
 public class FileMatcherVisitor extends FileVistiorAdapter {
 
-    private final IFileVisitor delegate;
+    private final IFileVisitor      delegate;
 
     private final Predicate<String> filter;
 

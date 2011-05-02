@@ -21,8 +21,7 @@ public interface ICallableListener<K, T> {
     public void onComplete(K key, T result);
 
     /**
-     * The callable threw an exception. If any registered listeners return true, then the exception will be rethrown.
-     * Otherwise the callable will return null;
+     * The callable threw an exception. If any registered listeners return true, then the exception will be rethrown. Otherwise the callable will return null;
      * 
      * All listeners will always be called, regardless of return value.
      * 

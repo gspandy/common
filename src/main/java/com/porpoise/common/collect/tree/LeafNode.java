@@ -8,7 +8,7 @@ import java.util.Collections;
 public class LeafNode<T> implements TreeNode<T> {
 
     private final TreeNode<T> parent;
-    private final T data;
+    private final T           data;
 
     /**
      * @return the tree as a string

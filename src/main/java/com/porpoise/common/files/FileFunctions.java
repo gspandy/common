@@ -21,8 +21,7 @@ public enum FileFunctions {
 
     /**
      * @param suffix
-     * @return a function which will return a new file with the same name and path as the input file, but with the given
-     *         suffix appended
+     * @return a function which will return a new file with the same name and path as the input file, but with the given suffix appended
      */
     public static Function<File, File> withSuffix(final String suffix) {
         return new Function<File, File>() {

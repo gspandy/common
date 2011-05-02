@@ -189,5 +189,4 @@ public interface PairVisitor {
 	 */
 	<K, V, P> VisitorResult afterMapEntryWithMetadata(Metadata<P, Map<K, V>> property, K key,
 	        Pair<Map<K, V>, V> pairOne, Pair<Map<K, V>, V> pairTwo);
-
 }

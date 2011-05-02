@@ -42,8 +42,7 @@ public enum Threads {
         String simpleClassName = firstNonLog4JStackElement.getClassName();
         final int firstUpper = CharMatcher.JAVA_UPPER_CASE.indexIn(simpleClassName);
         simpleClassName = simpleClassName.substring(firstUpper);
-        return String.format("%s.%s[%d]", simpleClassName, firstNonLog4JStackElement.getMethodName(),
-                Integer.valueOf(firstNonLog4JStackElement.getLineNumber()));
+        return String.format("%s.%s[%d]", simpleClassName, firstNonLog4JStackElement.getMethodName(), Integer.valueOf(firstNonLog4JStackElement.getLineNumber()));
     }
 
     /**

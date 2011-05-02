@@ -28,11 +28,11 @@ public enum Comparators {
      */
     static final class StringComparator implements Comparator<String>, Serializable {
         /** required by Serializable */
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID     = 1L;
 
-        private static final int SECOND_STRING_LONGER = -1;
+        private static final int  SECOND_STRING_LONGER = -1;
 
-        private static final int FIRST_STRING_LONGER = 1;
+        private static final int  FIRST_STRING_LONGER  = 1;
 
         @Override
         public int compare(final String arg0, final String arg1) {
@@ -54,8 +54,8 @@ public enum Comparators {
         }
 
         /**
-         * With comparators, the only result that counts is if the result is positive, zero or negative. So, for
-         * example, if we have two different numbers which are both positive, then that's considered the same
+         * With comparators, the only result that counts is if the result is positive, zero or negative. So, for example, if we have two different numbers which are both positive,
+         * then that's considered the same
          * 
          * @param resultOne
          * @param resultTwo
@@ -94,8 +94,7 @@ public enum Comparators {
             final Iterator<String> iterTwo = split(arg1);
 
             /*
-             * iterate over each "section" -- a section being either a regular string OR a string of numbers which can
-             * be treated as an integer
+             * iterate over each "section" -- a section being either a regular string OR a string of numbers which can be treated as an integer
              */
             while (iterOne.hasNext()) {
                 if (!iterTwo.hasNext()) {
@@ -188,8 +187,7 @@ public enum Comparators {
             // consume a number
             final int endOfDigitIndex = nextIndexSafe(string, DIGIT.negate(), digitIndex);
             final String numberPart = string.substring(digitIndex, endOfDigitIndex);
-            assert !numberPart.isEmpty() : String
-                    .format("Somehow a numerical string section was empty in '%s'", string);
+            assert !numberPart.isEmpty() : String.format("Somehow a numerical string section was empty in '%s'", string);
             stringsAndNumbers.add(numberPart);
 
             // check there is more to process
@@ -200,8 +198,7 @@ public enum Comparators {
             // consume a string (non-numeric) section
             digitIndex = nextIndexSafe(string, DIGIT, endOfDigitIndex);
             final String stringPart = string.substring(endOfDigitIndex, digitIndex);
-            assert !stringPart.isEmpty() : String.format("Somehow a non-numerical string section was empty in '%s'",
-                    string);
+            assert !stringPart.isEmpty() : String.format("Somehow a non-numerical string section was empty in '%s'", string);
             stringsAndNumbers.add(stringPart);
         }
 

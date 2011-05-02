@@ -100,8 +100,7 @@ public class ObservableNode<T> extends Node<T> {
     }
 
     /**
-     * add a listener. Regardless of the node on which this method is called, the listener will be added to the root
-     * node.
+     * add a listener. Regardless of the node on which this method is called, the listener will be added to the root node.
      * 
      * @param listener
      */
@@ -130,8 +129,7 @@ public class ObservableNode<T> extends Node<T> {
     /**
      * {@inheritDoc}
      * 
-     * @see com.porpoise.common.tree.Tree.Node#newNode(com.porpoise.common.tree.Tree.Node, java.lang.String,
-     *      java.lang.Object)
+     * @see com.porpoise.common.tree.Tree.Node#newNode(com.porpoise.common.tree.Tree.Node, java.lang.String, java.lang.Object)
      */
     @Override
     protected ObservableNode<T> newNode(final Node<T> p, final String childName, final T value) {

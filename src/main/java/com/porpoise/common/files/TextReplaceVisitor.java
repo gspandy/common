@@ -14,9 +14,9 @@ import com.porpoise.common.log.Log;
  * visitor which replaces text content in files
  */
 public class TextReplaceVisitor extends FileVistiorAdapter {
-    private final Charset charset;
+    private final Charset                  charset;
 
-    private final Function<File, File> targetFileFunction;
+    private final Function<File, File>     targetFileFunction;
 
     private final Function<String, String> contentsTransform;
 
@@ -46,8 +46,7 @@ public class TextReplaceVisitor extends FileVistiorAdapter {
      * @param textTransform
      *            the content transform
      */
-    public TextReplaceVisitor(final Charset encoding, final Function<File, File> newFileFunction,
-            final Function<String, String> textTransform) {
+    public TextReplaceVisitor(final Charset encoding, final Function<File, File> newFileFunction, final Function<String, String> textTransform) {
         this.charset = Preconditions.checkNotNull(encoding);
         this.targetFileFunction = Preconditions.checkNotNull(newFileFunction);
         this.contentsTransform = Preconditions.checkNotNull(textTransform);
