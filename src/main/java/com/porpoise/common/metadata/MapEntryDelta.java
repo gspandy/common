@@ -8,24 +8,25 @@ import java.util.Map;
  * @param <K>
  * @param <V>
  */
-public class MapEntryDelta<K, V> extends Delta<Map<K, V>> {
+public class MapEntryDelta<K, V> extends Delta<Map<K, ? extends V>> {
 
-    private final K key;
+	private final K	key;
 
-    MapEntryDelta(final Metadata<?, ?> prop, final K key, final Map<K, V> left, final Map<K, V> right) {
-        super(prop, left, right);
-        this.key = key;
-    }
+	MapEntryDelta(final Metadata<?, ?> prop, final K key, final Map<K, ? extends V> left,
+	        final Map<K, ? extends V> right) {
+		super(prop, left, right);
+		this.key = key;
+	}
 
-    @Override
-    public String getPropertyName() {
-        return String.format("%s[%s]", super.getPropertyName(), this.key);
-    }
+	@Override
+	public String getPropertyName() {
+		return String.format("%s[%s]", super.getPropertyName(), this.key);
+	}
 
-    /**
-     * @return the map key
-     */
-    public K getKey() {
-        return this.key;
-    }
+	/**
+	 * @return the map key
+	 */
+	public K getKey() {
+		return this.key;
+	}
 }
