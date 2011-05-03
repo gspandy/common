@@ -55,8 +55,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
 	 * @see PairVisitor#onIterableItem(Metadata, int, Pair, Pair)
 	 */
 	@Override
-	public <T, P, I extends Iterable<T>> VisitorResult onIterableItem(final Metadata<P, I> property, final int index,
-	        final Pair<I, T> pairOne, final Pair<I, T> pairTwo) {
+	public <T, P, I extends Iterable<? extends T>> VisitorResult onIterableItem(final Metadata<P, I> property,
+	        final int index, final Pair<I, T> pairOne, final Pair<I, T> pairTwo) {
 		processIterableItem(property, index, pairOne, pairTwo);
 		return result();
 	}
