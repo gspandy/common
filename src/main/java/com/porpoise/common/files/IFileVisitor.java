@@ -7,17 +7,17 @@ import java.io.File;
  */
 public interface IFileVisitor {
 
-    /**
-     * @param directory
-     *            the directory
-     * @return true if the visiting function should continue
-     */
-    boolean onDirectory(File directory);
+	/**
+	 * @param directory
+	 *            the directory
+	 * @return true if the visiting function should continue
+	 */
+	boolean onDirectory(File directory);
 
-    /**
-     * @param file
-     *            a file
-     */
-    void onFile(File file);
+	/**
+	 * @param file
+	 *            a file
+	 */
+	void onFile(File file);
 
 }

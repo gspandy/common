@@ -14,23 +14,19 @@ import com.porpoise.common.functions.FunctionSet;
 /**
  * 
  */
-public class FunctionSetTest
-{
+public class FunctionSetTest {
 
-	private FunctionSet<String>			functionSet;
+	private FunctionSet<String>	      functionSet;
 	private Function<String, Integer>	lengthFunction;
 
 	/**
 	 */
 	@Before
-	public void setup()
-	{
+	public void setup() {
 		// create a set which is keyed on string length
-		this.lengthFunction = new Function<String, Integer>()
-		{
+		this.lengthFunction = new Function<String, Integer>() {
 			@Override
-			public Integer apply(final String input)
-			{
+			public Integer apply(final String input) {
 				return Integer.valueOf(input.length());
 			}
 		};
@@ -40,8 +36,7 @@ public class FunctionSetTest
 	/**
 	 */
 	@Test
-	public void testAdd()
-	{
+	public void testAdd() {
 		Assert.assertTrue(this.functionSet.add("one"));
 		Assert.assertFalse(this.functionSet.add("two"));
 		Assert.assertEquals("one", Iterables.getOnlyElement(this.functionSet));
@@ -50,8 +45,7 @@ public class FunctionSetTest
 	/**
 	 */
 	@Test
-	public void testAddAll()
-	{
+	public void testAddAll() {
 		Assert.assertTrue(this.functionSet.addAll(ImmutableList.of("one", "two", "three")));
 		Assert.assertFalse(this.functionSet.addAll(ImmutableList.of("one", "two", "three")));
 		Assert.assertEquals(2, this.functionSet.size());
@@ -62,8 +56,7 @@ public class FunctionSetTest
 	/**
 	 */
 	@Test
-	public void testRetainAll()
-	{
+	public void testRetainAll() {
 		Assert.assertTrue(this.functionSet.addAll(ImmutableList.of("one", "two", "three")));
 		final ImmutableList<String> items = ImmutableList.of("not in the list", "three");
 		Assert.assertTrue(this.functionSet.retainAll(items));
@@ -75,8 +68,7 @@ public class FunctionSetTest
 	/**
 	 */
 	@Test
-	public void testClear()
-	{
+	public void testClear() {
 		Assert.assertTrue(this.functionSet.addAll(ImmutableList.of("one", "two", "three")));
 		this.functionSet.clear();
 		Assert.assertTrue(this.functionSet.isEmpty());
@@ -89,8 +81,7 @@ public class FunctionSetTest
 	/**
 	 */
 	@Test
-	public void testRemove()
-	{
+	public void testRemove() {
 		final Set<String> set = new FunctionSet<String>(this.lengthFunction, "a", "b", "see");
 		Assert.assertTrue(set.remove("a"));
 		Assert.assertFalse(set.remove("a"));
@@ -106,8 +97,7 @@ public class FunctionSetTest
 	/**
 	 */
 	@Test
-	public void testRemoveAll()
-	{
+	public void testRemoveAll() {
 		final Set<String> set = new FunctionSet<String>(this.lengthFunction, "a", "b", "see");
 		Assert.assertTrue(set.removeAll(ImmutableList.of("a", "see")));
 		Assert.assertFalse(set.removeAll(ImmutableList.of("a", "see")));
@@ -117,8 +107,7 @@ public class FunctionSetTest
 	/**
 	 */
 	@Test
-	public void testContains()
-	{
+	public void testContains() {
 		final Set<String> set = new FunctionSet<String>(this.lengthFunction, "a", "b", "see");
 		Assert.assertEquals(2, set.size());
 		Assert.assertTrue(set.contains("a"));
@@ -131,8 +120,7 @@ public class FunctionSetTest
 	/**
 	 */
 	@Test
-	public void testContainsAll()
-	{
+	public void testContainsAll() {
 		final Set<String> set = new FunctionSet<String>(this.lengthFunction, "a", "b", "see");
 		Assert.assertEquals(2, set.size());
 		Assert.assertTrue(set.containsAll(ImmutableList.of("a", "see")));
@@ -143,8 +131,7 @@ public class FunctionSetTest
 	/**
 	 */
 	@Test
-	public void testToArray()
-	{
+	public void testToArray() {
 		final Set<String> set = new FunctionSet<String>(this.lengthFunction, "a", "b", "see");
 		final Object[] array = set.toArray();
 		Assert.assertArrayEquals(new Object[] { "a", "see" }, array);
@@ -153,8 +140,7 @@ public class FunctionSetTest
 	/**
 	 */
 	@Test
-	public void testToArray2()
-	{
+	public void testToArray2() {
 		final Set<String> set = new FunctionSet<String>(this.lengthFunction, "a", "b", "see");
 		final Object[] array = set.toArray(new Object[0]);
 		Assert.assertArrayEquals(new Object[] { "a", "see" }, array);

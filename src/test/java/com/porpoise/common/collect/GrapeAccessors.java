@@ -5,8 +5,7 @@ import com.google.common.base.Function;
 /**
  * GrapeAccessors
  */
-public enum GrapeAccessors
-{
+public enum GrapeAccessors {
 	; // uninstantiable
 
 	/**
@@ -22,18 +21,15 @@ public enum GrapeAccessors
 	/**
 	 * ACCESSOR FOR GET_COLOR
 	 */
-	public static final Function<Grape, Color>		GET_COLOR;
+	public static final Function<Grape, Color>	 GET_COLOR;
 
-	static
-	{
+	static {
 		/**
 		 * GET_RADIUS
 		 */
-		GET_RADIUS = new Function<Grape, Integer>()
-		{
+		GET_RADIUS = new Function<Grape, Integer>() {
 			@Override
-			public Integer apply(final Grape input)
-			{
+			public Integer apply(final Grape input) {
 				return input.getRadius();
 			}
 		};
@@ -41,11 +37,9 @@ public enum GrapeAccessors
 		/**
 		 * GET_RIPENESS
 		 */
-		GET_RIPENESS = new Function<Grape, Integer>()
-		{
+		GET_RIPENESS = new Function<Grape, Integer>() {
 			@Override
-			public Integer apply(final Grape input)
-			{
+			public Integer apply(final Grape input) {
 				return input.getRipeness();
 			}
 		};
@@ -53,11 +47,9 @@ public enum GrapeAccessors
 		/**
 		 * GET_COLOR
 		 */
-		GET_COLOR = new Function<Grape, Color>()
-		{
+		GET_COLOR = new Function<Grape, Color>() {
 			@Override
-			public Color apply(final Grape input)
-			{
+			public Color apply(final Grape input) {
 				return input.getColor();
 			}
 		};

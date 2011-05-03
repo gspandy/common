@@ -1,7 +1,5 @@
 package com.porpoise.common.collect;
 
-enum Color
-{
-	Red,
-	Green
+enum Color {
+	Red, Green
 }

@@ -1,14 +1,11 @@
 package com.porpoise.common.collect;
 
-
-class Grape
-{
+class Grape {
 	private final int	radius;
 	private final int	ripeness;
 	private final Color	color;
 
-	Grape(final int r, final int ripe, final Color c)
-	{
+	Grape(final int r, final int ripe, final Color c) {
 		this.radius = r;
 		this.ripeness = ripe;
 		this.color = c;
@@ -17,24 +14,21 @@ class Grape
 	/**
 	 * @return the radius
 	 */
-	public int getRadius()
-	{
+	public int getRadius() {
 		return this.radius;
 	}
 
 	/**
 	 * @return the ripeness
 	 */
-	public int getRipeness()
-	{
+	public int getRipeness() {
 		return this.ripeness;
 	}
 
 	/**
 	 * @return the color
 	 */
-	public Color getColor()
-	{
+	public Color getColor() {
 		return this.color;
 	}
 }

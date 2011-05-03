@@ -13,8 +13,7 @@ import com.porpoise.common.functions.Keys;
 /**
  * 
  */
-public class KeysTest
-{
+public class KeysTest {
 	private final Grape	a	= new Grape(1, 2, Color.Red);
 	private final Grape	b	= new Grape(1, 3, Color.Red);
 
@@ -22,8 +21,7 @@ public class KeysTest
 	 * test the {@link Keys#keyFunction(com.google.common.base.Function...) } method
 	 */
 	@Test
-	public void testKeyFunctionKeyOnSingleProperty()
-	{
+	public void testKeyFunctionKeyOnSingleProperty() {
 		@SuppressWarnings("unchecked")
 		final Function<Grape, Object> keyOnColor = Keys.keyFunction(GrapeAccessors.GET_COLOR);
 		final Set<Grape> set = new FunctionSet<Grape>(keyOnColor, this.a, this.b);
@@ -34,11 +32,10 @@ public class KeysTest
 	 * test the {@link Keys#keyFunction(com.google.common.base.Function...) } method
 	 */
 	@Test
-	public void testKeyFunctionKeyOnMultipleProperties()
-	{
+	public void testKeyFunctionKeyOnMultipleProperties() {
 		@SuppressWarnings("unchecked")
 		final Function<Grape, Object> keyOnInts = Keys.keyFunction(GrapeAccessors.GET_RADIUS,
-				GrapeAccessors.GET_RIPENESS);
+		        GrapeAccessors.GET_RIPENESS);
 		final Set<Grape> intSet = new FunctionSet<Grape>(keyOnInts, this.a, this.b);
 		Assert.assertEquals(2, intSet.size());
 		Assert.assertTrue(intSet.contains(this.a));

@@ -11,41 +11,41 @@ import com.google.common.util.concurrent.ValueFuture;
  * @author Aaron
  */
 public final class CallableRunnable<T> implements Runnable {
-    /** The callable being run */
-    private final Callable<T>    callable;
+	/** The callable being run */
+	private final Callable<T>	 callable;
 
-    /** The Future which will hold the return value */
-    private final ValueFuture<T> future = ValueFuture.create();
+	/** The Future which will hold the return value */
+	private final ValueFuture<T>	future	= ValueFuture.create();
 
-    /**
-     * @return the future which will be populated once run
-     */
-    public ListenableFuture<T> getFuture() {
-        return this.future;
-    }
+	/**
+	 * @return the future which will be populated once run
+	 */
+	public ListenableFuture<T> getFuture() {
+		return this.future;
+	}
 
-    /**
-     * Access restricted - use {@link Runnables#asRunnable(Callable)}
-     * 
-     * @param callableValue
-     */
-    CallableRunnable(final Callable<T> callableValue) {
-        this.callable = checkNotNull(callableValue);
-    }
+	/**
+	 * Access restricted - use {@link Runnables#asRunnable(Callable)}
+	 * 
+	 * @param callableValue
+	 */
+	CallableRunnable(final Callable<T> callableValue) {
+		this.callable = checkNotNull(callableValue);
+	}
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see java.lang.Runnable#run()
-     */
-    @Override
-    public void run() {
-        try {
-            final T result = this.callable.call();
-            this.future.set(result);
-        } catch (final Throwable e) {
-            this.future.setException(e);
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
+	@Override
+	public void run() {
+		try {
+			final T result = this.callable.call();
+			this.future.set(result);
+		} catch (final Throwable e) {
+			this.future.setException(e);
+		}
+	}
 
 }
