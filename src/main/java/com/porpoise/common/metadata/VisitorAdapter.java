@@ -49,8 +49,8 @@ public class VisitorAdapter implements PairVisitor {
 	 *      com.porpoise.common.core.Pair, com.porpoise.common.core.Pair)
 	 */
 	@Override
-	public <K, V, P> VisitorResult onMaps(final Metadata<P, Map<K, V>> property, final Pair<P, Map<K, V>> thingOne,
-	        final Pair<P, Map<K, V>> thingTwo) {
+	public <K, V, P> VisitorResult onMaps(final Metadata<P, Map<K, ? extends V>> property,
+	        final Pair<P, Map<K, ? extends V>> thingOne, final Pair<P, Map<K, ? extends V>> thingTwo) {
 		log("onMaps(%s, %s, %s)", property.propertyName(), thingOne, thingTwo);
 		return VisitorResult.CONTINUE;
 	}

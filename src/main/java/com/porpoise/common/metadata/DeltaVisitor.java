@@ -77,8 +77,8 @@ public class DeltaVisitor<D> extends VisitorAdapter {
 	 * @see PairVisitor#onMaps(Metadata, Pair, Pair)
 	 */
 	@Override
-	public <K, V, P> VisitorResult onMaps(final Metadata<P, Map<K, V>> property, final Pair<P, Map<K, V>> thingOne,
-	        final Pair<P, Map<K, V>> thingTwo) {
+	public <K, V, P> VisitorResult onMaps(final Metadata<P, Map<K, ? extends V>> property,
+	        final Pair<P, Map<K, ? extends V>> thingOne, final Pair<P, Map<K, ? extends V>> thingTwo) {
 		return result();
 	}
 

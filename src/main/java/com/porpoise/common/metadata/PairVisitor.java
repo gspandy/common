@@ -124,8 +124,8 @@ public interface PairVisitor {
 	 * @param thingTwo
 	 * @return the visitor result
 	 */
-	<K, V, P> VisitorResult onMaps(Metadata<P, Map<K, V>> property, Pair<P, Map<K, V>> thingOne,
-	        Pair<P, Map<K, V>> thingTwo);
+	<K, V, P> VisitorResult onMaps(Metadata<P, Map<K, ? extends V>> property, Pair<P, Map<K, ? extends V>> thingOne,
+	        Pair<P, Map<K, ? extends V>> thingTwo);
 
 	/**
 	 * @param <K>
