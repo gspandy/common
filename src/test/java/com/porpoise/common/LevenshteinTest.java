@@ -36,8 +36,11 @@ public class LevenshteinTest {
 
 	@Test
 	public void testBestMatch() {
-		final String result = Levenshtein.match("jungle").pickBestfrom("juggle", "jiggle", "jello", "alphabit");
+		final String result = Levenshtein.match("jungle").pickBestfrom("jiggle", "juggle", "jello", "alphabit");
 		Assert.assertEquals("juggle", result);
+
+		Assert.assertEquals("jungle", Levenshtein.match("jungle")
+		        .pickBestfrom("juggle", "jiggle", "jungle", "alphabit"));
 	}
 
 	@Test
