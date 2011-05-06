@@ -9,9 +9,9 @@ package com.porpoise.common.collect.tree;
  */
 public interface TreeVisitor<T> {
 
-	/**
-	 * @param depth
-	 * @param node
-	 */
-	void onNode(int depth, T node);
+    /**
+     * @param depth
+     * @param node
+     */
+    void onNode(int depth, T node);
 }

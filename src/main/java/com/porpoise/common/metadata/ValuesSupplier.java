@@ -8,18 +8,18 @@ import com.google.common.collect.Iterators;
 
 class ValuesSupplier<T> implements Supplier<T> {
 
-	private final Iterator<T>	cycle;
+    private final Iterator<T> cycle;
 
-	public ValuesSupplier(final T... values) {
-		this(Arrays.asList(values));
-	}
+    public ValuesSupplier(final T... values) {
+        this(Arrays.asList(values));
+    }
 
-	public ValuesSupplier(final Iterable<T> iterable) {
-		this.cycle = Iterators.cycle(iterable);
-	}
+    public ValuesSupplier(final Iterable<T> iterable) {
+        this.cycle = Iterators.cycle(iterable);
+    }
 
-	@Override
-	public T get() {
-		return this.cycle.next();
-	}
+    @Override
+    public T get() {
+        return this.cycle.next();
+    }
 }

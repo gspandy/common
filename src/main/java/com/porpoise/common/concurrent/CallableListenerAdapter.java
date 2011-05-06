@@ -8,13 +8,13 @@ package com.porpoise.common.concurrent;
  * @param <T>
  */
 public class CallableListenerAdapter<K, T> implements ICallableListener<K, T> {
-	@Override
-	public void onComplete(final K key, final T result) {
-		// no-op
-	}
+    @Override
+    public void onComplete(final K key, final T result) {
+        // no-op
+    }
 
-	@Override
-	public boolean onException(final K key, final Exception exp) {
-		return false;
-	}
+    @Override
+    public boolean onException(final K key, final Exception exp) {
+        return false;
+    }
 }
