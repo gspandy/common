@@ -254,7 +254,7 @@ public class DeltaVisitor<D> extends VisitorAdapter {
         return this.workingDelta.peek();
     }
 
-    private <T, V> Delta<T> push(final Metadata<?, ?> property, final T left, final T right) {
+    private <T> Delta<T> push(final Metadata<?, ?> property, final T left, final T right) {
         return push(new Delta<T>(property, left, right));
     }
 

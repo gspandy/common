@@ -34,7 +34,7 @@ public class Delta<T> {
      * @param right
      * @return
      */
-    static <R> Delta<R> root(final R left, final R right) {
+    public static <R> Delta<R> root(final R left, final R right) {
         return new Delta<R>(null, left, right);
     }
 
@@ -56,7 +56,7 @@ public class Delta<T> {
      * @param beta
      * @return the added delta
      */
-    <P> Delta<P> addDiff(final Metadata<?, ?> prop, final P alpha, final P beta) {
+    public <P> Delta<P> addDiff(final Metadata<?, ?> prop, final P alpha, final P beta) {
         return addChild(new Delta<P>(prop, alpha, beta));
     }
 
@@ -93,7 +93,7 @@ public class Delta<T> {
      *            the child delta
      * @return the new delta
      */
-    <C> Delta<C> addChild(final Delta<C> child) {
+    public <C> Delta<C> addChild(final Delta<C> child) {
         this.childDeltasByProperty.put(child.getPropertyName(), child);
         // assert replaced == null : String.format("duplicate property '%s' found in %s", child.getPropertyName(),
         // this.property == null ? "root" : this.property.propertyName());
