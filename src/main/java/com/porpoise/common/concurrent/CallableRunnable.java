@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.concurrent.Callable;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ValueFuture;
+import com.google.common.util.concurrent.SettableFuture;
 
 /**
  * @author Aaron
@@ -15,7 +15,7 @@ public final class CallableRunnable<T> implements Runnable {
     private final Callable<T> callable;
 
     /** The Future which will hold the return value */
-    private final ValueFuture<T> future = ValueFuture.create();
+    private final SettableFuture<T> future = SettableFuture.create();
 
     /**
      * @return the future which will be populated once run
