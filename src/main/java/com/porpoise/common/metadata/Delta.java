@@ -67,7 +67,7 @@ public class Delta<T> {
      * @param beta
      * @return the newly added diff
      */
-    <P> Delta<P> addIterableDiff(final Metadata<?, ?> prop, final int index, final P alpha, final P beta) {
+    public <P> Delta<P> addIterableDiff(final Metadata<?, ?> prop, final int index, final P alpha, final P beta) {
         final Delta<P> diff = new IterableDelta<P>(prop, index, alpha, beta);
         addChild(diff);
         return diff;
@@ -82,7 +82,7 @@ public class Delta<T> {
      * @param beta
      * @return the newly added delta
      */
-    <K, V> Delta<Map<K, ? extends V>> addMapDiff(final Metadata<?, Map<K, ? extends V>> prop, final K key,
+    public <K, V> Delta<Map<K, ? extends V>> addMapDiff(final Metadata<?, Map<K, ? extends V>> prop, final K key,
             final Map<K, ? extends V> alpha, final Map<K, ? extends V> beta) {
         return addChild(new MapEntryDelta<K, V>(prop, key, alpha, beta));
     }
@@ -93,7 +93,7 @@ public class Delta<T> {
      *            the child delta
      * @return the new delta
      */
-    public <C> Delta<C> addChild(final Delta<C> child) {
+    public <C, D extends Delta<C>> D addChild(final D child) {
         this.childDeltasByProperty.put(child.getPropertyName(), child);
         // assert replaced == null : String.format("duplicate property '%s' found in %s", child.getPropertyName(),
         // this.property == null ? "root" : this.property.propertyName());

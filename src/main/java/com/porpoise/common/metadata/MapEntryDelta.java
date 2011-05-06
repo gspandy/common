@@ -12,7 +12,7 @@ public class MapEntryDelta<K, V> extends Delta<Map<K, ? extends V>> {
 
     private final K key;
 
-    MapEntryDelta(final Metadata<?, ?> prop, final K key, final Map<K, ? extends V> left,
+    public MapEntryDelta(final Metadata<?, ?> prop, final K key, final Map<K, ? extends V> left,
             final Map<K, ? extends V> right) {
         super(prop, left, right);
         this.key = key;
