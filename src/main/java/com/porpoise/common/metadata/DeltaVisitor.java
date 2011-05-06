@@ -111,6 +111,13 @@ public class DeltaVisitor<D> extends VisitorAdapter {
     @Override
     public <T, P> VisitorResult beforeMetadataProperty(final Metadata<P, T> property, final Pair<P, T> thingOne,
             final Pair<P, T> thingTwo) {
+        if (thingOne.getSecond() == null) {
+            delta().addDiff(property, null, thingTwo.getSecond());
+            return VisitorResult.SKIP;
+        } else if (thingTwo.getSecond() == null) {
+            delta().addDiff(property, thingOne.getSecond(), null);
+            return VisitorResult.SKIP;
+        }
         push(property, thingOne, thingTwo);
         return result();
     }
@@ -123,7 +130,9 @@ public class DeltaVisitor<D> extends VisitorAdapter {
     @Override
     public <T, P> VisitorResult afterMetadataProperty(final Metadata<P, T> property, final Pair<P, T> thingOne,
             final Pair<P, T> thingTwo) {
-        this.workingDelta.pop();
+        if (thingOne.getSecond() != null && thingTwo.getSecond() != null) {
+            this.workingDelta.pop();
+        }
         return result();
     }
 
