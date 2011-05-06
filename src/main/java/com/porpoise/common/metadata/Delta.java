@@ -82,9 +82,9 @@ public class Delta<T> {
      * @param beta
      * @return the newly added delta
      */
-    public <K, V> Delta<Map<K, ? extends V>> addMapDiff(final Metadata<?, Map<K, ? extends V>> prop, final K key,
-            final Map<K, ? extends V> alpha, final Map<K, ? extends V> beta) {
-        return addChild(new MapEntryDelta<K, V>(prop, key, alpha, beta));
+    public <K> Delta<Map<K, ?>> addMapDiff(final Metadata<?, ?> prop, final K key, final Map<K, ?> alpha,
+            final Map<K, ?> beta) {
+        return addChild(new MapEntryDelta<K>(prop, key, alpha, beta));
     }
 
     /**

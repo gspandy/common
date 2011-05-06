@@ -8,12 +8,16 @@ import java.util.Map;
  * @param <K>
  * @param <V>
  */
-public class MapEntryDelta<K, V> extends Delta<Map<K, ? extends V>> {
+public class MapEntryDelta<K> extends Delta<Map<K, ?>> {
 
     private final K key;
 
-    public MapEntryDelta(final Metadata<?, ?> prop, final K key, final Map<K, ? extends V> left,
-            final Map<K, ? extends V> right) {
+    public static <A> MapEntryDelta<A> valueOf(final Metadata<?, ?> prop, final A key, final Map<A, ?> left,
+            final Map<A, ?> right) {
+        return new MapEntryDelta<A>(prop, key, left, right);
+    }
+
+    public MapEntryDelta(final Metadata<?, ?> prop, final K key, final Map<K, ?> left, final Map<K, ?> right) {
         super(prop, left, right);
         this.key = key;
     }
@@ -46,7 +50,7 @@ public class MapEntryDelta<K, V> extends Delta<Map<K, ? extends V>> {
         return mapToString(getRight());
     }
 
-    private String mapToString(final Map<K, ? extends V> map) {
+    private String mapToString(final Map<K, ?> map) {
         if (map == null) {
             return "null";
         }
