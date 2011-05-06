@@ -20,6 +20,8 @@ import com.porpoise.common.collect.Sequences;
  *            the root object type for the delta
  */
 public class Delta<T> {
+    static final String NULL_STRING = "null";
+
     private final Map<String, Delta<?>> childDeltasByProperty = Maps.newHashMap();
 
     private final Metadata<?, ?> property;
@@ -219,7 +221,7 @@ public class Delta<T> {
     }
 
     protected static <V> String toStringSafe(final V value) {
-        return Objects.firstNonNull(value, "null").toString();
+        return Objects.firstNonNull(value, NULL_STRING).toString();
     }
 
     /**
