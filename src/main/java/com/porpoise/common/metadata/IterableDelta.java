@@ -49,9 +49,8 @@ public class IterableDelta<P> extends Delta<P> {
             final Iterable<?> iterable = (Iterable<?>) left;
             if (Iterables.size(iterable) > this.index) {
                 return toStringSafe(Iterables.get(iterable, this.index));
-            } else {
-                return NULL_STRING;
             }
+            return NULL_STRING;
         }
         return toStringSafe(left);
     }
