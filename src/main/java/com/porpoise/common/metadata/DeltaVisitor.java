@@ -133,7 +133,7 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#beforeIterablesWithMetadata(Metadata, java.lang.Iterable, java.lang.Iterable)
      */
     @Override
-    public <T, P, I extends Iterable<T>> VisitorResult beforeIterablesWithMetadata(final Metadata<P, I> property, final I thingOne, final I thingTwo) {
+    public <P, I extends Iterable<?>> VisitorResult beforeIterablesWithMetadata(final Metadata<P, I> property, final I thingOne, final I thingTwo) {
         return result();
     }
 
@@ -143,7 +143,7 @@ public class DeltaVisitor<D> extends VisitorAdapter {
      * @see PairVisitor#afterIterablesWithMetadata(Metadata, java.lang.Iterable, java.lang.Iterable)
      */
     @Override
-    public <T, P, I extends Iterable<T>> VisitorResult afterIterablesWithMetadata(final Metadata<P, I> property, final I thingOne, final I thingTwo) {
+    public <P, I extends Iterable<?>> VisitorResult afterIterablesWithMetadata(final Metadata<P, I> property, final I thingOne, final I thingTwo) {
         return result();
     }
 

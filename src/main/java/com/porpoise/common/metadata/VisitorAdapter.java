@@ -82,7 +82,7 @@ public class VisitorAdapter implements PairVisitor {
      * @see com.porpoise.common.metadata.PairVisitor#beforeIterablesWithMetadata(com.porpoise.common.metadata.Metadata, java.lang.Iterable, java.lang.Iterable)
      */
     @Override
-    public <T, P, I extends Iterable<T>> VisitorResult beforeIterablesWithMetadata(final Metadata<P, I> property, final I thingOne, final I thingTwo) {
+    public <P, I extends Iterable<?>> VisitorResult beforeIterablesWithMetadata(final Metadata<P, I> property, final I thingOne, final I thingTwo) {
         log("beforeIterablesWithMetadata(%s,  %s, %s)", property.propertyName(), thingOne, thingTwo);
         return VisitorResult.CONTINUE;
     }
@@ -93,7 +93,7 @@ public class VisitorAdapter implements PairVisitor {
      * @see com.porpoise.common.metadata.PairVisitor#afterIterablesWithMetadata(com.porpoise.common.metadata.Metadata, java.lang.Iterable, java.lang.Iterable)
      */
     @Override
-    public <T, P, I extends Iterable<T>> VisitorResult afterIterablesWithMetadata(final Metadata<P, I> property, final I thingOne, final I thingTwo) {
+    public <P, I extends Iterable<?>> VisitorResult afterIterablesWithMetadata(final Metadata<P, I> property, final I thingOne, final I thingTwo) {
         log("afterIterablesWithMetadata(%s,  %s, %s)", property.propertyName(), thingOne, thingTwo);
         return VisitorResult.CONTINUE;
     }

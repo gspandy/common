@@ -60,7 +60,7 @@ public interface PairVisitor {
      * @param thingTwo
      * @return the visitor result
      */
-    <T, P, I extends Iterable<T>> VisitorResult beforeIterablesWithMetadata(Metadata<P, I> property, I thingOne, I thingTwo);
+    <P, I extends Iterable<?>> VisitorResult beforeIterablesWithMetadata(Metadata<P, I> property, I thingOne, I thingTwo);
 
     /**
      * 
@@ -72,7 +72,7 @@ public interface PairVisitor {
      * @param thingTwo
      * @return the visitor result
      */
-    <T, P, I extends Iterable<T>> VisitorResult afterIterablesWithMetadata(Metadata<P, I> property, I thingOne, I thingTwo);
+    <P, I extends Iterable<?>> VisitorResult afterIterablesWithMetadata(Metadata<P, I> property, I thingOne, I thingTwo);
 
     /**
      * 
@@ -96,7 +96,7 @@ public interface PairVisitor {
      * @param pairTwo
      * @return the visitor result
      */
-    <T, P, I extends Iterable<T>> VisitorResult beforeIterableItemWithMetadata(Metadata<P, I> property, int index, Pair<I, T> pairOne, Pair<I, T> pairTwo);
+    <P, I extends Iterable<?>> VisitorResult beforeIterableItemWithMetadata(Metadata<P, I> property, int index, Pair<I, T> pairOne, Pair<I, T> pairTwo);
 
     /**
      * 
