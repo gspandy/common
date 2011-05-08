@@ -9,8 +9,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.google.common.collect.Lists;
 
 /**
- * A {@link Callable} which delegates to another callable. Listeners can register for notification of the underlying delegate's completion, whether successful or in the event of an
- * exception.
+ * A {@link Callable} which delegates to another callable. Listeners can register for notification of the underlying
+ * delegate's completion, whether successful or in the event of an exception.
  * 
  * @author Aaron
  * @param <K>
@@ -21,9 +21,9 @@ import com.google.common.collect.Lists;
 class KeyedListenableCallable<K, T> implements Callable<T> {
     private final Collection<ICallableListener<K, T>> listeners;
 
-    private final Callable<T>                         delegate;
+    private final Callable<T> delegate;
 
-    private final K                                   key;
+    private final K key;
 
     public KeyedListenableCallable(final K keyParam, final Callable<T> newCallable) {
         this.key = checkNotNull(keyParam);

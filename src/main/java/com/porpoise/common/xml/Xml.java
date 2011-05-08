@@ -34,9 +34,9 @@ import com.google.common.collect.Lists;
 public enum Xml {
     ; // unintantiable
 
-    private static final DocumentBuilderFactory BUILDER_FACTOR      = DocumentBuilderFactory.newInstance();
+    private static final DocumentBuilderFactory BUILDER_FACTOR = DocumentBuilderFactory.newInstance();
 
-    private static final TransformerFactory     TRANSFORMER_FACTORY = TransformerFactory.newInstance();
+    private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 
     public static Collection<Node> evalXPath(final String xml, final String xpath) {
         final Document doc = xmlToDoc(xml);

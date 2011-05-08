@@ -9,14 +9,15 @@ import org.apache.log4j.Logger;
 import com.porpoise.common.concurrent.Threads;
 
 /**
- * Logging utility class. In addition to 'convenience methods' for formatted logging, this class also serves as an RCP log listener
+ * Logging utility class. In addition to 'convenience methods' for formatted logging, this class also serves as an RCP
+ * log listener
  * 
  * @author Aaron
  */
 public class Log {
     private static final Log INSTANCE;
 
-    private final Logger     log;
+    private final Logger log;
 
     static {
         INSTANCE = new Log();

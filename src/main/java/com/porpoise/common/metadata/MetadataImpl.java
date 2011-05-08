@@ -8,9 +8,9 @@ import com.google.common.base.Preconditions;
  */
 public class MetadataImpl<T, V> implements Metadata<T, V> {
 
-    private final String         name;
+    private final String name;
     private final Function<T, V> accessor;
-    private final boolean        mutable;
+    private final boolean mutable;
 
     public MetadataImpl(final String name, final Function<T, V> accessor) {
         this(name, accessor, false);

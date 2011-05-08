@@ -14,8 +14,8 @@ import com.google.common.collect.Lists;
  * Object which can be used as the key in a map based on the given functions and input type
  */
 final class FixedHashKey<T> {
-    private final T                  input;
-    private final int                cachedHashCode;
+    private final T input;
+    private final int cachedHashCode;
     private final Collection<Object> precomputedValues;
 
     FixedHashKey(final Iterable<Function<T, ?>> functions, final T inputParam) {

@@ -13,7 +13,7 @@ import com.porpoise.common.log.Log;
 public class SkipDirectoryVisitor extends FileVistiorAdapter {
     private final IFileVisitor delegate;
 
-    final Collection<String>   blackList;
+    final Collection<String> blackList;
 
     /**
      * @param visitor

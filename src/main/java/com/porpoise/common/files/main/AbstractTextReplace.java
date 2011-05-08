@@ -38,15 +38,18 @@ abstract class AbstractTextReplace {
         return newFileFunction;
     }
 
-    protected IFileVisitor createJavaVisitor(final Function<String, String> replace, final Function<File, File> newFileFunction) {
+    protected IFileVisitor createJavaVisitor(final Function<String, String> replace,
+            final Function<File, File> newFileFunction) {
         final IFileVisitor renameVisitor = createTextReplaceVisitor(replace, newFileFunction);
         final Predicate<String> nameMatcher = getFileNamePredicate();
         final IFileVisitor fileMatcherVisitor = new FileMatcherVisitor(nameMatcher, renameVisitor);
-        final SkipDirectoryVisitor skipDirectoryVisitor = new SkipDirectoryVisitor(fileMatcherVisitor, ".git", "build", "target", "dist", "target-platform", "org.junit");
+        final SkipDirectoryVisitor skipDirectoryVisitor = new SkipDirectoryVisitor(fileMatcherVisitor, ".git", "build",
+                "target", "dist", "target-platform", "org.junit");
         return skipDirectoryVisitor;
     }
 
-    private static IFileVisitor createTextReplaceVisitor(final Function<String, String> replace, final Function<File, File> newFileFunction) {
+    private static IFileVisitor createTextReplaceVisitor(final Function<String, String> replace,
+            final Function<File, File> newFileFunction) {
         final IFileVisitor renameVisitor = new TextReplaceVisitor(replace, newFileFunction);
         return renameVisitor;
     }

@@ -19,9 +19,9 @@ import com.google.common.collect.Maps;
  * @author Aaron
  */
 abstract class AbstractCache<K, T> {
-    static final TimeUnit   DEFAULT_TIME_UNIT = TimeUnit.MINUTES;
+    static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MINUTES;
 
-    static final int        DEFAULT_TIMEOUT   = 10;
+    static final int DEFAULT_TIMEOUT = 10;
 
     private final Map<K, T> cache;
 

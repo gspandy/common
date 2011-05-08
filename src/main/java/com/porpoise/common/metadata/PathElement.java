@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
  * @param <T>
  */
 public class PathElement<T, P> {
-    private final Delta<T>          delta;
+    private final Delta<T> delta;
     private final PathElement<?, T> parent;
 
     /**
@@ -34,6 +34,14 @@ public class PathElement<T, P> {
      */
     public T getLeft() {
         return this.delta.getLeft();
+    }
+
+    private String getLeftString() {
+        return this.delta.getLeftString();
+    }
+
+    private String getRightString() {
+        return this.delta.getRightString();
     }
 
     /**
@@ -89,7 +97,7 @@ public class PathElement<T, P> {
         if (this.parent != null) {
             prefix = String.format("%s.", this.parent.getPathString());
         }
-        return String.format("%s%s{%s != %s}", prefix, getPropertyName(), getLeft(), getRight());
+        return String.format("%s%s{%s != %s}", prefix, getPropertyName(), getLeftString(), getRightString());
     }
 
     /**

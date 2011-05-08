@@ -24,7 +24,8 @@ import com.porpoise.common.collect.tree.TreeVisitors.SizeVisitor;
 import com.porpoise.common.collect.tree.TreeVisitors.TreeVisitorAdapter;
 
 /**
- * Similar to scala traits, this class provides a richer tree implementation by providing addition methods from the basic {@link TreeNode} interface
+ * Similar to scala traits, this class provides a richer tree implementation by providing addition methods from the
+ * basic {@link TreeNode} interface
  * 
  * @author Aaron
  * 
@@ -72,7 +73,8 @@ public enum TreeTrait {
      *            the separator to use between nodes
      * @return a string containing all parent nodes using the given separator and to-string function
      */
-    public static <T> String toPathString(final TreeNode<T> node, final Function<? super TreeNode<T>, String> toString, final String separator) {
+    public static <T> String toPathString(final TreeNode<T> node, final Function<? super TreeNode<T>, String> toString,
+            final String separator) {
         final Collection<TreeNode<T>> path = getPath(node);
         final Collection<String> names = Collections2.transform(path, toString);
         return Joiner.on(separator).join(names);
@@ -113,7 +115,8 @@ public enum TreeTrait {
      *            the depth 'delta' to process. i.e., if set to one (1), it will proceed to a maximum of 1 depth further
      * @return
      */
-    public static <T, N extends TreeNode<T>, V extends TreeVisitor<N>> V depthFirstPlusDepth(final N node, final V visitor, final int depth) {
+    public static <T, N extends TreeNode<T>, V extends TreeVisitor<N>> V depthFirstPlusDepth(final N node,
+            final V visitor, final int depth) {
         Preconditions.checkArgument(depth > 0, "Depth must be positive: " + depth);
         final Predicate<N> condition = plusDepthCondition(node, depth);
         depthFirstConditional(node, visitor, condition);
@@ -188,11 +191,13 @@ public enum TreeTrait {
      * @param visitor
      * @param continuePredicate
      */
-    public static <T, N extends TreeNode<T>> void depthFirstConditional(final N node, final TreeVisitor<N> visitor, final Predicate<N> continuePredicate) {
+    public static <T, N extends TreeNode<T>> void depthFirstConditional(final N node, final TreeVisitor<N> visitor,
+            final Predicate<N> continuePredicate) {
         depthFirstRecursive(0, node, visitor, continuePredicate);
     }
 
-    private static <T, N extends TreeNode<T>> void depthFirstRecursive(final int depth, final N node, final TreeVisitor<N> visitor, final Predicate<N> continuePredicate) {
+    private static <T, N extends TreeNode<T>> void depthFirstRecursive(final int depth, final N node,
+            final TreeVisitor<N> visitor, final Predicate<N> continuePredicate) {
         if (!continuePredicate.apply(node)) {
             return;
         }
@@ -227,7 +232,8 @@ public enum TreeTrait {
      *            the depth 'delta' to process. i.e., if set to one (1), it will proceed to a maximum of 1 depth further
      * @return
      */
-    public static <T, N extends TreeNode<T>> N breadthFirstPlusDepth(final N node, final TreeVisitor<N> visitor, final int depth) {
+    public static <T, N extends TreeNode<T>> N breadthFirstPlusDepth(final N node, final TreeVisitor<N> visitor,
+            final int depth) {
         Preconditions.checkArgument(depth > 0, "Depth must be positive: " + depth);
         final Predicate<N> condition = plusDepthCondition(node, depth);
         return breadthFirstConditional(node, visitor, condition);
@@ -257,7 +263,8 @@ public enum TreeTrait {
      *            the predicate used to determine whether the processing should continue
      * @return the last processed node
      */
-    public static <T, N extends TreeNode<T>> N breadthFirstConditional(final N node, final TreeVisitor<N> visitor, final Predicate<N> continuePredicate) {
+    public static <T, N extends TreeNode<T>> N breadthFirstConditional(final N node, final TreeVisitor<N> visitor,
+            final Predicate<N> continuePredicate) {
         final Deque<N> queue = Lists.newLinkedList();
         queue.add(node);
         return breadthFirstConditional(queue, visitor, continuePredicate);
@@ -301,7 +308,8 @@ public enum TreeTrait {
         return sizeVisitor.sizeOf(node);
     }
 
-    private static <T, N extends TreeNode<T>> N breadthFirstConditional(final Deque<N> queue, final TreeVisitor<N> visitor, final Predicate<N> continuePredicate) {
+    private static <T, N extends TreeNode<T>> N breadthFirstConditional(final Deque<N> queue,
+            final TreeVisitor<N> visitor, final Predicate<N> continuePredicate) {
         N node = null;
         while (!queue.isEmpty()) {
             node = queue.removeFirst();
@@ -355,7 +363,8 @@ public enum TreeTrait {
      * @param name
      * @return the child for the given tree node using the nodeToName function
      */
-    public static <T> TreeNode<T> getChildByName(final TreeNode<T> source, final Function<? super TreeNode<T>, String> nodeToName, final String name) {
+    public static <T> TreeNode<T> getChildByName(final TreeNode<T> source,
+            final Function<? super TreeNode<T>, String> nodeToName, final String name) {
         for (final TreeNode<T> child : source.getChildren()) {
             if (nodeToName.apply(child).equals(name)) {
                 return child;
@@ -371,7 +380,8 @@ public enum TreeTrait {
      * @param name
      * @return the child for the given tree node using the nodeToName function
      */
-    public static <T> TreeNode<T> getChildByNameDeep(final TreeNode<T> source, final Function<? super TreeNode<T>, String> nodeToName, final String name) {
+    public static <T> TreeNode<T> getChildByNameDeep(final TreeNode<T> source,
+            final Function<? super TreeNode<T>, String> nodeToName, final String name) {
         final Predicate<TreeNode<T>> continuePredicate = new Predicate<TreeNode<T>>() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -390,7 +400,8 @@ public enum TreeTrait {
         return null;
     }
 
-    private static <T> boolean isNameEquals(final TreeNode<T> node, final Function<? super TreeNode<T>, String> nodeToName, final String name) {
+    private static <T> boolean isNameEquals(final TreeNode<T> node,
+            final Function<? super TreeNode<T>, String> nodeToName, final String name) {
         if (node == null) {
             return false;
         }
@@ -418,7 +429,8 @@ public enum TreeTrait {
      * @param pathParam
      * @return
      */
-    public static <T> TreeNode<T> findByPath(final TreeNode<T> source, final Function<? super TreeNode<T>, String> nodeToNameFunction, final String pathParam) {
+    public static <T> TreeNode<T> findByPath(final TreeNode<T> source,
+            final Function<? super TreeNode<T>, String> nodeToNameFunction, final String pathParam) {
         // start at the current node
         TreeNode<T> result = source;
         String path = pathParam;
@@ -443,7 +455,8 @@ public enum TreeTrait {
      * 
      * The intent is this:
      * 
-     * Given an ITreeNode (who's nodeToName function resolves it as 'A'), then when 'A' is asked to parse the path A/B/C , this resolves to 'B/C'
+     * Given an ITreeNode (who's nodeToName function resolves it as 'A'), then when 'A' is asked to parse the path A/B/C
+     * , this resolves to 'B/C'
      * 
      * @param <T>
      * @param source
@@ -451,7 +464,8 @@ public enum TreeTrait {
      * @param pathParam
      * @return
      */
-    static <T> String adjustForRootPath(final TreeNode<T> source, final Function<? super TreeNode<T>, String> nodeToName, final String pathParam) {
+    static <T> String adjustForRootPath(final TreeNode<T> source,
+            final Function<? super TreeNode<T>, String> nodeToName, final String pathParam) {
         String path = pathParam;
         final Iterable<String> nodes = split(path);
         final Iterator<String> iter = nodes.iterator();
@@ -511,7 +525,8 @@ public enum TreeTrait {
      * @param name
      * @return a collection of the tree leaf 'paths'
      */
-    public static <T> Collection<String> getLeafPaths(final TreeNode<T> source, final Function<? super TreeNode<?>, String> name) {
+    public static <T> Collection<String> getLeafPaths(final TreeNode<T> source,
+            final Function<? super TreeNode<?>, String> name) {
         final Collection<TreeNode<T>> nodes = getLeafNodes(source);
         final Function<TreeNode<T>, String> toPath = new Function<TreeNode<T>, String>() {
             @Override
@@ -713,8 +728,9 @@ public enum TreeTrait {
         }
 
         /*
-         * ====================================================================== To get to the same depth, we choose to always work in one 'direction'. Either is as good as the
-         * other, so lets always assume the left side to be more shallow than the right: ================================================
+         * ====================================================================== To get to the same depth, we choose to
+         * always work in one 'direction'. Either is as good as the other, so lets always assume the left side to be
+         * more shallow than the right: ================================================
          */
         final int depth = getDepth(first);
         if (depth > getDepth(second)) {
@@ -722,7 +738,8 @@ public enum TreeTrait {
         }
 
         /*
-         * ====================================================================== Now, get both nodes to the same depth ======================================
+         * ====================================================================== Now, get both nodes to the same depth
+         * ======================================
          */
         TreeNode<T> right = second;
         final int secondDepth = getDepth(right);
@@ -732,9 +749,11 @@ public enum TreeTrait {
         assert depth == getDepth(right);
 
         /*
-         * ====================================================================== finally, simply traverse up the tree until a common parent is found. The only way this would NOT
-         * work is if the nodes were from two different trees. If that is the case, we could return null, but here we choose rather to just let them NPE, as clients of this class
-         * really shouldn't be mixing two navigation trees ================================================
+         * ====================================================================== finally, simply traverse up the tree
+         * until a common parent is found. The only way this would NOT work is if the nodes were from two different
+         * trees. If that is the case, we could return null, but here we choose rather to just let them NPE, as clients
+         * of this class really shouldn't be mixing two navigation trees
+         * ================================================
          */
         TreeNode<T> left = first;
         while (left != right) {
@@ -797,7 +816,8 @@ public enum TreeTrait {
         return toStringRecursive(node, toString, newLine);
     }
 
-    private static <T> String toStringRecursive(final TreeNode<T> node, final Function<? super TreeNode<T>, String> toString, final String newLine) {
+    private static <T> String toStringRecursive(final TreeNode<T> node,
+            final Function<? super TreeNode<T>, String> toString, final String newLine) {
         final StringBuilder b = new StringBuilder();
 
         final int depth = getDepth(node);

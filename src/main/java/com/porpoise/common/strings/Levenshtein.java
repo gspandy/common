@@ -56,10 +56,10 @@ public enum Levenshtein {
     private static class Matrix {
 
         Table<Integer, Integer, Integer> matrix;
-        private final int                width;
-        private final int                height;
-        private final String             one;
-        private final String             two;
+        private final int width;
+        private final int height;
+        private final String one;
+        private final String two;
 
         public Matrix(final String one, final String two) {
             this.one = one;

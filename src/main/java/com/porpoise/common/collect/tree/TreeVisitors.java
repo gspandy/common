@@ -109,7 +109,8 @@ public enum TreeVisitors {
         /**
          * convenience method to parse the given node depth first using the collection visitor.
          * 
-         * NOTE: the internal (mutable) nodes collection will simply append all nodes, so multiple calls of this method will continue to add to the collection!
+         * NOTE: the internal (mutable) nodes collection will simply append all nodes, so multiple calls of this method
+         * will continue to add to the collection!
          * 
          * @param node
          *            the node to parse, depth first

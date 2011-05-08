@@ -29,7 +29,7 @@ public enum Sequences {
     ;//
 
     public static final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> SUM_DEC;
-    public static final Function<Pair<Number, Number>, Number>             SUM_NUM;
+    public static final Function<Pair<Number, Number>, Number> SUM_NUM;
 
     static {
         SUM_DEC = new Function<Pair<BigDecimal, BigDecimal>, BigDecimal>() {
@@ -70,7 +70,8 @@ public enum Sequences {
         };
     }
 
-    public static <KEY, VAL1, VAL2, RES> Map<KEY, RES> mergeMapsIntersection(final Function<Pair<VAL1, VAL2>, RES> collate, final Map<KEY, VAL1> map1, final Map<KEY, VAL2> map2) {
+    public static <KEY, VAL1, VAL2, RES> Map<KEY, RES> mergeMapsIntersection(
+            final Function<Pair<VAL1, VAL2>, RES> collate, final Map<KEY, VAL1> map1, final Map<KEY, VAL2> map2) {
         final Map<KEY, RES> intersection = Maps.newHashMap();
         for (final KEY key : Sets.intersection(map1.keySet(), map2.keySet())) {
             final VAL1 value1 = map1.get(key);
@@ -83,7 +84,8 @@ public enum Sequences {
         return intersection;
     }
 
-    public static <T, N> T foldLeft(final T initial, final Iterable<? extends N> things, final Function<Pair<T, N>, T> fnc) {
+    public static <T, N> T foldLeft(final T initial, final Iterable<? extends N> things,
+            final Function<Pair<T, N>, T> fnc) {
         T value = initial;
         for (final N next : things) {
             value = fnc.apply(Pair.valueOf(value, next));
@@ -91,31 +93,38 @@ public enum Sequences {
         return value;
     }
 
-    public static <T, N> T foldRight(final T initial, final Iterable<? extends N> things, final Function<Pair<T, N>, T> fnc) {
+    public static <T, N> T foldRight(final T initial, final Iterable<? extends N> things,
+            final Function<Pair<T, N>, T> fnc) {
         return foldLeft(initial, Lists.reverse(Lists.newArrayList(things)), fnc);
     }
 
-    public static BigDecimal foldDec(final Iterable<BigDecimal> things, final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> fnc) {
+    public static BigDecimal foldDec(final Iterable<BigDecimal> things,
+            final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> fnc) {
         return foldDec(BigDecimal.ZERO, things, fnc);
     }
 
-    public static BigDecimal foldDec(final BigDecimal initial, final Iterable<BigDecimal> things, final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> fnc) {
+    public static BigDecimal foldDec(final BigDecimal initial, final Iterable<BigDecimal> things,
+            final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> fnc) {
         return foldLeft(initial, things, fnc);
     }
 
-    public static Number foldNum(final Iterable<? extends Number> things, final Function<Pair<Number, Number>, Number> fnc) {
+    public static Number foldNum(final Iterable<? extends Number> things,
+            final Function<Pair<Number, Number>, Number> fnc) {
         return foldNum(Integer.valueOf(0), things, fnc);
     }
 
-    public static Number foldNum(final Integer initial, final Iterable<? extends Number> things, final Function<Pair<Number, Number>, Number> fnc) {
+    public static Number foldNum(final Integer initial, final Iterable<? extends Number> things,
+            final Function<Pair<Number, Number>, Number> fnc) {
         return foldLeft(initial, things, fnc);
     }
 
-    public static <K, V> Map<K, V> mergeMaps(final Map<K, V> map1, final Map<K, V> map2, final Function<Pair<V, V>, V> collate) {
+    public static <K, V> Map<K, V> mergeMaps(final Map<K, V> map1, final Map<K, V> map2,
+            final Function<Pair<V, V>, V> collate) {
         return mergeMapsInternal(ImmutableList.of(map1, map2), collate);
     }
 
-    private static <K, V> Map<K, V> mergeMapsInternal(final Iterable<Map<K, V>> mapsToMerge, final Function<Pair<V, V>, V> collate) {
+    private static <K, V> Map<K, V> mergeMapsInternal(final Iterable<Map<K, V>> mapsToMerge,
+            final Function<Pair<V, V>, V> collate) {
         final Function<Map<K, ?>, Set<K>> getKeys = getKeys();
         final Map<K, V> merged = Maps.newHashMap();
         for (final K key : flatMapSet(mapsToMerge, getKeys)) {
@@ -144,7 +153,8 @@ public enum Sequences {
         return addAll(flat, all);
     }
 
-    private static <C extends Collection<T>, T> C addAll(final C container, final Iterable<? extends Iterable<T>> collections) {
+    private static <C extends Collection<T>, T> C addAll(final C container,
+            final Iterable<? extends Iterable<T>> collections) {
         for (final Iterable<T> coll : collections) {
             Iterables.addAll(container, coll);
         }
@@ -156,12 +166,14 @@ public enum Sequences {
         return natural.nullsFirst().compare(left, right);
     }
 
-    public static <F, T> Collection<T> flatMap(final Iterable<F> from, final Function<? super F, ? extends Iterable<T>> function) {
+    public static <F, T> Collection<T> flatMap(final Iterable<F> from,
+            final Function<? super F, ? extends Iterable<T>> function) {
         final Iterable<Iterable<T>> transformed = Iterables.transform(from, function);
         return flatten(transformed);
     }
 
-    public static <F, T> Set<T> flatMapSet(final Iterable<F> from, final Function<? super F, ? extends Iterable<T>> function) {
+    public static <F, T> Set<T> flatMapSet(final Iterable<F> from,
+            final Function<? super F, ? extends Iterable<T>> function) {
         final Iterable<Iterable<T>> all = Iterables.transform(from, function);
         final Set<T> flat = Sets.newHashSet();
         return addAll(flat, all);
@@ -183,7 +195,8 @@ public enum Sequences {
         return groupByInternal(collection, mapper);
     }
 
-    private static <K, V> Map<K, Collection<V>> groupByInternal(final Iterable<V> collection, final Function<? super V, K> mapper) {
+    private static <K, V> Map<K, Collection<V>> groupByInternal(final Iterable<V> collection,
+            final Function<? super V, K> mapper) {
         final Map<K, Collection<V>> mapped = Maps.newConcurrentMap();
         for (final V value : collection) {
             final K key = mapper.apply(value);
@@ -225,7 +238,8 @@ public enum Sequences {
     }
 
     /**
-     * Zip together both collections, returning a collection of both elements. Any extra elements in either list will be silently lopped off
+     * Zip together both collections, returning a collection of both elements. Any extra elements in either list will be
+     * silently lopped off
      * 
      * @param <A>
      * @param <B>

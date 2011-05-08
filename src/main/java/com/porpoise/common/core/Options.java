@@ -5,14 +5,17 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Borrowed from Scala, an Option is a type of "Monad". It serves as a container, and is used to replace potential null values.
+ * Borrowed from Scala, an Option is a type of "Monad". It serves as a container, and is used to replace potential null
+ * values.
  * 
- * For instance, if a method returns a Long which can be null, that intention isn't obvious except perhaps by reading the Javadoc.
+ * For instance, if a method returns a Long which can be null, that intention isn't obvious except perhaps by reading
+ * the Javadoc.
  * 
- * If instead, however, it returns an Option<Long>, not only is it clear that that return value might not be a Long, but also it is possible to call methods on the returned option
- * (as the method now returns an object, not a null)
+ * If instead, however, it returns an Option<Long>, not only is it clear that that return value might not be a Long, but
+ * also it is possible to call methods on the returned option (as the method now returns an object, not a null)
  * 
- * Use {@link Options#none()} and {@link Options#some(Object)} to represent no value (null) or a valid value, respectively.
+ * Use {@link Options#none()} and {@link Options#some(Object)} to represent no value (null) or a valid value,
+ * respectively.
  * 
  * @author aaron.pritzlaff
  * 

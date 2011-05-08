@@ -6,7 +6,7 @@ import java.io.IOException;
 import com.google.common.base.Preconditions;
 
 class Configuration {
-    private final File   directory;
+    private final File directory;
 
     private final String suffix;
 

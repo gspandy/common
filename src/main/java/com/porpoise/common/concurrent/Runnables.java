@@ -16,7 +16,8 @@ public enum Runnables {
     ;// uninstantiable
 
     /**
-     * This method provides a bridge/adapter pattern, allowing a {@link Callable} to be treated as a {@link Runnable} Return a {@link Runnable}
+     * This method provides a bridge/adapter pattern, allowing a {@link Callable} to be treated as a {@link Runnable}
+     * Return a {@link Runnable}
      * 
      * @param callable
      *            the non-null callable to return as a runnable
@@ -51,10 +52,12 @@ public enum Runnables {
     }
 
     /**
-     * This is a utility method for wrapping a runnable, returning another runnable which is guaranteed only to run at the given interval. Multiple invocations within that interval
-     * will be result in only one invocation of the wrapped Runnable being executed at the next available time slot.
+     * This is a utility method for wrapping a runnable, returning another runnable which is guaranteed only to run at
+     * the given interval. Multiple invocations within that interval will be result in only one invocation of the
+     * wrapped Runnable being executed at the next available time slot.
      * 
-     * For example, consider some runnable logic A is provided with the interval of 10 seconds, and the returned 'throttled' runnable is invoked:
+     * For example, consider some runnable logic A is provided with the interval of 10 seconds, and the returned
+     * 'throttled' runnable is invoked:
      * 
      * <pre>
      * Runnable logic = ...;
@@ -63,13 +66,15 @@ public enum Runnables {
      * <ol>
      * <li>12:00:00 => thottled.run() // this invocation will occur immediately</li>
      * <li>12:00:01 => thottled.run() // this invocation will result in the logic being run at 12:00:10</li>
-     * <li>12:00:02 => thottled.run() // this invocation will be ignored, as an invocation is already queued for 12:00:10</li>
+     * <li>12:00:02 => thottled.run() // this invocation will be ignored, as an invocation is already queued for
+     * 12:00:10</li>
      * <li>12:00:09 => thottled.run() // this invocation is also ignored</li>
      * <li>12:00:10 => the logic is executed</li>
-     * <li>12:00:11 => thottled.run() // As the logic was last run at 12:00:10 and should only be run every 10 seconds, this invocation will result in the logic being run at
-     * 12:00:20</li>
+     * <li>12:00:11 => thottled.run() // As the logic was last run at 12:00:10 and should only be run every 10 seconds,
+     * this invocation will result in the logic being run at 12:00:20</li>
      * <li>12:00:20 => the logic is executed</li>
-     * <li>12:00:50 => thottled.run() // the logic has not been invoked since 12:00:20, so this invocation will occur immediately</li>
+     * <li>12:00:50 => thottled.run() // the logic has not been invoked since 12:00:20, so this invocation will occur
+     * immediately</li>
      * </ol>
      * 
      * I
@@ -98,7 +103,8 @@ public enum Runnables {
      *            the interval time unit
      * @return a runnable which will only be invoked once within the given interval
      */
-    public static Runnable throttle(final ExecutorService executor, final Runnable runnable, final int interval, final TimeUnit timeUnit) {
+    public static Runnable throttle(final ExecutorService executor, final Runnable runnable, final int interval,
+            final TimeUnit timeUnit) {
         return new ThrottledRunnable(executor, interval, timeUnit, runnable);
     }
 }

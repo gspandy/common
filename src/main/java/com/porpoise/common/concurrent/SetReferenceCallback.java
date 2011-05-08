@@ -14,7 +14,7 @@ import com.porpoise.common.log.Log;
 class SetReferenceCallback<K, T> extends CallableListenerAdapter<K, T> {
     private final AtomicReference<T> reference;
 
-    private final T                  originalValue;
+    private final T originalValue;
 
     public SetReferenceCallback(final AtomicReference<T> ref) {
         this.reference = Preconditions.checkNotNull(ref);
@@ -25,7 +25,8 @@ class SetReferenceCallback<K, T> extends CallableListenerAdapter<K, T> {
     public void onComplete(final K key, final T result) {
         final boolean success = this.reference.compareAndSet(this.originalValue, result);
         if (!success) {
-            Log.debug("Couldn not set '%s' reference to '%s' as the value had been altered since instantiation", key, result);
+            Log.debug("Couldn not set '%s' reference to '%s' as the value had been altered since instantiation", key,
+                    result);
         }
     }
 

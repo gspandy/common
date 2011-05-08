@@ -9,15 +9,18 @@ import java.util.Set;
 
 /**
  * <p>
- * A delayed map is a type of delegating map which will keep local changes (puts, removes clears) until it is "flushed" to its underlying map.
+ * A delayed map is a type of delegating map which will keep local changes (puts, removes clears) until it is "flushed"
+ * to its underlying map.
  * </p>
  * <p>
- * This may be useful to keep track of and control the changes of a map provided as a method argument or constructor, or for use a tiered cache, where a local scratch-pad might be
- * used and then submitted to a session cache, which in turn submits to an application-wide cache.
+ * This may be useful to keep track of and control the changes of a map provided as a method argument or constructor, or
+ * for use a tiered cache, where a local scratch-pad might be used and then submitted to a session cache, which in turn
+ * submits to an application-wide cache.
  * </p>
  * <p>
- * NOTE: no synchronization or resolution is provided with underlying maps. If a similar change is made both to a DelayedMap and to the underlying map delegate, the underlying
- * changes may be lost when the map is flushed. External synchronisation/coordination is thus required in order to prevent data loss.
+ * NOTE: no synchronization or resolution is provided with underlying maps. If a similar change is made both to a
+ * DelayedMap and to the underlying map delegate, the underlying changes may be lost when the map is flushed. External
+ * synchronisation/coordination is thus required in order to prevent data loss.
  * </p>
  * 
  * @param <K>
@@ -26,11 +29,11 @@ import java.util.Set;
  *            The value type
  */
 public class DelayedMap<K, V> implements Map<K, V> {
-    private final Map<K, V>      delegate;
+    private final Map<K, V> delegate;
 
-    private final Map<K, V>      updateMap;
-    private final Set<K>         newSet;
-    private final Set<K>         deleteSet;
+    private final Map<K, V> updateMap;
+    private final Set<K> newSet;
+    private final Set<K> deleteSet;
 
     //
     // This flag may be used in order to track "new" entries, though

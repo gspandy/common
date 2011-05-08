@@ -2,12 +2,16 @@ package com.porpoise.common.metadata;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Functions;
+import com.google.common.base.Objects;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.porpoise.common.strings.Trim;
+import com.porpoise.common.collect.Sequences;
 
 /**
  * Represents a delta between two objects of type T
@@ -16,11 +20,13 @@ import com.porpoise.common.strings.Trim;
  *            the root object type for the delta
  */
 public class Delta<T> {
+    static final String NULL_STRING = "null";
+
     private final Map<String, Delta<?>> childDeltasByProperty = Maps.newHashMap();
 
-    private final Metadata<?, ?>        property;
-    private final T                     left;
-    private final T                     right;
+    private final Metadata<?, ?> property;
+    private final T left;
+    private final T right;
 
     /**
      * @param <R>
@@ -28,7 +34,7 @@ public class Delta<T> {
      * @param right
      * @return
      */
-    static <R> Delta<R> root(final R left, final R right) {
+    public static <R> Delta<R> root(final R left, final R right) {
         return new Delta<R>(null, left, right);
     }
 
@@ -50,7 +56,7 @@ public class Delta<T> {
      * @param beta
      * @return the added delta
      */
-    <P> Delta<P> addDiff(final Metadata<?, ?> prop, final P alpha, final P beta) {
+    public <P> Delta<P> addDiff(final Metadata<?, ?> prop, final P alpha, final P beta) {
         return addChild(new Delta<P>(prop, alpha, beta));
     }
 
@@ -61,7 +67,7 @@ public class Delta<T> {
      * @param beta
      * @return the newly added diff
      */
-    <P> Delta<P> addIterableDiff(final Metadata<?, ?> prop, final int index, final P alpha, final P beta) {
+    public <P> Delta<P> addIterableDiff(final Metadata<?, ?> prop, final int index, final P alpha, final P beta) {
         final Delta<P> diff = new IterableDelta<P>(prop, index, alpha, beta);
         addChild(diff);
         return diff;
@@ -76,8 +82,9 @@ public class Delta<T> {
      * @param beta
      * @return the newly added delta
      */
-    <K, V> Delta<Map<K, V>> addMapDiff(final Metadata<?, Map<K, V>> prop, final K key, final Map<K, V> alpha, final Map<K, V> beta) {
-        return addChild(new MapEntryDelta<K, V>(prop, key, alpha, beta));
+    public <K> Delta<Map<K, ?>> addMapDiff(final Metadata<?, ?> prop, final K key, final Map<K, ?> alpha,
+            final Map<K, ?> beta) {
+        return addChild(new MapEntryDelta<K>(prop, key, alpha, beta));
     }
 
     /**
@@ -86,7 +93,7 @@ public class Delta<T> {
      *            the child delta
      * @return the new delta
      */
-    <C> Delta<C> addChild(final Delta<C> child) {
+    public <C, D extends Delta<C>> D addChild(final D child) {
         this.childDeltasByProperty.put(child.getPropertyName(), child);
         // assert replaced == null : String.format("duplicate property '%s' found in %s", child.getPropertyName(),
         // this.property == null ? "root" : this.property.propertyName());
@@ -98,31 +105,35 @@ public class Delta<T> {
      */
     @Override
     public String toString() {
-        return toString(null);
+        final List<String> pathStrings = Lists.newArrayList(Collections2.transform(paths(),
+                Functions.toStringFunction()));
+        Collections.sort(pathStrings);
+        return Sequences.toString(pathStrings);
     }
 
-    private String mkName() {
-        if (this.property == null) {
-            return "";
-        }
-        return String.format("%s{%s,%s}", getPropertyName(), Trim.right(getLeft(), 10), Trim.right(getRight(), 10));
-    }
+    //
+    // private String mkName() {
+    // if (this.property == null) {
+    // return "";
+    // }
+    // return String.format("%s{%s,%s}", getPropertyName(), Trim.right(getLeft(), 10), Trim.right(getRight(), 10));
+    // }
 
-    private String toString(final String prefixParam) {
-        final StringBuilder b = new StringBuilder();
-        final String prefix;
-        if (prefixParam == null) {
-            prefix = mkName();
-        } else {
-            prefix = String.format("%s => %s", prefixParam, mkName());
-            b.append(prefix).append(String.format("%n"));
-        }
-        for (final Delta<?> child : this.childDeltasByProperty.values()) {
-            b.append(child.toString(prefix));
-        }
-
-        return b.toString();
-    }
+    // private String toString(final String prefixParam) {
+    // final StringBuilder b = new StringBuilder();
+    // final String prefix;
+    // if (prefixParam == null) {
+    // prefix = mkName();
+    // } else {
+    // prefix = String.format("%s => %s", prefixParam, mkName());
+    // b.append(prefix).append(String.format("%n"));
+    // }
+    // for (final Delta<?> child : this.childDeltasByProperty.values()) {
+    // b.append(child.toString(prefix));
+    // }
+    //
+    // return b.toString();
+    // }
 
     /**
      * @return all the path elements for this delta
@@ -148,8 +159,7 @@ public class Delta<T> {
 
         final PathElement<?, ?> newParent = makePath(parentParam);
 
-        final boolean isLeaf = this.childDeltasByProperty.isEmpty();
-        if (isLeaf) {
+        if (isLeaf()) {
             if (newParent != null) {
                 paths = ImmutableList.<PathElement<?, ?>> of(newParent);
             } else {
@@ -164,6 +174,14 @@ public class Delta<T> {
         return paths;
     }
 
+    protected boolean hasChildren() {
+        return !this.childDeltasByProperty.isEmpty();
+    }
+
+    protected boolean isLeaf() {
+        return !hasChildren();
+    }
+
     /**
      * @return the metadata property
      */
@@ -172,7 +190,8 @@ public class Delta<T> {
     }
 
     /**
-     * This method should be overridden in subclasses to reflect, for instance, collection indices (e.g. "someListProperty[3]")
+     * This method should be overridden in subclasses to reflect, for instance, collection indices (e.g.
+     * "someListProperty[3]")
      * 
      * @return the property name
      */
@@ -185,6 +204,24 @@ public class Delta<T> {
      */
     public T getLeft() {
         return this.left;
+    }
+
+    /**
+     * @return the left side string
+     */
+    public String getLeftString() {
+        return toStringSafe(getLeft());
+    }
+
+    /**
+     * @return the right side string
+     */
+    public String getRightString() {
+        return toStringSafe(getRight());
+    }
+
+    protected static <V> String toStringSafe(final V value) {
+        return Objects.firstNonNull(value, NULL_STRING).toString();
     }
 
     /**
