@@ -11,6 +11,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -309,5 +310,20 @@ public enum Sequences {
             return Iterators.emptyIterator();
         }
         return iterable.iterator();
+    }
+
+    /**
+     * @param <F>
+     * @param <T>
+     * @param source
+     *            the source collection
+     * @param function
+     *            a function which returns either a valid mapping or a null value
+     * @return a collection which contains only non-null values
+     */
+    public static <F, T> Collection<T> collect(final Collection<? extends F> source,
+            final Function<? super F, T> function) {
+        final Collection<T> result = Collections2.transform(source, function);
+        return Collections2.filter(result, Predicates.notNull());
     }
 }

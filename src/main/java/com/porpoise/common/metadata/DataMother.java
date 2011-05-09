@@ -16,6 +16,35 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.porpoise.common.date.Dates;
 
+/**
+ * Data "Mother"
+ * 
+ * "Mother" classes are just factories, but specifically for test data. The idea of calling someting XXX "Mother" is to
+ * distinguish them from otherwise potentially valid Factory classes.
+ * 
+ * For example, given a "Person" class, someone discovering a "PersonFactory" class might legitimately assume it should
+ * be used to create Person instances (and wonder why the Person class warrents a "Factory"). Upon seeing a
+ * "PersonMother", however, it hopefully is more clear that it is for creating Person instances for test data.
+ * 
+ * Using DataMothers can also be useful in slightly objects deep in an object graph. Consider (ignoring bad LoD):
+ * 
+ * <pre>
+ * Order order = DataMother.get(Order.class);
+ * Description d = order.getLine(0).getItem(0).getDescription()
+ * 
+ * -- here we just want a different descriptions
+ * DataMother.add(Description.class, new Supplier<Description>() { ... });
+ * Order order2 = DataMother.get(Order.class);
+ * 
+ * -- order and order2 should now only differ by their line item descriptions
+ * 
+ * <pre/>
+ * 
+ * 
+ * @see http://martinfowler.com/bliki/ObjectMother.html
+ * @author Aaron.Pritzlaff
+ * 
+ */
 public class DataMother {
 
     private final Map<Class<?>, Supplier<?>> providerByClass;
@@ -75,6 +104,7 @@ public class DataMother {
     }
 
     public DataMother() {
+        // consider MutableClassToInstanceMap
         this(Maps.<Class<?>, Supplier<?>> newHashMap());
     }
 

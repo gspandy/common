@@ -16,6 +16,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Ints;
 import com.porpoise.common.core.Pair;
 
 public class SequencesTest {
@@ -215,5 +216,25 @@ public class SequencesTest {
         final ImmutableList<BigDecimal> decs = ImmutableList.of(new BigDecimal(2), new BigDecimal(3));
         final BigDecimal sum = Sequences.foldDec(decs, Sequences.SUM_DEC);
         Assert.assertTrue(sum.compareTo(new BigDecimal(5)) == 0);
+    }
+
+    /**
+     * Test for {@link Sequences#collect(Collection, Function)}
+     */
+    @Test
+    public void testCollect() {
+        final List<Integer> decs = Ints.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        final Collection<String> divByThreeAsString = Sequences.collect(decs, new Function<Integer, String>() {
+            @Override
+            public String apply(final Integer value) {
+                return value.intValue() % 3 == 0 ? value.toString() : null;
+            }
+        });
+        final Iterator<String> actual = divByThreeAsString.iterator();
+        Assert.assertEquals("3", actual.next());
+        Assert.assertEquals("6", actual.next());
+        Assert.assertEquals("9", actual.next());
+        Assert.assertFalse(actual.hasNext());
+
     }
 }
