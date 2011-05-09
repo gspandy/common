@@ -26,7 +26,6 @@ class FruitBowl {
     /**
      * @return the grapes
      */
-    @SuppressWarnings("unchecked")
     public List<Grape> getGrapes() {
         return Collections.unmodifiableList(this.grapes);
     }
