@@ -291,11 +291,12 @@ public enum TreeTrait {
      *            the node for which to find the root node
      * @return the root node
      */
-    public static <T> TreeNode<T> getRoot(final TreeNode<T> node) {
+    @SuppressWarnings("unchecked")
+    public static <T, N extends TreeNode<T>> N getRoot(final N node) {
         if (isRoot(node)) {
             return node;
         }
-        return getRoot(node.getParent());
+        return (N) getRoot(node.getParent());
     }
 
     /**
@@ -798,8 +799,13 @@ public enum TreeTrait {
      * @param node
      * @return
      */
-    public static <T> String toString(final TreeNode<T> node) {
-        final Function<? super TreeNode<T>, String> function = Functions.toStringFunction();
+    public static <T, N extends TreeNode<T>> String toString(final N node) {
+        final Function<N, String> function = new Function<N, String>() {
+            @Override
+            public String apply(final N arg0) {
+                return arg0.toString();
+            }
+        };
         return toString(node, function);
     }
 
@@ -811,13 +817,14 @@ public enum TreeTrait {
      * @param toString
      * @return
      */
-    public static <T> String toString(final TreeNode<T> node, final Function<? super TreeNode<T>, String> toString) {
+    public static <T, N extends TreeNode<T>> String toString(final N node, final Function<N, String> toString) {
         final String newLine = String.format("%n");
         return toStringRecursive(node, toString, newLine);
     }
 
-    private static <T> String toStringRecursive(final TreeNode<T> node,
-            final Function<? super TreeNode<T>, String> toString, final String newLine) {
+    @SuppressWarnings("unchecked")
+    private static <T, N extends TreeNode<T>> String toStringRecursive(final N node,
+            final Function<N, String> toString, final String newLine) {
         final StringBuilder b = new StringBuilder();
 
         final int depth = getDepth(node);
@@ -831,7 +838,7 @@ public enum TreeTrait {
         b.append("+--").append(nodeString).append(newLine);
 
         for (final TreeNode<T> child : node.getChildren()) {
-            b.append(toStringRecursive(child, toString, newLine));
+            b.append(toStringRecursive((N) child, toString, newLine));
         }
         return b.toString();
     }

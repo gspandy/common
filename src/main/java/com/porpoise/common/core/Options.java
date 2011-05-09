@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+
 /**
  * Borrowed from Scala, an Option is a type of "Monad". It serves as a container, and is used to replace potential null
  * values.
@@ -69,7 +71,21 @@ public enum Options {
      * @return a "some" value
      */
     public static <T> Option<T> some(final T value) {
-        return new Some<T>(value);
+        return new Some<T>(Preconditions.checkNotNull(value));
+    }
+
+    /**
+     * value of
+     * 
+     * @param <T>
+     * @param value
+     * @return
+     */
+    public static <T> Option<T> valueOf(final T value) {
+        if (value == null) {
+            return none();
+        }
+        return some(value);
     }
 
     /**
@@ -135,7 +151,7 @@ public enum Options {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ((this.value == null) ? 0 : this.value.hashCode());
+            result = prime * result + (this.value == null ? 0 : this.value.hashCode());
             return result;
         }
 
