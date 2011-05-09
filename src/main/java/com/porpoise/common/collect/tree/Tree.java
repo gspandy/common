@@ -118,15 +118,15 @@ public class Tree {
      */
     public static class Node<T> implements Iterable<Node<T>>, TreeNode<T> {
 
-        private final String name;
+        private final String               name;
 
-        private T data;
+        private T                          data;
 
-        private final Node<T> parent;
+        private final Node<T>              parent;
 
         private final Map<String, Node<T>> childrenByName;
 
-        private Integer cachedDepth;
+        private Integer                    cachedDepth;
 
         protected Node(final Node<T> parentNode, final String nodeName) {
             this(parentNode, nodeName, null);
@@ -252,7 +252,13 @@ public class Tree {
 
         @Override
         public final String toString() {
-            return TreeTrait.toString(this, Tree.name());
+            final Function<Node<T>, String> f = new Function<Node<T>, String>() {
+                @Override
+                public final String apply(final Node<T> node) {
+                    return node.getName();
+                }
+            };
+            return TreeTrait.toString(this, f);
         }
 
         public String getName() {
@@ -335,7 +341,7 @@ public class Tree {
          */
         @SuppressWarnings("static-method")
         public Node<T> getRoot() {
-            return (Node<T>) TreeTrait.getRoot(this);
+            return TreeTrait.getRoot(this);
         }
 
         @Override
