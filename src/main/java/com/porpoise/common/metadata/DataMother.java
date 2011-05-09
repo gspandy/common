@@ -1,6 +1,7 @@
 package com.porpoise.common.metadata;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -18,6 +20,10 @@ public class DataMother {
 
     private final Map<Class<?>, Supplier<?>> providerByClass;
 
+    /**
+     * @return a DataMother which will cycle through different values for the wrapped primitive classes (Integer, Long,
+     *         etc), as well as Date, BigInteger and BigDecimal
+     */
     @SuppressWarnings("boxing")
     public static DataMother withTestValues() {
         final DataMother mother = new DataMother();
@@ -37,9 +43,31 @@ public class DataMother {
                 Double.valueOf(-1), Double.valueOf(0), Double.valueOf(1), Double.valueOf(12.34d));
         mother.add(BigDecimal.class, new BigDecimal("-0.01"), new BigDecimal("12.345678"), BigDecimal.ZERO,
                 BigDecimal.ONE, BigDecimal.TEN);
+        mother.add(BigInteger.class, new BigInteger("-1"), new BigInteger("12345678987654321"), BigInteger.ZERO,
+                BigInteger.ONE, BigInteger.TEN);
         mother.add(Date.class, Dates.yearMonthDay(2000, 1, 1), Dates.now().getTime(), Dates.yearMonthDay(1977, 7, 8));
 
         return mother;
+    }
+
+    /**
+     * @return a data mother which will return consistent values for the classes covered in {@link #withTestValues()}
+     */
+    public static DataMother withConsistentTestValues() {
+        final DataMother mother = new DataMother();
+        final DataMother variableValues = withTestValues();
+        for (final Class<?> c : variableValues.definedClasses()) {
+            final Supplier<?> instance = Suppliers.ofInstance(variableValues.get(c));
+            mother.providerByClass.put(c, instance);
+        }
+        return mother;
+    }
+
+    /**
+     * @return the supported the classes
+     */
+    public Set<Class<?>> definedClasses() {
+        return this.providerByClass.keySet();
     }
 
     public <T> DataMother add(final Class<T> class1, final T... values) {

@@ -71,6 +71,16 @@ public class DataMotherTest {
     }
 
     /**
+     * Test {@link DataMother#withConsistentTestValues()} returns the same values for each type
+     */
+    public void testMotherWithConsistentValues() {
+        final DataMother mother = DataMother.withConsistentTestValues();
+        for (final Class<?> c : mother.definedClasses()) {
+            Assert.assertEquals(mother.get(c), mother.get(c));
+        }
+    }
+
+    /**
      * test we can construct a datamother
      */
     @Test
