@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.porpoise</groupId>
 	<artifactId>porpoise-common</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<properties>
 		<git.url>scm:git:file:///Users/Aaron/dev/sandbox/common</git.url>
 		<publish.to.url>file:///Users/Aaron/.m2/repository</publish.to.url>
