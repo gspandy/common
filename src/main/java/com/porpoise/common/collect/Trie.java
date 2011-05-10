@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
@@ -63,7 +62,6 @@ public class Trie<T> implements TreeNode<Option<T>> {
 
     public static <T> Trie<T> valueOfWithValue(final String string, final T value) {
         final Option<T> leafValue = Options.valueOf(value);
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(string), "input cannot be empty");
 
         final Trie<T> root = new Trie<T>('_');
         final Iterator<Character> stringIterator = new StringIterator(string);
