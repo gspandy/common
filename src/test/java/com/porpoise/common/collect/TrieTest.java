@@ -60,6 +60,7 @@ public class TrieTest {
         Assert.assertEquals("a", Trie.longestPrefix("abc", "aA"));
         Assert.assertEquals("a", Trie.longestPrefix("a"));
         Assert.assertEquals("", Trie.longestPrefix(""));
+        Assert.assertEquals("", Trie.longestPrefix("d", "", "", "d"));
         Assert.assertEquals("a", Trie.longestPrefix("abc", "a1"));
     }
 }
