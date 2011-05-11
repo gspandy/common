@@ -35,6 +35,9 @@ public class ObservableNode<T> extends Node<T> {
         public void onDataAssociated(Node<T> node);
     }
 
+    /**
+     * @param <T>
+     */
     public static abstract class NodeListenerAdapter<T> implements NodeListener<T> {
         @Override
         public void onDataAssociated(final Node<T> node) {
@@ -68,7 +71,7 @@ public class ObservableNode<T> extends Node<T> {
      * @param <T>
      * @param name
      * @param data
-     * @return
+     * @return an observable node
      */
     public static <T> ObservableNode<T> create(final String name, final T data) {
         return new ObservableNode<T>(null, name, data);

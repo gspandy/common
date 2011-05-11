@@ -27,18 +27,34 @@ public enum Levenshtein {
 
         private final String input;
 
+        /**
+         * @param string
+         */
         public DistanceMatcher(final String string) {
             this.input = checkNotNull(string);
         }
 
+        /**
+         * @param values
+         * @return the closest string from the given options
+         */
         public String pickBestfrom(final String... values) {
             return pickBestfrom(Arrays.asList(values));
         }
 
+        /**
+         * @param values
+         * @return the closest string from the given options
+         */
         public String pickBestfrom(final Iterable<String> values) {
             return comparator().min(values);
         }
 
+        /**
+         * The returned string comparator will show the most appropriate (closest) result first
+         * 
+         * @return a string comparator based on the distance to the target string
+         */
         public Ordering<String> comparator() {
             final Comparator<Integer> c = new Comparator<Integer>() {
                 @Override
@@ -46,8 +62,7 @@ public enum Levenshtein {
                     return arg0.compareTo(arg1);
                 }
             };
-            final Ordering<String> dist = Ordering.from(c).onResultOf(distanceFunction(this.input));
-            return dist;
+            return Ordering.from(c).onResultOf(distanceFunction(this.input));
         }
 
     }
@@ -161,6 +176,13 @@ public enum Levenshtein {
         return new Matrix(one, two).toString();
     }
 
+    /**
+     * @param one
+     *            the first string to test
+     * @param two
+     *            the second string to test
+     * @return the distance between these two strings
+     */
     public static int distance(final String one, final String two) {
         if (one.isEmpty()) {
             return two.length();
@@ -172,6 +194,11 @@ public enum Levenshtein {
         return new Matrix(one, two).compute();
     }
 
+    /**
+     * @param string
+     *            the target string against which other strings will be matched
+     * @return a matching instance for the given target string
+     */
     public static DistanceMatcher match(final String string) {
         return new DistanceMatcher(string);
     }

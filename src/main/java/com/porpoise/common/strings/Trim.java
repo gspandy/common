@@ -5,11 +5,20 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 /**
- * 
+ * a string trim utility
  */
 public enum Trim {
     ; // uninstantiable
 
+    /**
+     * keep the right-most characters of a string
+     * 
+     * @param value
+     *            the input object (converted to a string)
+     * @param max
+     *            the maximum length of the string to return
+     * @return a string with the maximum of 'max' characters having trimmed any overflow characters from teh left
+     */
     public static String right(final Object value, final int max) {
         if (value == null) {
             return "";
@@ -18,9 +27,13 @@ public enum Trim {
     }
 
     /**
+     * keep the right-most characters of a string
+     * 
      * @param value
+     *            the input object (converted to a string)
      * @param max
-     * @return
+     *            the maximum length of the string to return
+     * @return a string with the maximum of 'max' characters having trimmed any overflow characters from teh left
      */
     public static String right(final String value, final int max) {
         if (Strings.isNullOrEmpty(value)) {

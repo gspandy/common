@@ -19,13 +19,15 @@ public class LeafNode<T> implements TreeNode<T> {
     }
 
     /**
+     * @param data
      */
     public LeafNode(final T data) {
         this(null, data);
     }
 
     /**
-     * 
+     * @param parent
+     * @param data
      */
     public LeafNode(final TreeNode<T> parent, final T data) {
         this.parent = parent;
