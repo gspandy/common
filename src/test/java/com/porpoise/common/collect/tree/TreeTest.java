@@ -10,6 +10,9 @@ import org.junit.Test;
 import com.google.common.collect.Iterables;
 import com.porpoise.common.collect.tree.Tree.Node;
 
+/**
+ * Test for {@link Tree}
+ */
 public class TreeTest {
 
     /**
@@ -93,6 +96,9 @@ public class TreeTest {
         Assert.assertNull("The 'm' node should not be in the original", a.findByPath("h/k/m"));
     }
 
+    /**
+     * Test for {@link TreeTrait#getDepth(TreeNode)}
+     */
     @Test
     public void test_getDepth() {
         final Node<Object> node = Tree.parse("root/grandparent1/parent1/child1/grandchild1");

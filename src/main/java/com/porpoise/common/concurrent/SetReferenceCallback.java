@@ -8,7 +8,6 @@ import com.porpoise.common.log.Log;
 /**
  * Callback which will update an atomic reference once complete
  * 
- * @author Aaron
  * @param <T>
  */
 class SetReferenceCallback<K, T> extends CallableListenerAdapter<K, T> {

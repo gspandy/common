@@ -4,7 +4,6 @@ package com.porpoise.common.concurrent;
  * Adapter for {@link ICallableListener} implementations, allowing subclasses to provide a no-operation implementation
  * for method calls in which they are not interested
  * 
- * @author Aaron
  * @param <T>
  */
 public class CallableListenerAdapter<K, T> implements ICallableListener<K, T> {

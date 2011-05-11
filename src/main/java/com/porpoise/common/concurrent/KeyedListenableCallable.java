@@ -12,7 +12,6 @@ import com.google.common.collect.Lists;
  * A {@link Callable} which delegates to another callable. Listeners can register for notification of the underlying
  * delegate's completion, whether successful or in the event of an exception.
  * 
- * @author Aaron
  * @param <K>
  *            the key type. The 'key' is associated with the event which invoked the callable
  * @param <T>

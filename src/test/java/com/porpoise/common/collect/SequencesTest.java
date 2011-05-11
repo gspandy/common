@@ -19,6 +19,9 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.porpoise.common.core.Pair;
 
+/**
+ * Tests for {@link Sequences}
+ */
 public class SequencesTest {
     /** a test function to sum inputs */
     private static final Function<Pair<Integer, Integer>, Integer> SUM;
@@ -211,6 +214,9 @@ public class SequencesTest {
         Assert.assertEquals(10, multiplied.get("delta").intValue());
     }
 
+    /**
+     * test for {@link Sequences#SUM_DEC}
+     */
     @Test
     public void testSum() {
         final ImmutableList<BigDecimal> decs = ImmutableList.of(new BigDecimal(2), new BigDecimal(3));
@@ -236,5 +242,82 @@ public class SequencesTest {
         Assert.assertEquals("9", actual.next());
         Assert.assertFalse(actual.hasNext());
 
+    }
+
+    /**
+     * test for {@link Sequences#flatten(Iterable...)}
+     */
+    @Test
+    public void testFlatten() {
+        @SuppressWarnings({ "unchecked", "boxing" })
+        // call the method under test
+        final Collection<Integer> flattened = Sequences.flatten(ImmutableList.of(1, 2), ImmutableList.of(3, 4));
+        final Iterator<Integer> iter = flattened.iterator();
+        Assert.assertEquals(1, iter.next().intValue());
+        Assert.assertEquals(2, iter.next().intValue());
+        Assert.assertEquals(3, iter.next().intValue());
+        Assert.assertEquals(4, iter.next().intValue());
+        Assert.assertFalse(iter.hasNext());
+
+    }
+
+    /**
+     * test for {@link Sequences#zip(Iterable, Iterable)}
+     */
+    @SuppressWarnings("boxing")
+    @Test
+    public void testZip() {
+        final Collection<Pair<String, Integer>> zipped = Sequences.zip(ImmutableList.of("A", "B", "C"),
+                ImmutableList.of(1, 2));
+        final Iterator<Pair<String, Integer>> iter = zipped.iterator();
+
+        Pair<String, Integer> pair = iter.next();
+        Assert.assertEquals("A", pair.getFirst());
+        Assert.assertEquals(1, pair.getSecond().intValue());
+
+        pair = iter.next();
+        Assert.assertEquals("B", pair.getFirst());
+        Assert.assertEquals(2, pair.getSecond().intValue());
+
+        pair = iter.next();
+        Assert.assertEquals("C", pair.getFirst());
+        Assert.assertNull(pair.getSecond());
+
+        Assert.assertFalse(iter.hasNext());
+    }
+
+    /**
+     * test for {@link Sequences#unzipFirst(Collection)} and {@link Sequences#unzipSecond(Collection)}
+     */
+    @SuppressWarnings("boxing")
+    @Test
+    public void testUnzip() {
+        final ImmutableList<String> expectedFirst = ImmutableList.of("A", "B", "C");
+        final List<Integer> expectedSecond = Lists.newArrayList(1, 2);
+        final Collection<Pair<String, Integer>> zipped = Sequences.zip(expectedFirst, expectedSecond);
+
+        final Collection<String> first = Sequences.unzipFirst(zipped);
+        final Collection<Integer> second = Sequences.unzipSecond(zipped);
+
+        Assert.assertArrayEquals(expectedFirst.toArray(), first.toArray());
+
+        expectedSecond.add(null);
+        Assert.assertArrayEquals(expectedSecond.toArray(), second.toArray());
+    }
+
+    /**
+     * Test for {@link Sequences#foldNum(Integer, Iterable, Function)}
+     */
+    @Test
+    @SuppressWarnings("boxing")
+    public void testFoldNum() {
+        final int result = Sequences.foldNum(1, ImmutableList.of(1, 2, 3),
+                new Function<Pair<Number, Number>, Number>() {
+                    @Override
+                    public Number apply(final Pair<Number, Number> input) {
+                        return input.getFirst().intValue() * input.getSecond().intValue();
+                    }
+                }).intValue();
+        Assert.assertEquals(1 * 2 * 3, result);
     }
 }

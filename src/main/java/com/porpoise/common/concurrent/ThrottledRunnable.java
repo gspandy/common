@@ -18,7 +18,6 @@ import java.util.concurrent.TimeUnit;
  * 
  * Note: Due to this class implementing Delayed, it has a natural ordering that is inconsistent with equals.
  * 
- * @author Aaron
  */
 class ThrottledRunnable implements Runnable, Delayed {
     /** The runnable logic we are attempting to throttle */
@@ -71,7 +70,6 @@ class ThrottledRunnable implements Runnable, Delayed {
      * Now, the first invocation is executed, the next 5 are queued as per the queue limit. The remaining 14
      * 'overflowing' invocations are sent to the overflow handler
      * 
-     * @author Aaron
      */
     public static interface IOverflowHandler {
         public void onInvocationExceedsThreshold(int threshold, Runnable job);
@@ -80,7 +78,6 @@ class ThrottledRunnable implements Runnable, Delayed {
     /**
      * Handler which will ignore multiple 'overflow' invocations within the interval
      * 
-     * @author Aaron
      */
     private static class IgnoreHandler implements IOverflowHandler {
         @Override

@@ -14,6 +14,9 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.porpoise.common.collect.tree.Tree.Node;
 
+/**
+ * Test for {@link TreeTrait}
+ */
 public class TreeTraitTest {
     private Node<Object> root;
     private TreeVisitor<Node<Object>> visitor;
@@ -26,6 +29,9 @@ public class TreeTraitTest {
     private Node<Object> c2;
     private Node<Object> a;
 
+    /**
+     * setup the test data
+     */
     @Before
     public void setUp() {
         this.root = Tree.parse("/a/b1/c1").getRoot();

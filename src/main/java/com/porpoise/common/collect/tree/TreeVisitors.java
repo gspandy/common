@@ -44,8 +44,6 @@ public enum TreeVisitors {
     /**
      * counting visitor
      * 
-     * @author Aaron
-     * 
      * @param <T>
      */
     public static final class SizeVisitor<T> implements TreeVisitor<TreeNode<T>> {
@@ -56,6 +54,9 @@ public enum TreeVisitors {
             this.count++;
         }
 
+        /**
+         * @return the number of nodes counted
+         */
         public int getCount() {
             return this.count;
         }
@@ -73,9 +74,10 @@ public enum TreeVisitors {
     }
 
     /**
-     * @author Aaron
-     * 
      * @param <T>
+     *            the data type held in the node
+     * @param <N>
+     *            the tree node type
      */
     public static class LeafCollectionVisitor<T, N extends TreeNode<T>> extends CollectionVisitor<T, N> {
         @Override
@@ -87,9 +89,10 @@ public enum TreeVisitors {
     }
 
     /**
-     * @author Aaron
-     * 
      * @param <T>
+     *            the data type held in the node
+     * @param <N>
+     *            the node type
      */
     public static class CollectionVisitor<T, N extends TreeNode<T>> implements TreeVisitor<N> {
         private final Collection<N> nodes = Lists.newArrayList();

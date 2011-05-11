@@ -11,7 +11,6 @@ import com.porpoise.common.collect.tree.Tree.Node;
 /**
  * Tests for {@link ObservableNode}
  * 
- * @author Aaron
  */
 public class ObservableNodeTest {
     private final ObservableNode<Object> root = ObservableNode.create();
@@ -35,6 +34,9 @@ public class ObservableNodeTest {
         }
     };
 
+    /**
+     * prepare the test data
+     */
     @Before
     public void setUp() {
         this.lastDataAssociated = null;

@@ -5,8 +5,14 @@ import org.junit.Test;
 
 import com.porpoise.common.strings.Levenshtein;
 
+/**
+ * Tests for {@link Levenshtein}
+ */
 public class LevenshteinTest {
 
+    /**
+     * Test for {@link Levenshtein#distance(String, String)}
+     */
     @Test
     public void testSameStringsAreEqual() {
         Assert.assertEquals(0, Levenshtein.distance("a", "a"));
@@ -14,6 +20,9 @@ public class LevenshteinTest {
         Assert.assertEquals(0, Levenshtein.distance("", ""));
     }
 
+    /**
+     * Test for {@link Levenshtein#distance(String, String)}
+     */
     @Test
     public void testOneAway() {
         Assert.assertEquals(1, Levenshtein.distance("abc", "abcd"));
@@ -27,6 +36,9 @@ public class LevenshteinTest {
         Assert.assertEquals(1, Levenshtein.distance("12", "2"));
     }
 
+    /**
+     * Test for {@link Levenshtein#distance(String, String)}
+     */
     @Test
     public void testTwoAway() {
         Assert.assertEquals(2, Levenshtein.distance("abdc", "abcd"));
@@ -34,6 +46,9 @@ public class LevenshteinTest {
         Assert.assertEquals(2, Levenshtein.distance("abcd", "abCD"));
     }
 
+    /**
+     * Test for {@link Levenshtein#match(String)}
+     */
     @Test
     public void testBestMatch() {
         final String result = Levenshtein.match("jungle").pickBestfrom("jiggle", "juggle", "jello", "alphabit");
@@ -43,6 +58,9 @@ public class LevenshteinTest {
                 .pickBestfrom("juggle", "jiggle", "jungle", "alphabit"));
     }
 
+    /**
+     * Test for {@link Levenshtein#match(String)}
+     */
     @Test
     public void testBestMatchHarder() {
         final String result = Levenshtein.match("alpha").pickBestfrom("omega", "beta", "gamma",
@@ -50,6 +68,9 @@ public class LevenshteinTest {
         Assert.assertEquals("omega", result);
     }
 
+    /**
+     * Test for {@link Levenshtein#toString(String, String)}
+     */
     @Test
     public void testToString() {
         System.out.println(Levenshtein.toString("alpha", "omega"));

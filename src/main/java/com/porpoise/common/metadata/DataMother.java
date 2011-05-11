@@ -42,7 +42,6 @@ import com.porpoise.common.date.Dates;
  * 
  * 
  * @see http://martinfowler.com/bliki/ObjectMother.html
- * @author Aaron.Pritzlaff
  * 
  */
 public class DataMother {

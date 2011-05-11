@@ -16,7 +16,6 @@ import com.google.common.collect.Maps;
  *            the cache key type
  * @param <T>
  *            the cache value type
- * @author Aaron
  */
 abstract class AbstractCache<K, T> {
     static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MINUTES;

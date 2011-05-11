@@ -5,7 +5,7 @@ import com.google.common.base.Function;
 /**
  * GrapeAccessors
  */
-public enum GrapeAccessors {
+enum GrapeAccessors {
     ; // uninstantiable
 
     /**
@@ -28,6 +28,7 @@ public enum GrapeAccessors {
          * GET_RADIUS
          */
         GET_RADIUS = new Function<Grape, Integer>() {
+            @SuppressWarnings("boxing")
             @Override
             public Integer apply(final Grape input) {
                 return input.getRadius();
@@ -38,6 +39,7 @@ public enum GrapeAccessors {
          * GET_RIPENESS
          */
         GET_RIPENESS = new Function<Grape, Integer>() {
+            @SuppressWarnings("boxing")
             @Override
             public Integer apply(final Grape input) {
                 return input.getRipeness();

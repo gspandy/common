@@ -27,8 +27,6 @@ import com.porpoise.common.collect.tree.TreeVisitors.TreeVisitorAdapter;
  * Similar to scala traits, this class provides a richer tree implementation by providing addition methods from the
  * basic {@link TreeNode} interface
  * 
- * @author Aaron
- * 
  */
 public enum TreeTrait {
     ;// uninstantiable

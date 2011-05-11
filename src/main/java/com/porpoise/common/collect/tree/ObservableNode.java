@@ -8,15 +8,11 @@ import com.porpoise.common.collect.tree.Tree.Node;
 /**
  * A tree node which supports the 'observer' pattern, allowing listeners to be notified when nodes are added
  * 
- * @author Aaron
- * 
  * @param <T>
  */
 public class ObservableNode<T> extends Node<T> {
     /**
      * The observer's callback interface
-     * 
-     * @author Aaron
      * 
      * @param <T>
      */

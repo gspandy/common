@@ -3,7 +3,6 @@ package com.porpoise.common.files;
 import java.io.File;
 
 /**
- * @author Aaron
  */
 public class FileVistiorAdapter implements IFileVisitor {
     /**

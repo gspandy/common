@@ -3,6 +3,7 @@ package com.porpoise.common.collect;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -24,12 +25,19 @@ import com.google.common.collect.Sets;
 import com.porpoise.common.core.Pair;
 
 /**
- * 
+ * Utility class for working with collections -- things not found in {@link Collections} or {@link Collections2}.
  */
 public enum Sequences {
     ;//
 
+    /**
+     * Function which will sum pairs of big decimals
+     */
     public static final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> SUM_DEC;
+
+    /**
+     * Function which will sum pairs of numbers
+     */
     public static final Function<Pair<Number, Number>, Number> SUM_NUM;
 
     static {
@@ -51,11 +59,17 @@ public enum Sequences {
         };
     }
 
-    public static String toString(final Iterable<? extends Object> list) {
-        if (list == null) {
+    /**
+     * null-safe toString method which uses comma/new-line separators between elements
+     * 
+     * @param input
+     * @return the iterable as a comma + new-line separated string
+     */
+    public static String toString(final Iterable<? extends Object> input) {
+        if (input == null) {
             return "";
         }
-        return Joiner.on(String.format(",%n")).join(list);
+        return Joiner.on(String.format(",%n")).join(input);
     }
 
     /**
@@ -71,6 +85,23 @@ public enum Sequences {
         };
     }
 
+    /**
+     * @param <KEY>
+     *            the key type of the map
+     * @param <VAL1>
+     *            the value type of map1
+     * @param <VAL2>
+     *            the value type of map2
+     * @param <RES>
+     *            the result type
+     * @param collate
+     *            the collating function
+     * @param map1
+     *            the left-side map to merge
+     * @param map2
+     *            the right-side map to merge
+     * @return the result of merging
+     */
     public static <KEY, VAL1, VAL2, RES> Map<KEY, RES> mergeMapsIntersection(
             final Function<Pair<VAL1, VAL2>, RES> collate, final Map<KEY, VAL1> map1, final Map<KEY, VAL2> map2) {
         final Map<KEY, RES> intersection = Maps.newHashMap();
@@ -85,40 +116,20 @@ public enum Sequences {
         return intersection;
     }
 
-    public static <T, N> T foldLeft(final T initial, final Iterable<? extends N> things,
-            final Function<Pair<T, N>, T> fnc) {
-        T value = initial;
-        for (final N next : things) {
-            value = fnc.apply(Pair.valueOf(value, next));
-        }
-        return value;
-    }
-
-    public static <T, N> T foldRight(final T initial, final Iterable<? extends N> things,
-            final Function<Pair<T, N>, T> fnc) {
-        return foldLeft(initial, Lists.reverse(Lists.newArrayList(things)), fnc);
-    }
-
-    public static BigDecimal foldDec(final Iterable<BigDecimal> things,
-            final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> fnc) {
-        return foldDec(BigDecimal.ZERO, things, fnc);
-    }
-
-    public static BigDecimal foldDec(final BigDecimal initial, final Iterable<BigDecimal> things,
-            final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> fnc) {
-        return foldLeft(initial, things, fnc);
-    }
-
-    public static Number foldNum(final Iterable<? extends Number> things,
-            final Function<Pair<Number, Number>, Number> fnc) {
-        return foldNum(Integer.valueOf(0), things, fnc);
-    }
-
-    public static Number foldNum(final Integer initial, final Iterable<? extends Number> things,
-            final Function<Pair<Number, Number>, Number> fnc) {
-        return foldLeft(initial, things, fnc);
-    }
-
+    /**
+     * 
+     * @param <K>
+     *            the key type
+     * @param <V>
+     *            the value type
+     * @param map1
+     *            the left map to merge
+     * @param map2
+     *            the right map to merge
+     * @param collate
+     *            the merging function
+     * @return the merged map
+     */
     public static <K, V> Map<K, V> mergeMaps(final Map<K, V> map1, final Map<K, V> map2,
             final Function<Pair<V, V>, V> collate) {
         return mergeMapsInternal(ImmutableList.of(map1, map2), collate);
@@ -145,10 +156,129 @@ public enum Sequences {
         return merged;
     }
 
+    /**
+     * @param <T>
+     *            the value type to apply to all elements
+     * @param <N>
+     *            the element type
+     * @param initial
+     *            the initial value
+     * @param things
+     *            the iterable to which the function should be applied
+     * @param fnc
+     *            the function used to apply to all elements
+     * @return the result of applying the initial condition + the function across all elements in the iterable
+     */
+    public static <T, N> T foldLeft(final T initial, final Iterable<? extends N> things,
+            final Function<Pair<T, N>, T> fnc) {
+        T value = initial;
+        for (final N next : things) {
+            value = fnc.apply(Pair.valueOf(value, next));
+        }
+        return value;
+    }
+
+    /**
+     * @param <T>
+     *            the value type to apply to all elements
+     * @param <N>
+     *            the element type
+     * @param initial
+     *            the initial value
+     * @param things
+     *            the iterable to which the function should be applied
+     * @param fnc
+     *            the function used to apply to all elements
+     * @return the result of applying the initial condition + the function across all elements in the iterable, but
+     *         going from right to left
+     */
+    public static <T, N> T foldRight(final T initial, final Iterable<? extends N> things,
+            final Function<Pair<T, N>, T> fnc) {
+        return foldLeft(initial, Lists.reverse(Lists.newArrayList(things)), fnc);
+    }
+
+    /**
+     * convenience method for iterables of {@link BigDecimal}s, starting with zero
+     * 
+     * @param things
+     *            the iterable to apply to
+     * @param fnc
+     *            the function
+     * @return the big decimal result
+     */
+    public static BigDecimal foldDec(final Iterable<BigDecimal> things,
+            final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> fnc) {
+        return foldDec(BigDecimal.ZERO, things, fnc);
+    }
+
+    /**
+     * convenience method for iterables of {@link BigDecimal}s
+     * 
+     * @param initial
+     *            the initial value
+     * @param things
+     *            the iterable to apply to
+     * @param fnc
+     * @return the big decimal result
+     */
+    public static BigDecimal foldDec(final BigDecimal initial, final Iterable<BigDecimal> things,
+            final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> fnc) {
+        return foldLeft(initial, things, fnc);
+    }
+
+    /**
+     * convenience method for iterables of {@link Number}s, starting with an initial 0 result
+     * 
+     * @param things
+     *            the iterable to apply to
+     * @param fnc
+     *            the function
+     * @return the numerical result
+     */
+    public static Number foldNum(final Iterable<? extends Number> things,
+            final Function<Pair<Number, Number>, Number> fnc) {
+        return foldNum(Integer.valueOf(0), things, fnc);
+    }
+
+    /**
+     * convenience method for iterables of {@link Number}s
+     * 
+     * @param initial
+     *            the initial value to fold
+     * 
+     * @param things
+     *            the iterable to apply to
+     * @param fnc
+     *            the function
+     * @return the numerical result
+     */
+    public static Number foldNum(final Integer initial, final Iterable<? extends Number> things,
+            final Function<Pair<Number, Number>, Number> fnc) {
+        return foldLeft(initial, things, fnc);
+    }
+
+    /**
+     * flatten the iterable, returning a (flattened) collection of all elements
+     * 
+     * @param <T>
+     *            the iterable type
+     * @param all
+     *            the various iterables to flatten
+     * @return a collection of all the iterables
+     */
     public static <T> Collection<T> flatten(final Iterable<T>... all) {
         return flatten(Arrays.asList(all));
     }
 
+    /**
+     * flatten the iterable, returning a (flattened) collection of all elements
+     * 
+     * @param <T>
+     *            the iterable type
+     * @param all
+     *            the various iterables to flatten
+     * @return a collection of all the iterables
+     */
     public static <T> Collection<T> flatten(final Iterable<? extends Iterable<T>> all) {
         final Collection<T> flat = Lists.newArrayList();
         return addAll(flat, all);
@@ -162,17 +292,44 @@ public enum Sequences {
         return container;
     }
 
+    /**
+     * @param <V>
+     * @param <T>
+     * @param left
+     * @param right
+     * @return a comparison between two comparables
+     */
     public static <V, T extends Comparable<V>> int compare(final T left, final T right) {
         final Ordering<T> natural = Ordering.natural();
         return natural.nullsFirst().compare(left, right);
     }
 
+    /**
+     * This function applies a function across all elements of a collection where each element itself is an iterable,
+     * returning a flattened result
+     * 
+     * @param <F>
+     * @param <T>
+     * @param from
+     * @param function
+     * @return the flattened result
+     */
     public static <F, T> Collection<T> flatMap(final Iterable<F> from,
             final Function<? super F, ? extends Iterable<T>> function) {
         final Iterable<Iterable<T>> transformed = Iterables.transform(from, function);
         return flatten(transformed);
     }
 
+    /**
+     * This function applies a function across all elements of a collection where each element itself is an iterable,
+     * returning a flattened set result
+     * 
+     * @param <F>
+     * @param <T>
+     * @param from
+     * @param function
+     * @return a set of all results
+     */
     public static <F, T> Set<T> flatMapSet(final Iterable<F> from,
             final Function<? super F, ? extends Iterable<T>> function) {
         final Iterable<Iterable<T>> all = Iterables.transform(from, function);
@@ -180,6 +337,21 @@ public enum Sequences {
         return addAll(flat, all);
     }
 
+    /**
+     * group the iterable using the given function to create the keys in the map. By calling this method, the caller is
+     * making the assertion that the function will only return unique results within the collection, otherwise as
+     * exception will be thrown.
+     * 
+     * @param <K>
+     *            the key value of the map
+     * @param <V>
+     *            the iterable element type
+     * @param collection
+     *            the collection to group
+     * @param mapper
+     *            the mapping function used to create the keys in the map
+     * @return the map of unique results
+     */
     public static <K, V> Map<K, V> groupByUnique(final Iterable<V> collection, final Function<? super V, K> mapper) {
         final Map<K, Collection<V>> map = groupBy(collection, mapper);
         final Function<Iterable<V>, V> onlyElm = new Function<Iterable<V>, V>() {
@@ -192,6 +364,19 @@ public enum Sequences {
         return ImmutableMap.copyOf(Maps.transformValues(map, onlyElm));
     }
 
+    /**
+     * group the iterable using the given function to create the keys in the map.
+     * 
+     * @param <K>
+     *            the key value of the map
+     * @param <V>
+     *            the iterable element type
+     * @param collection
+     *            the collection to group
+     * @param mapper
+     *            the mapping function used to create the keys in the map
+     * @return the map of results
+     */
     public static <K, V> Map<K, Collection<V>> groupBy(final Iterable<V> collection, final Function<? super V, K> mapper) {
         return groupByInternal(collection, mapper);
     }
@@ -239,8 +424,8 @@ public enum Sequences {
     }
 
     /**
-     * Zip together both collections, returning a collection of both elements. Any extra elements in either list will be
-     * silently lopped off
+     * Zip together both collections, returning a collection of both elements. If the iterables are of diffferent sizes,
+     * the extra elements will be represented as null values
      * 
      * @param <A>
      * @param <B>
@@ -250,10 +435,12 @@ public enum Sequences {
      */
     public static <A, B> Collection<Pair<A, B>> zip(final Iterable<A> first, final Iterable<B> second) {
         final Collection<Pair<A, B>> zipped = Lists.newArrayList();
-        final Iterator<A> iterOne = first.iterator();
-        final Iterator<B> iterTwo = second.iterator();
-        while (iterOne.hasNext() && iterTwo.hasNext()) {
-            zipped.add(Pair.valueOf(iterOne.next(), iterTwo.next()));
+        final Iterator<A> iterOne = iter(first);
+        final Iterator<B> iterTwo = iter(second);
+        while (iterOne.hasNext() || iterTwo.hasNext()) {
+            final A left = iterOne.hasNext() ? iterOne.next() : null;
+            final B right = iterTwo.hasNext() ? iterTwo.next() : null;
+            zipped.add(Pair.valueOf(left, right));
         }
         return zipped;
     }
@@ -274,30 +461,6 @@ public enum Sequences {
      */
     public static <A, B> Collection<B> unzipSecond(final Collection<Pair<A, B>> all) {
         return Collections2.transform(all, Pair.<A, B> second());
-    }
-
-    /**
-     * @return a function which will return the last of the elements in a collection
-     */
-    public static <T> Function<Collection<T>, T> getLast() {
-        return new Function<Collection<T>, T>() {
-            @Override
-            public T apply(final Collection<T> input) {
-                return Iterables.getLast(input);
-            }
-        };
-    }
-
-    /**
-     * @return a function which will return the first of the elements in a collection
-     */
-    public static <T> Function<Collection<T>, T> getFirst() {
-        return new Function<Collection<T>, T>() {
-            @Override
-            public T apply(final Collection<T> input) {
-                return Iterables.getFirst(input, null);
-            }
-        };
     }
 
     /**

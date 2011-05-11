@@ -12,7 +12,6 @@ import com.porpoise.common.concurrent.Threads;
  * Logging utility class. In addition to 'convenience methods' for formatted logging, this class also serves as an RCP
  * log listener
  * 
- * @author Aaron
  */
 public class Log {
     private static final Log INSTANCE;

@@ -5,7 +5,6 @@ import java.util.concurrent.Callable;
 /**
  * Listener interface to provide notification when a {@link Callable} completes
  * 
- * @author Aaron
  * @param <K>
  *            the key type
  * @param <T>

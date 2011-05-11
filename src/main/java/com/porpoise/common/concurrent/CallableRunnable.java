@@ -8,7 +8,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 
 /**
- * @author Aaron
  */
 public final class CallableRunnable<T> implements Runnable {
     /** The callable being run */

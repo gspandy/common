@@ -10,7 +10,6 @@ import com.porpoise.common.log.Log;
 /**
  * Utility class for {@link Runnable}s
  * 
- * @author Aaron
  */
 public enum Runnables {
     ;// uninstantiable

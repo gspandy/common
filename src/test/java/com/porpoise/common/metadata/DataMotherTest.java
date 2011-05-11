@@ -10,11 +10,17 @@ import org.junit.Test;
 import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 
+/**
+ * tests for {@link DataMother}
+ */
 public class DataMotherTest {
 
     private DataMother dataMother;
 
-    public static class TestClass {
+    /**
+     * internal test class
+     */
+    static class TestClass {
         public final int integer;
         public final float floatValue;
         public final String str;
@@ -44,6 +50,9 @@ public class DataMotherTest {
         }
     }
 
+    /**
+     * prepare the test data
+     */
     @Before
     public void setup() {
         this.dataMother = DataMother.withTestValues();

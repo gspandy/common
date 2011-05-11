@@ -19,8 +19,6 @@ import com.google.common.base.Preconditions;
  * Use {@link Options#none()} and {@link Options#some(Object)} to represent no value (null) or a valid value,
  * respectively.
  * 
- * @author aaron.pritzlaff
- * 
  */
 public enum Options {
     ;// uninstantiable
@@ -79,7 +77,7 @@ public enum Options {
      * 
      * @param <T>
      * @param value
-     * @return
+     * @return the option value
      */
     public static <T> Option<T> valueOf(final T value) {
         if (value == null) {
@@ -90,8 +88,6 @@ public enum Options {
 
     /**
      * internal representation of none. Two none's are always equal, regardless of the type
-     * 
-     * @author aaron.pritzlaff
      * 
      * @param <T>
      */

@@ -19,7 +19,6 @@ import com.porpoise.common.collect.tree.TreeVisitors.CollectionVisitor;
  * 
  * Also, all tree nodes have a 'name', allowing for easier string parsing
  * 
- * @author Aaron
  */
 public class Tree {
 
@@ -114,19 +113,20 @@ public class Tree {
     /**
      * A node of the tree
      * 
-     * @author Aaron
+     * @param <T>
+     *            the value type held within the node
      */
     public static class Node<T> implements Iterable<Node<T>>, TreeNode<T> {
 
-        private final String               name;
+        private final String name;
 
-        private T                          data;
+        private T data;
 
-        private final Node<T>              parent;
+        private final Node<T> parent;
 
         private final Map<String, Node<T>> childrenByName;
 
-        private Integer                    cachedDepth;
+        private Integer cachedDepth;
 
         protected Node(final Node<T> parentNode, final String nodeName) {
             this(parentNode, nodeName, null);
@@ -144,7 +144,7 @@ public class Tree {
          * similar to parse, but without creating nodes along the way. If at any point a node in the tree does not
          * exist, a null node is returned
          * 
-         * @param path
+         * @param pathParam
          *            the slash-separated path for the node
          * @return the node at the given location or null if no node exists
          */
@@ -212,7 +212,7 @@ public class Tree {
         /**
          * add the given node as a deep copy
          * 
-         * @param nodes
+         * @param node
          */
         public void addAll(final Node<T> node) {
             final Node<T> copy = node.copyRecursive(this);
@@ -261,6 +261,9 @@ public class Tree {
             return TreeTrait.toString(this, f);
         }
 
+        /**
+         * @return the node name
+         */
         public String getName() {
             return this.name;
         }
@@ -316,7 +319,7 @@ public class Tree {
          * 
          * If the path begins with a slash (/), then the path will be interpreted from the root node
          * 
-         * @param path
+         * @param pathParam
          * @return the last node as interpreted from the path
          */
         public Node<T> parse(final String pathParam) {
@@ -358,6 +361,9 @@ public class Tree {
             TreeTrait.depthFirst(this, visitor);
         }
 
+        /**
+         * @return the tree as a collection of node names
+         */
         public Collection<String> flatten() {
             return Collections2.transform(flattenNodes(), new Function<Node<T>, String>() {
                 @Override
@@ -372,10 +378,16 @@ public class Tree {
             return collection.depthFirst(this);
         }
 
+        /**
+         * @return true if this node is the root node
+         */
         public boolean isRoot() {
             return this.parent == null;
         }
 
+        /**
+         * @return a copy of this node
+         */
         public Node<T> copy() {
             return copyRecursive(null);
         }
@@ -401,6 +413,11 @@ public class Tree {
             return this.data;
         }
 
+        /**
+         * @param newData
+         *            set the data at this node
+         * @return the data formerly held against this node
+         */
         public T setData(final T newData) {
             if (this.data != null) {
                 throw new IllegalStateException("data already set: " + this.data);
