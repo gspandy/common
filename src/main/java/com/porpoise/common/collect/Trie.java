@@ -18,18 +18,29 @@ import com.porpoise.common.core.Options.Option;
 import com.porpoise.common.strings.StringIterator;
 
 /**
- * Trie implementation, where each the Trie object is itself a node in the Trie
+ * Prefix Trie implementation, where each the {@code Trie} object is itself a node in the prefix tree
  * 
  * @param <T>
  *            the data type held in the trie
  */
-public class Trie<T> implements TreeNode<Option<T>> {
+public final class Trie<T> implements TreeNode<Option<T>> {
 
-    private char                      key;
-    private Trie<T>                   parent;
+    private char key;
+    private Trie<T> parent;
     private final Collection<Trie<T>> children = Lists.newArrayList();
-    private Option<T>                 value;
+    private Option<T> value;
 
+    /**
+     * factory method - create a new prefix trie with the given strings
+     * 
+     * @param <T>
+     * @param first
+     *            an initial key
+     * @param second
+     *            another key (having two initial strings followed by a varargs
+     * @param values
+     * @return a new prefix trie
+     */
     public static <T> Trie<T> valueOf(final String first, final String second, final String... values) {
         final Trie<T> root = Trie.valueOf(first);
         root.put(second);
@@ -39,6 +50,14 @@ public class Trie<T> implements TreeNode<Option<T>> {
         return root;
     }
 
+    /**
+     * factory method - create a new prefix trie populated with the given values
+     * 
+     * @param <T>
+     * @param values
+     *            the values to populate the initial trie
+     * @return a trie containing the given values
+     */
     public static <T> Trie<T> valueOf(final Iterable<String> values) {
         final Iterator<String> iter = values.iterator();
         if (!iter.hasNext()) {
@@ -52,17 +71,31 @@ public class Trie<T> implements TreeNode<Option<T>> {
     }
 
     /**
+     * factory method to construct a trie from a single string
+     * 
      * @param <T>
      * @param string
-     * @return
+     * @return a trie with the single initial string
      */
     public static <T> Trie<T> valueOf(final String string) {
         return valueOfWithValue(string, (T) null);
     }
 
+    /**
+     * factory method to create a trie which also stores a value against the key. This name is 'valueOfWithValue' to
+     * differentiate between the other 'valueOf' factory methods to guard against tries which also store {@link String}s
+     * as their values
+     * 
+     * @param <T>
+     * @param string
+     * @param value
+     * @return a trie with the given initial value
+     */
     public static <T> Trie<T> valueOfWithValue(final String string, final T value) {
         final Option<T> leafValue = Options.valueOf(value);
 
+        // though we use an underscore here for the 'root' of the trie, it could be anything (just
+        // because each node requires a char key). We don't (and shouldn't) depend on it for any side-effects
         final Trie<T> root = new Trie<T>('_');
         final Iterator<Character> stringIterator = new StringIterator(string);
         root.put(stringIterator, leafValue);
@@ -81,6 +114,29 @@ public class Trie<T> implements TreeNode<Option<T>> {
         this.value = charValue;
     }
 
+    /**
+     * returns the closest match for the given string.
+     * 
+     * If, for example, we have a trie that contains:
+     * 
+     * <pre>
+     * a + b + c | +d
+     * </pre>
+     * 
+     * The following will be returned for each given string:
+     * <ul>
+     * <li>"abcdefg" => "abc"</li>
+     * <li>"alpha" => "a"</li>
+     * <li>"beta" => "" (root node)</li>
+     * <li>"" => "" (root node)</li>
+     * <li>null => "" (root node)</li>
+     * <li>"abd" => "abd"</li>
+     * </ul>
+     * 
+     * @param keyString
+     *            the key to find
+     * @return the closest match for the given string
+     */
     public Trie<T> findClosest(final String keyString) {
         if (Strings.isNullOrEmpty(keyString)) {
             return root();
@@ -93,6 +149,7 @@ public class Trie<T> implements TreeNode<Option<T>> {
                     return closest;
                 }
             }
+            return root();
         }
 
         final StringIterator iter = new StringIterator(keyString);
@@ -103,9 +160,11 @@ public class Trie<T> implements TreeNode<Option<T>> {
         return closest(iter);
     }
 
-    private Trie<T> root() {
-        final Trie<T> root = TreeTrait.getRoot(this);
-        return root;
+    /**
+     * @return the root of this trie
+     */
+    public Trie<T> root() {
+        return TreeTrait.getRoot(this);
     }
 
     /**
@@ -128,6 +187,13 @@ public class Trie<T> implements TreeNode<Option<T>> {
         return closest.put(iter, Options.<T> valueOf(leafValue));
     }
 
+    /**
+     * put a new key into this trie node
+     * 
+     * @param next
+     *            the key to insert
+     * @return the previous value held at this key (will either be 'none' or some(T))
+     */
     public Option<T> put(final String next) {
         return put(next, null);
     }
@@ -154,7 +220,7 @@ public class Trie<T> implements TreeNode<Option<T>> {
         return child.put(chars, leafValue);
     }
 
-    protected Trie<T> closest(final Iterator<Character> chars) {
+    Trie<T> closest(final Iterator<Character> chars) {
         if (!chars.hasNext()) {
             return this;
         }
@@ -266,7 +332,7 @@ public class Trie<T> implements TreeNode<Option<T>> {
      */
     public Map<String, T> leaves() {
         final Map<String, T> leaves = Maps.newHashMap();
-        TreeTrait.depthFirst(root(), new TreeVisitor<Trie<T>>() {
+        TreeTrait.depthFirst(this, new TreeVisitor<Trie<T>>() {
             @Override
             public void onNode(final int depth, final Trie<T> node) {
                 if (node.hasValue()) {
@@ -279,11 +345,11 @@ public class Trie<T> implements TreeNode<Option<T>> {
         return leaves;
     }
 
-    protected boolean isLeaf() {
+    boolean isLeaf() {
         return hasValue() || TreeTrait.isLeaf(this);
     }
 
-    protected boolean hasValue() {
+    boolean hasValue() {
         return getData().isDefined();
     }
 }

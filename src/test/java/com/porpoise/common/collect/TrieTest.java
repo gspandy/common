@@ -6,10 +6,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Tests for the {@link Trie} class
+ */
 public class TrieTest {
 
     private Trie<Object> trie;
 
+    /**
+     * setup a trie to test
+     */
     @Before
     public void setup() {
         this.trie = Trie.valueOf("com.acme.one");
@@ -17,6 +23,32 @@ public class TrieTest {
         this.trie.put("com.acme.three");
     }
 
+    /**
+     * test for {@link Trie#leaves()}
+     * 
+     * test a subnode can return its leaves
+     */
+    @Test
+    public void testLeavesFromSubnode() {
+
+        // let's add a couple more nodes
+        this.trie.put("com.acme.two.A");
+        this.trie.put("com.acme.two.B");
+
+        // call the method under test
+        final Map<String, Object> leaves = this.trie.findClosest("com.acme.two.").leaves();
+        Assert.assertEquals(2, leaves.size());
+        Assert.assertTrue(leaves.containsKey("com.acme.two.A"));
+        Assert.assertTrue(leaves.containsKey("com.acme.two.B"));
+
+        // lets test the 'com.acme.three' key too, just for fun
+        Assert.assertEquals(1, this.trie.findClosest("com.acme.th").leaves().size());
+        Assert.assertTrue(this.trie.findClosest("com.acme.th").leaves().containsKey("com.acme.three"));
+    }
+
+    /**
+     * test for {@link Trie#leaves()}
+     */
     @SuppressWarnings("boxing")
     @Test
     public void testLeaves() {
@@ -29,7 +61,9 @@ public class TrieTest {
         root.put("andandand", 5);
         root.put("shootsHoops");
 
+        // call the method under test
         final Map<String, Integer> leaves = root.leaves();
+
         Assert.assertEquals(7, leaves.size());
 
         Assert.assertTrue(leaves.containsKey("eats"));
@@ -45,6 +79,9 @@ public class TrieTest {
         Assert.assertNull(leaves.get("shootsHoops"));
     }
 
+    /**
+     * test for {@link Trie#findClosest(String)}
+     */
     @Test
     public void testFindClosest() {
         Assert.assertEquals("com.acme.", this.trie.findClosest("com.acme.blah").prefix());
@@ -52,6 +89,9 @@ public class TrieTest {
         Assert.assertEquals("", this.trie.findClosest("dave").prefix());
     }
 
+    /**
+     * test for {@link Trie#longestPrefix()}
+     */
     @Test
     public void testLongestPrefix() {
         Assert.assertEquals("com.acme.", this.trie.longestPrefix());
