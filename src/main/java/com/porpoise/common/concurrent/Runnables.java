@@ -9,7 +9,6 @@ import com.porpoise.common.log.Log;
 
 /**
  * Utility class for {@link Runnable}s
- * 
  */
 public enum Runnables {
     ;// uninstantiable
@@ -27,6 +26,8 @@ public enum Runnables {
     }
 
     /**
+     * @param runnable
+     *            the runnable to wrap
      * @return a runnable which delegates to the given runnable whilst logging the start/complete/exception status
      */
     public static Runnable proxyWithLogging(final Runnable runnable) {

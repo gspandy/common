@@ -10,7 +10,8 @@ import com.google.common.collect.Maps;
 /**
  * Simple cache implementation which can use an optional expiration time and weak key/value references.
  * 
- * Should an object not exist in the cache, then its value will be computed via a call to {@link #createValue(Object)}
+ * Should an object not exist in the cache, then its value will be computed via an internal call to
+ * {@code #createValue(Object)}
  * 
  * @param <K>
  *            the cache key type

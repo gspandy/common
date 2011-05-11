@@ -49,6 +49,7 @@ public class TreeTraitTest {
 
         this.paths = Lists.newArrayList();
         this.visitor = new TreeVisitor<Node<Object>>() {
+            @SuppressWarnings("synthetic-access")
             @Override
             public void onNode(final int depth, final Node<Object> node) {
                 TreeTraitTest.this.paths.add(node.getPath());
@@ -57,7 +58,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * test for {@link TreeTrait#sizeOf(ITreeNode)}
+     * test for {@link TreeTrait#sizeOf(TreeNode)}
      */
     @Test
     public void test_sizeOf() {
@@ -68,7 +69,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * test for {@link TreeTrait#depthFirstPlusDepth(ITreeNode, ITreeVisitor, int) 
+     * test for {@link TreeTrait#depthFirstPlusDepth(TreeNode, TreeVisitor, int)}
      */
     @Test
     public void test_depthFirstConditionalToDepthTwo() {
@@ -82,7 +83,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * test for {@link TreeTrait#depthFirstPlusDepth(ITreeNode, ITreeVisitor, int) 
+     * test for {@link TreeTrait#depthFirstPlusDepth(TreeNode, TreeVisitor, int)}
      */
     @Test
     public void test_depthFirstConditionalToDepthOne() {
@@ -94,7 +95,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * test for {@link TreeTrait#depthFirst(ITreeNode, ITreeVisitor) 
+     * test for {@link TreeTrait#depthFirst(TreeNode, TreeVisitor) }
      */
     @Test
     public void test_depthFirst() {
@@ -112,7 +113,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * test for {@link TreeTrait#breadthFirst(ITreeNode, ITreeVisitor) 
+     * test for {@link TreeTrait#breadthFirst(TreeNode, TreeVisitor)}
      */
     @Test
     public void test_breadthFirst() {
@@ -129,7 +130,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * test for {@link TreeTrait#findFirst(ITreeNode, com.google.common.base.Predicate)}
+     * test for {@link TreeTrait#findFirst(TreeNode, com.google.common.base.Predicate)}
      */
     @Test
     public void test_findFirst() {
@@ -148,7 +149,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * test for {@link TreeTrait#findFirst(ITreeNode, com.google.common.base.Predicate)}
+     * test for {@link TreeTrait#findFirst(TreeNode, com.google.common.base.Predicate)}
      */
     @Test
     public void test_findFirstNoResults() {
@@ -158,7 +159,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * Test for {@link TreeTrait#findByPath(ITreeNode, com.google.common.base.Function, String)}
+     * Test for {@link TreeTrait#findByPath(TreeNode, com.google.common.base.Function, String)}
      */
     @Test
     public void test_findByPath() {
@@ -170,7 +171,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * Test for {@link TreeTrait#getRoot(ITreeNode)}
+     * Test for {@link TreeTrait#getRoot(TreeNode)}
      */
     @Test
     public void test_getRoot() {
@@ -190,7 +191,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * test for TreeTrait#getLeafNodes(ITreeNode)
+     * test for TreeTrait#getLeafNodes(TreeNode)
      */
     @Test
     public void test_getLeafNodes() {
@@ -204,7 +205,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * Test for {@link TreeTrait#getLeafPaths(ITreeNode, com.google.common.base.Function)}
+     * Test for {@link TreeTrait#getLeafPaths(TreeNode, com.google.common.base.Function)}
      */
     @Test
     public void test_getLeafPaths() {
@@ -235,7 +236,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * Test for {@link TreeTrait#toPathString(ITreeNode, String)
+     * Test for {@link TreeTrait#toPathString(TreeNode, String)}
      */
     @Test
     public void test_toPathString() {
@@ -244,7 +245,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * test for {@link TreeTrait#getMaxDepth(ITreeNode)}
+     * test for {@link TreeTrait#getMaxDepth(TreeNode)}
      */
     @Test
     public void test_getMaxDepth() {
@@ -258,17 +259,17 @@ public class TreeTraitTest {
     }
 
     /**
-     * Test for {@link TreeTrait#getChildByNameDeep(ITreeNode, com.google.common.base.Function, String)}
+     * Test for {@link TreeTrait#getChildByNameDeep(TreeNode, com.google.common.base.Function, String)}
      */
     @Test
     public void test_getChildByNameDeep() {
         final Node<Object> b1C1 = Tree.parse("/A/B1/C1");
-        final Node<Object> a = b1C1.getRoot();
-        final Node<Object> bOne = a.getChildByName("B1");
+        final Node<Object> aNode = b1C1.getRoot();
+        final Node<Object> bOne = aNode.getChildByName("B1");
         final Node<Object> b1C2 = bOne.addChild("C2");
-        final Node<Object> bTwo = a.parse("B2");
+        final Node<Object> bTwo = aNode.parse("B2");
         final Node<Object> b2C1 = bTwo.addChild("C1");
-        final Node<Object> b2C2 = a.parse("B2/C2");
+        final Node<Object> b2C2 = aNode.parse("B2/C2");
 
         // should have the tree:
         // /A/B1/C1
@@ -276,9 +277,9 @@ public class TreeTraitTest {
         // /A/B2/C1
         // /A/B2/C2
 
-        final TreeNode<Object> actual = TreeTrait.getChildByNameDeep(a, Tree.name(), "C1");
+        final TreeNode<Object> actual = TreeTrait.getChildByNameDeep(aNode, Tree.name(), "C1");
         Assert.assertSame(b1C1, actual);
-        Assert.assertSame(b1C2, TreeTrait.getChildByNameDeep(a, Tree.name(), "C2"));
+        Assert.assertSame(b1C2, TreeTrait.getChildByNameDeep(aNode, Tree.name(), "C2"));
 
         Assert.assertSame(b1C1, TreeTrait.getChildByNameDeep(bOne, Tree.name(), "C1"));
         Assert.assertSame(b1C2, TreeTrait.getChildByNameDeep(bOne, Tree.name(), "C2"));
@@ -301,7 +302,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * Test for {@link TreeTrait#findNextSibling(ITreeNode)}
+     * Test for {@link TreeTrait#findNextSibling(TreeNode)}
      */
     @Test
     public void test_findNextSibling() {
@@ -337,7 +338,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * test for {@link TreeTrait#getNodesAtDepth(ITreeNode, int)}
+     * test for {@link TreeTrait#getNodesAtDepth(TreeNode, int)}
      */
     @Test
     public void test_getNodesAtDepth() {
@@ -375,7 +376,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * Test for {@link TreeTrait#all(ITreeNode, Predicate)} and Test for {@link TreeTrait#any(ITreeNode, Predicate)}
+     * Test for {@link TreeTrait#all(TreeNode, Predicate)} and Test for {@link TreeTrait#any(TreeNode, Predicate)}
      */
     @Test
     public void test_allAndAnyForAlwaysTrue() {
@@ -385,7 +386,7 @@ public class TreeTraitTest {
     }
 
     /**
-     * Test for {@link TreeTrait#all(ITreeNode, Predicate)} and Test for {@link TreeTrait#any(ITreeNode, Predicate)}
+     * Test for {@link TreeTrait#all(TreeNode, Predicate)} and Test for {@link TreeTrait#any(TreeNode, Predicate)}
      */
     @Test
     public void test_allAndAny() {

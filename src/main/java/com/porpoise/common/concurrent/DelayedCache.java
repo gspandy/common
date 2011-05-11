@@ -14,18 +14,19 @@ import com.google.common.collect.MapMaker;
 import com.google.common.util.concurrent.Callables;
 
 /**
- * The DelayedCache is an implementation of {@link AbstractCache}. The implementation of {@link #createValue(Object)}
+ * The DelayedCache is an implementation of {@code AbstractCache}. The implementation of {@code #createValue(Object)}
  * does not compute missing values directly, but rather delegates their computation to a worker (a {@link Callable}
  * instance) and returns a default value immediately. Once the worker is complete, registered listeners are notified so
  * they can update their values.
  * 
- * 
  * @param <K>
+ *            the key type (request type) for the cached value
  * @param <T>
+ *            the value type
  */
 public abstract class DelayedCache<K, T> extends AbstractCache<K, AtomicReference<T>> {
     /** collection of listeners who are notified when values are calculated */
-    private final Collection<ICallableListener<K, T>> listeners;
+    private final Collection<CallableListener<K, T>> listeners;
 
     /** The executor service used to start computation threads */
     private ExecutorService pool;
@@ -86,7 +87,7 @@ public abstract class DelayedCache<K, T> extends AbstractCache<K, AtomicReferenc
     protected DelayedCache(final MapMaker builder, final ExecutorService threadPool) {
         super(builder);
         this.pool = Preconditions.checkNotNull(threadPool);
-        this.listeners = new CopyOnWriteArraySet<ICallableListener<K, T>>();
+        this.listeners = new CopyOnWriteArraySet<CallableListener<K, T>>();
     }
 
     /**
@@ -96,7 +97,7 @@ public abstract class DelayedCache<K, T> extends AbstractCache<K, AtomicReferenc
      *            the listener to register
      * @return true if the listener was added successfully
      */
-    public boolean addListener(final ICallableListener<K, T> listener) {
+    public boolean addListener(final CallableListener<K, T> listener) {
         checkDisposed();
 
         if (listener == null) {
@@ -122,7 +123,7 @@ public abstract class DelayedCache<K, T> extends AbstractCache<K, AtomicReferenc
      *            the listener to register
      * @return true if the listener was added successfully
      */
-    public boolean removeListener(final ICallableListener<K, T> listener) {
+    public boolean removeListener(final CallableListener<K, T> listener) {
         return this.listeners.remove(listener);
     }
 

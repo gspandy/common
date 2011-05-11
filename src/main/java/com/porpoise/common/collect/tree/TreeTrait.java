@@ -37,22 +37,31 @@ public enum TreeTrait {
 
     /**
      * @param node
-     * @return
+     * @return a string for the given node's path
      */
     public static String toPathString(final TreeNode<?> node) {
         return toPathString(node, TREE_PATH_DELIM);
     }
 
     /**
+     * @param <T>
+     *            the node type
      * @param node
-     * @return
+     *            the input node
+     * @param toString
+     *            the toString function
+     * @return a string for the given node's path using the toString function for each node in the path
      */
     public static <T> String toPathString(final TreeNode<T> node, final Function<? super TreeNode<T>, String> toString) {
         return toPathString(node, toString, TREE_PATH_DELIM);
     }
 
     /**
-     * create a string for the given node
+     * @param node
+     *            the node whos path will be calculated
+     * @param separator
+     *            the path separator
+     * @return a string for the given node
      */
     public static String toPathString(final TreeNode<?> node, final String separator) {
         if (node == null) {
@@ -79,6 +88,8 @@ public enum TreeTrait {
     }
 
     /**
+     * @param node
+     *            the input node for which its depth will be computed
      * @return the depth of the given node
      */
     public static int getDepth(final TreeNode<?> node) {
@@ -95,7 +106,7 @@ public enum TreeTrait {
      * 
      * @return the depth of the given node
      */
-    public static int calculateDepth(final TreeNode<?> node) {
+    static int calculateDepth(final TreeNode<?> node) {
         if (node == null || node.getParent() == null) {
             return 0;
         }
@@ -111,7 +122,7 @@ public enum TreeTrait {
      *            the visitor used to 'visit' the nodes
      * @param depth
      *            the depth 'delta' to process. i.e., if set to one (1), it will proceed to a maximum of 1 depth further
-     * @return
+     * @return the visitor
      */
     public static <T, N extends TreeNode<T>, V extends TreeVisitor<N>> V depthFirstPlusDepth(final N node,
             final V visitor, final int depth) {
@@ -124,11 +135,22 @@ public enum TreeTrait {
     /**
      * traverse the node tree with the given visitor, depth-first
      * 
+     * @param node
+     *            the input node
+     * @param <T>
+     *            the node data type
+     * @param <N>
+     *            the node type
+     * @param <V>
+     *            the visitor type
+     * 
      * @param visitor
+     * @return the visitor
      */
-    public final static <T, N extends TreeNode<T>> void depthFirst(final N node, final TreeVisitor<N> visitor) {
+    public final static <T, N extends TreeNode<T>, V extends TreeVisitor<N>> V depthFirst(final N node, final V visitor) {
         final Predicate<N> condition = Predicates.alwaysTrue();
         depthFirstConditional(node, visitor, condition);
+        return visitor;
     }
 
     /**
@@ -184,14 +206,20 @@ public enum TreeTrait {
      * a depth-first traversal of the tree, stopping once the predicate returns 'false'
      * 
      * @param <T>
+     *            the data type of the tree node
      * @param <N>
+     *            the tree node type
+     * @param <V>
+     *            the visitor type
      * @param node
      * @param visitor
      * @param continuePredicate
+     * @return the visitor
      */
-    public static <T, N extends TreeNode<T>> void depthFirstConditional(final N node, final TreeVisitor<N> visitor,
-            final Predicate<N> continuePredicate) {
+    public static <T, N extends TreeNode<T>, V extends TreeVisitor<N>> V depthFirstConditional(final N node,
+            final V visitor, final Predicate<N> continuePredicate) {
         depthFirstRecursive(0, node, visitor, continuePredicate);
+        return visitor;
     }
 
     private static <T, N extends TreeNode<T>> void depthFirstRecursive(final int depth, final N node,
@@ -212,29 +240,45 @@ public enum TreeTrait {
     /**
      * traverse the node tree with the given visitor, depth-first
      * 
+     * @param node
+     *            the input node
+     * @param <T>
+     *            the node's data type
+     * @param <N>
+     *            the node type
+     * @param <V>
+     *            the visitor type
+     * 
      * @param visitor
+     *            the visitor
+     * @return the visitor
      */
-    public final static <T, N extends TreeNode<T>> void breadthFirst(final N node, final TreeVisitor<N> visitor) {
+    public final static <T, N extends TreeNode<T>, V extends TreeVisitor<N>> V breadthFirst(final N node,
+            final V visitor) {
         final Predicate<N> condition = Predicates.alwaysTrue();
         breadthFirstConditional(node, visitor, condition);
+        return visitor;
     }
 
     /**
      * @param <T>
+     *            the node's data type
      * @param <N>
+     *            the node type
      * @param node
      *            the node to visit breadth-first
      * @param visitor
      *            the visitor used to 'visit' the nodes
      * @param depth
      *            the depth 'delta' to process. i.e., if set to one (1), it will proceed to a maximum of 1 depth further
-     * @return
+     * @return the visitor
      */
-    public static <T, N extends TreeNode<T>> N breadthFirstPlusDepth(final N node, final TreeVisitor<N> visitor,
-            final int depth) {
+    public static <T, N extends TreeNode<T>, V extends TreeVisitor<N>> V breadthFirstPlusDepth(final N node,
+            final V visitor, final int depth) {
         Preconditions.checkArgument(depth > 0, "Depth must be positive: " + depth);
         final Predicate<N> condition = plusDepthCondition(node, depth);
-        return breadthFirstConditional(node, visitor, condition);
+        breadthFirstConditional(node, visitor, condition);
+        return visitor;
     }
 
     private static <T, N extends TreeNode<T>> Predicate<N> plusDepthCondition(final N node, final int depth) {
@@ -426,7 +470,8 @@ public enum TreeTrait {
      * @param source
      * @param nodeToNameFunction
      * @param pathParam
-     * @return
+     *            the path
+     * @return the node for the given slash-delimited ('/') node path
      */
     public static <T> TreeNode<T> findByPath(final TreeNode<T> source,
             final Function<? super TreeNode<T>, String> nodeToNameFunction, final String pathParam) {
@@ -583,8 +628,10 @@ public enum TreeTrait {
      * filter the leaf nodes from the collection of nodes
      * 
      * @param <T>
+     *            the node data type
      * @param nodes
-     * @return
+     *            the input nodes
+     * @return the node leaves for the given nodes
      */
     public static <T> Collection<TreeNode<T>> filterLeaves(final Collection<TreeNode<T>> nodes) {
         final Predicate<TreeNode<T>> predicate = new Predicate<TreeNode<T>>() {
@@ -667,6 +714,11 @@ public enum TreeTrait {
         return nextParentSiblingWithChildren;
     }
 
+    /**
+     * @param <T>
+     * @param node
+     * @return the index of the given node as a child of its parent
+     */
     public static <T> int indexOf(final TreeNode<T> node) {
         if (isRoot(node)) {
             return -1;
@@ -679,8 +731,7 @@ public enum TreeTrait {
                 return n == node;
             }
         };
-        final int nodeIndex = Iterables.indexOf(kids, equals);
-        return nodeIndex;
+        return Iterables.indexOf(kids, equals);
     }
 
     /**
@@ -717,6 +768,12 @@ public enum TreeTrait {
         return common;
     }
 
+    /**
+     * @param <T>
+     * @param first
+     * @param second
+     * @return the common ancester of the two nodes
+     */
     public static <T> TreeNode<T> findCommonAncester(final TreeNode<T> first, final TreeNode<T> second) {
         if (first == null || second == null) {
             return null;
@@ -726,19 +783,17 @@ public enum TreeTrait {
             return first;
         }
 
-        /*
-         * ====================================================================== To get to the same depth, we choose to
-         * always work in one 'direction'. Either is as good as the other, so lets always assume the left side to be
-         * more shallow than the right: ================================================
+        /**
+         * To get to the same depth, we choose to always work in one 'direction'. Either is as good as the other, so
+         * lets always assume the left side to be more shallow than the right:
          */
         final int depth = getDepth(first);
         if (depth > getDepth(second)) {
             return findCommonAncester(second, first);
         }
 
-        /*
-         * ====================================================================== Now, get both nodes to the same depth
-         * ======================================
+        /**
+         * Now, get both nodes to the same depth
          */
         TreeNode<T> right = second;
         final int secondDepth = getDepth(right);
@@ -747,12 +802,10 @@ public enum TreeTrait {
         }
         assert depth == getDepth(right);
 
-        /*
-         * ====================================================================== finally, simply traverse up the tree
+        /**
          * until a common parent is found. The only way this would NOT work is if the nodes were from two different
          * trees. If that is the case, we could return null, but here we choose rather to just let them NPE, as clients
          * of this class really shouldn't be mixing two navigation trees
-         * ================================================
          */
         TreeNode<T> left = first;
         while (left != right) {
@@ -795,7 +848,8 @@ public enum TreeTrait {
      * 
      * @param <T>
      * @param node
-     * @return
+     *            the input node
+     * @return the node as a string
      */
     public static <T, N extends TreeNode<T>> String toString(final N node) {
         final Function<N, String> function = new Function<N, String>() {
@@ -813,7 +867,7 @@ public enum TreeTrait {
      * @param <T>
      * @param node
      * @param toString
-     * @return
+     * @return the node as a string
      */
     public static <T, N extends TreeNode<T>> String toString(final N node, final Function<N, String> toString) {
         final String newLine = String.format("%n");

@@ -41,7 +41,7 @@ import com.porpoise.common.date.Dates;
  * <pre/>
  * 
  * 
- * @see http://martinfowler.com/bliki/ObjectMother.html
+ * @see <a href="http://martinfowler.com/bliki/ObjectMother.html">ObjectMother</a>
  * 
  */
 public class DataMother {
@@ -98,15 +98,36 @@ public class DataMother {
         return this.providerByClass.keySet();
     }
 
-    public <T> DataMother add(final Class<T> class1, final T... values) {
-        return add(class1, new ValuesSupplier<T>(values));
-    }
-
+    /**
+     * Default Constructor
+     */
     public DataMother() {
         // consider MutableClassToInstanceMap
         this(Maps.<Class<?>, Supplier<?>> newHashMap());
     }
 
+    /**
+     * @param <T>
+     *            the value type
+     * @param class1
+     *            the class type to add
+     * @param values
+     *            the values to add for the given class type
+     * @return the datamother instance
+     */
+    public <T> DataMother add(final Class<T> class1, final T... values) {
+        return add(class1, new ValuesSupplier<T>(values));
+    }
+
+    /**
+     * @param <T>
+     *            the value type
+     * @param type
+     *            the class type for which values will be supplied
+     * @param supplier
+     *            the supplier instance
+     * @return the datamother instance
+     */
     public <T> DataMother add(final Class<T> type, final Supplier<T> supplier) {
         this.providerByClass.put(type, supplier);
         return this;
@@ -116,20 +137,43 @@ public class DataMother {
         this.providerByClass = Preconditions.checkNotNull(impl);
     }
 
+    /**
+     * @param <T>
+     * @param c1ass
+     * @return a value for the given class as determined by a supplier registered against the given class
+     */
     public <T> T get(final Class<T> c1ass) {
         @SuppressWarnings("unchecked")
         final Supplier<T> supplier = (Supplier<T>) this.providerByClass.get(c1ass);
         return supplier == null ? null : supplier.get();
     }
 
+    /**
+     * @param <T>
+     * @param c1ass
+     *            the data type for which instances are to be returned
+     * @return a collection of data of the given type
+     */
     public <T> Collection<T> collectionOf(final Class<T> c1ass) {
         return listOf(c1ass);
     }
 
+    /**
+     * @param <T>
+     * @param c1ass
+     *            the data type for which instances are to be returned
+     * @return a list of data of the given type
+     */
     public <T> List<T> listOf(final Class<T> c1ass) {
         return ImmutableList.of(get(c1ass), get(c1ass), get(c1ass));
     }
 
+    /**
+     * @param <T>
+     * @param c1ass
+     *            the data type for which instances are to be returned
+     * @return a set of data of the given type
+     */
     public <T> Set<T> setOf(final Class<T> c1ass) {
         return ImmutableSet.of(get(c1ass), get(c1ass), get(c1ass));
     }

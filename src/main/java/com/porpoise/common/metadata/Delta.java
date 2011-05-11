@@ -32,7 +32,7 @@ public class Delta<T> {
      * @param <R>
      * @param left
      * @param right
-     * @return
+     * @return a new delta node
      */
     public static <R> Delta<R> root(final R left, final R right) {
         return new Delta<R>(null, left, right);
@@ -63,9 +63,10 @@ public class Delta<T> {
     /**
      * @param <P>
      * @param prop
+     * @param index
      * @param alpha
      * @param beta
-     * @return the newly added diff
+     * @return the newly added delta
      */
     public <P> Delta<P> addIterableDiff(final Metadata<?, ?> prop, final int index, final P alpha, final P beta) {
         final Delta<P> diff = new IterableDelta<P>(prop, index, alpha, beta);
@@ -74,8 +75,6 @@ public class Delta<T> {
     }
 
     /**
-     * @param <K>
-     * @param <V>
      * @param prop
      * @param key
      * @param alpha

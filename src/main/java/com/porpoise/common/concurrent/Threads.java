@@ -12,29 +12,33 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.porpoise.common.log.Log;
 
+/**
+ * Utility for threads
+ */
 public enum Threads {
-    ;
+    ; // unintantiable
+
     private static ExecutorService defaultThreadPool;
 
-    // unintantiable
-
     /**
-     * @return an excecutor service
+     * @param threadCount
+     *            the initial fixed thread pool count
+     * @return a fixed thread-pool executor service
      */
     public static ExecutorService newFixedThreadPool(final int threadCount) {
-        final ThreadFactory factory = Threads.newLoggingThreadFactory();
-        final ExecutorService threadPool = Executors.newFixedThreadPool(threadCount, factory);
-        return threadPool;
+        final ThreadFactory factory = newLoggingThreadFactory();
+        return Executors.newFixedThreadPool(threadCount, factory);
     }
 
     /**
      * Return the first call made prior to those of the given classes as a string.
      * 
-     * 
+     * @param classesToIgnore
+     *            an array of classes to ignore in the call-chain
      * @return the first call made prior to those of the given classes as a string
      */
-    public static String getFirstPriorCallAsString(final Class<?>... classes) {
-        final StackTraceElement firstNonLog4JStackElement = getFirstCallBefore(classes);
+    public static String getFirstPriorCallAsString(final Class<?>... classesToIgnore) {
+        final StackTraceElement firstNonLog4JStackElement = getFirstCallBefore(classesToIgnore);
 
         if (firstNonLog4JStackElement == null) {
             return "";

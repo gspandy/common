@@ -3,15 +3,24 @@ package com.porpoise.common.metadata;
 import java.util.Map;
 
 /**
- * a diff between two map entries
+ * a difference between two map entries
  * 
  * @param <K>
- * @param <V>
  */
 public class MapEntryDelta<K> extends Delta<Map<K, ?>> {
 
     private final K key;
 
+    /**
+     * factory method to create a new map entry delta
+     * 
+     * @param <A>
+     * @param prop
+     * @param key
+     * @param left
+     * @param right
+     * @return a new map entry delta
+     */
     public static <A> MapEntryDelta<A> valueOf(final Metadata<?, ?> prop, final A key, final Map<A, ?> left,
             final Map<A, ?> right) {
         return new MapEntryDelta<A>(prop, key, left, right);

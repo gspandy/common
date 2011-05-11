@@ -10,9 +10,11 @@ import java.util.concurrent.Callable;
  * @param <T>
  *            the value type
  */
-public interface ICallableListener<K, T> {
+public interface CallableListener<K, T> {
     /**
      * The callable has completed successfully, returning the given value
+     * 
+     * @param key
      * 
      * @param result
      *            the callback result
@@ -24,6 +26,8 @@ public interface ICallableListener<K, T> {
      * Otherwise the callable will return null;
      * 
      * All listeners will always be called, regardless of return value.
+     * 
+     * @param key
      * 
      * @param exp
      * @return true if the exception should be propagated (rethrown), false otherwise

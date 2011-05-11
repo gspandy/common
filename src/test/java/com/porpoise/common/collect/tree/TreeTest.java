@@ -160,6 +160,7 @@ public class TreeTest {
             Tree.newTree("some/root");
             Assert.fail("names with slashes should not be allowed");
         } catch (final IllegalArgumentException e) {
+            // expected
         }
     }
 

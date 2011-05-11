@@ -82,7 +82,7 @@ public class ObservableNode<T> extends Node<T> {
      * 
      * @param <T>
      * @param name
-     * @return
+     * @return a new observable node for the given name
      */
     public static <T> ObservableNode<T> create(final String name) {
         return create(name, null);
@@ -188,7 +188,7 @@ public class ObservableNode<T> extends Node<T> {
     /**
      * {@inheritDoc}
      * 
-     * @see com.porpoise.common.tree.Tree.Node#addChild(java.lang.String, java.lang.Object)
+     * @see Node#addChild(java.lang.String, java.lang.Object)
      */
     @Override
     public ObservableNode<T> addChild(final String childName, final T value) {
@@ -198,7 +198,7 @@ public class ObservableNode<T> extends Node<T> {
     /**
      * {@inheritDoc}
      * 
-     * @see com.porpoise.common.tree.Tree.Node#getRoot()
+     * @see Node#getRoot()
      */
     @Override
     public ObservableNode<T> getRoot() {
