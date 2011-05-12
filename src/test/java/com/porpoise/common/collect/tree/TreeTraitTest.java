@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.porpoise.common.collect.tree.Tree.Node;
 
@@ -18,16 +19,16 @@ import com.porpoise.common.collect.tree.Tree.Node;
  * Test for {@link TreeTrait}
  */
 public class TreeTraitTest {
-    private Node<Object> root;
+    private Node<Object>              root;
     private TreeVisitor<Node<Object>> visitor;
-    private Collection<String> paths;
-    private Node<Object> b2;
-    private Node<Object> b1;
-    private Node<Object> alpha;
-    private Node<Object> beta;
-    private Node<Object> c1;
-    private Node<Object> c2;
-    private Node<Object> a;
+    private Collection<String>        paths;
+    private Node<Object>              b2;
+    private Node<Object>              b1;
+    private Node<Object>              alpha;
+    private Node<Object>              beta;
+    private Node<Object>              c1;
+    private Node<Object>              c2;
+    private Node<Object>              a;
 
     /**
      * setup the test data
@@ -389,16 +390,32 @@ public class TreeTraitTest {
      */
     @Test
     public void test_toString() {
-        final String s = TreeTrait.toString(this.root);
+        final String actual = TreeTrait.toString(this.root);
         final String expected = //
-        /*    */String.format(" +-a%n") + //
-                String.format("    +-b1%n") + //
-                String.format("    |  +-c1%n") + //
-                String.format("    |  +-c2%n") + //
-                String.format("    +-b2%n") + //
-                String.format("       +-alpha%n") + //
-                String.format("       +-beta%n");
-        Assert.assertEquals(expected, s);
+        /*    */String.format("+-a%n") + //
+                String.format("  | %n") + //
+                String.format("  +-b1%n") + //
+                String.format("  | | %n") + //
+                String.format("  | +-c1%n") + //
+                String.format("  | | %n") + //
+                String.format("  | +-c2%n") + //
+                String.format("  | %n") + //
+                String.format("  +-b2%n") + //
+                String.format("    | %n") + //
+                String.format("    +-alpha%n") + //
+                String.format("    | %n") + //
+                String.format("    +-beta%n");
+
+        final Splitter splitter = Splitter.on(String.format("%n"));
+        final Iterator<String> e = splitter.split(expected).iterator();
+        final Iterator<String> a = splitter.split(actual).iterator();
+        int i = 0;
+        while (a.hasNext() && e.hasNext()) {
+            Assert.assertEquals("line " + i, a.next(), e.next());
+            i++;
+        }
+        Assert.assertFalse(a.hasNext());
+        Assert.assertFalse(e.hasNext());
     }
 
     /**
