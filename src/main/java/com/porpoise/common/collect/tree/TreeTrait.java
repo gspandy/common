@@ -4,24 +4,27 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.porpoise.common.collect.tree.Tree.Node;
 import com.porpoise.common.collect.tree.TreeVisitors.LeafCollectionVisitor;
 import com.porpoise.common.collect.tree.TreeVisitors.SizeVisitor;
 import com.porpoise.common.collect.tree.TreeVisitors.TreeVisitorAdapter;
+import com.porpoise.common.strings.Strings2;
 
 /**
  * Similar to scala traits, this class provides a richer tree implementation by providing addition methods from the
@@ -717,6 +720,19 @@ public enum TreeTrait {
     /**
      * @param <T>
      * @param node
+     * @return true if this node is the last of its parent's children
+     */
+    public static <T> boolean isLastChild(final TreeNode<T> node) {
+        if (isRoot(node)) {
+            return false;
+        }
+        final TreeNode<T> parent = node.getParent();
+        return indexOf(node) == Iterables.size(parent.getChildren()) - 1;
+    }
+
+    /**
+     * @param <T>
+     * @param node
      * @return the index of the given node as a child of its parent
      */
     public static <T> int indexOf(final TreeNode<T> node) {
@@ -844,54 +860,64 @@ public enum TreeTrait {
     }
 
     /**
-     * Return a String representation of the tree
-     * 
      * @param <T>
-     * @param node
-     *            the input node
-     * @return the node as a string
+     * @param inputNode
+     * @param toString
+     *            the function used to create text for a given node
+     * @return a string representation of the tree
      */
-    public static <T, N extends TreeNode<T>> String toString(final N node) {
-        final Function<N, String> function = new Function<N, String>() {
+    public static <T, N extends TreeNode<T>> String toString(final N inputNode, final Function<N, String> toString) {
+        final StringBuilder builder = new StringBuilder();
+        depthFirst(inputNode, new TreeVisitor<N>() {
+            final Set<Integer> depths = Sets.newHashSet();
+
+            @SuppressWarnings("boxing")
             @Override
-            public String apply(final N arg0) {
-                return arg0.toString();
+            public void onNode(final int depth, final N node) {
+                if (!isRoot(node) && !isLeaf(node) && !isLastChild(node)) {
+                    this.depths.add(depth);
+                } else {
+                    this.depths.remove(depth);
+                }
+                builder.append(indent(depth));
+                final String nodeString = toString.apply(node);
+                builder.append(" +-").append(nodeString).append(Strings2.NEW_LINE);
             }
-        };
-        return toString(node, function);
+
+            private String indent(final int depth) {
+                final StringBuilder b = new StringBuilder();
+                for (int i = 0; i < depth; i++) {
+                    if (this.depths.contains(Integer.valueOf(i))) {
+                        b.append(" | ");
+                    } else {
+                        b.append("   ");
+                    }
+                }
+                return b.toString();
+            }
+        });
+        return builder.toString();
     }
 
     /**
-     * Return a String representation of the tree
-     * 
-     * @param <T>
-     * @param node
-     * @param toString
-     * @return the node as a string
+     * @param root
+     * @return the tree as a string
      */
-    public static <T, N extends TreeNode<T>> String toString(final N node, final Function<N, String> toString) {
-        final String newLine = String.format("%n");
-        return toStringRecursive(node, toString, newLine);
-    }
-
     @SuppressWarnings("unchecked")
-    private static <T, N extends TreeNode<T>> String toStringRecursive(final N node,
-            final Function<N, String> toString, final String newLine) {
-        final StringBuilder b = new StringBuilder();
+    public static <T, N extends TreeNode<T>> String toString(final N root) {
+        final Function<N, String> toString;
+        if (root instanceof Node<?>) {
+            final Node<?> node = (Node<?>) root;
+            toString = (Function<N, String>) node.toStringFunction();
+        } else {
+            toString = new Function<N, String>() {
 
-        final int depth = getDepth(node);
-        final String nodeString = String.format("(%d) %s", Integer.valueOf(depth), toString.apply(node));
-
-        if (depth > 0) {
-            final int indent = 4 * depth;
-            b.append(Strings.repeat(" ", indent));
+                @Override
+                public String apply(final N input) {
+                    return Objects.firstNonNull(input.getData(), "").toString();
+                }
+            };
         }
-
-        b.append("+--").append(nodeString).append(newLine);
-
-        for (final TreeNode<T> child : node.getChildren()) {
-            b.append(toStringRecursive((N) child, toString, newLine));
-        }
-        return b.toString();
+        return toString(root, toString);
     }
 }

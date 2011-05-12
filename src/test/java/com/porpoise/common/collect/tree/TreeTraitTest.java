@@ -144,8 +144,8 @@ public class TreeTraitTest {
         Assert.assertEquals("c2", found.getName());
 
         final Predicate<Node<Object>> first = Predicates.alwaysTrue();
-        final Node<Object> a = TreeTrait.findFirst(this.root, first);
-        Assert.assertEquals("a", a.getName());
+        final Node<Object> aNode = TreeTrait.findFirst(this.root, first);
+        Assert.assertEquals("a", aNode.getName());
     }
 
     /**
@@ -383,6 +383,22 @@ public class TreeTraitTest {
         final Predicate<Node<Object>> logic = Predicates.alwaysTrue();
         Assert.assertTrue(TreeTrait.all(this.root, logic));
         Assert.assertTrue(TreeTrait.any(this.root, logic));
+    }
+
+    /**
+     */
+    @Test
+    public void test_toString() {
+        final String s = TreeTrait.toString(this.root);
+        final String expected = //
+        /*    */String.format(" +-a%n") + //
+                String.format("    +-b1%n") + //
+                String.format("    |  +-c1%n") + //
+                String.format("    |  +-c2%n") + //
+                String.format("    +-b2%n") + //
+                String.format("       +-alpha%n") + //
+                String.format("       +-beta%n");
+        Assert.assertEquals(expected, s);
     }
 
     /**

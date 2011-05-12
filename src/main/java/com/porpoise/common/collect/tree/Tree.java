@@ -252,13 +252,17 @@ public class Tree {
 
         @Override
         public final String toString() {
-            final Function<Node<T>, String> f = new Function<Node<T>, String>() {
+            final Function<Node<T>, String> f = toStringFunction();
+            return TreeTrait.toString(this, f);
+        }
+
+        Function<Node<T>, String> toStringFunction() {
+            return new Function<Node<T>, String>() {
                 @Override
                 public final String apply(final Node<T> node) {
                     return node.getName();
                 }
             };
-            return TreeTrait.toString(this, f);
         }
 
         /**

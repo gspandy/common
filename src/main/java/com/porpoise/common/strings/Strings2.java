@@ -12,6 +12,10 @@ public enum Strings2 {
     ; // uninstantiable
 
     /**
+     */
+    public static final String NEW_LINE = String.format("%n");
+
+    /**
      * @param suffix
      *            the suffix to test against
      * @return a predicate which returns true if the input string ends with the supplied suffix
