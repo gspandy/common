@@ -407,15 +407,14 @@ public class TreeTraitTest {
                 String.format("    +-beta%n");
 
         final Splitter splitter = Splitter.on(String.format("%n"));
-        final Iterator<String> e = splitter.split(expected).iterator();
-        final Iterator<String> a = splitter.split(actual).iterator();
-        int i = 0;
-        while (a.hasNext() && e.hasNext()) {
-            Assert.assertEquals("line " + i, a.next(), e.next());
-            i++;
+        final Iterator<String> expectedIter = splitter.split(expected).iterator();
+        final Iterator<String> actualIter = splitter.split(actual).iterator();
+
+        for (int i = 0; actualIter.hasNext() && expectedIter.hasNext(); i++) {
+            Assert.assertEquals("line " + i, actualIter.next(), expectedIter.next());
         }
-        Assert.assertFalse(a.hasNext());
-        Assert.assertFalse(e.hasNext());
+        Assert.assertFalse(actualIter.hasNext());
+        Assert.assertFalse(expectedIter.hasNext());
     }
 
     /**
