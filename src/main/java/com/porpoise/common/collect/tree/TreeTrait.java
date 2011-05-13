@@ -911,7 +911,7 @@ public enum TreeTrait {
     public static <T, N extends TreeNode<T>> String toString(final N root) {
         final Function<N, String> toString;
         if (root instanceof Node<?>) {
-            final Node<?> node = (Node<?>) root;
+            final Node<T> node = (Node<T>) root;
             toString = (Function<N, String>) node.toStringFunction();
         } else {
             toString = new Function<N, String>() {
