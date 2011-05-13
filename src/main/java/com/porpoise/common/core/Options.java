@@ -93,6 +93,7 @@ public enum Options {
      */
     private static final class None<T> implements Option<T> {
         private None() {
+            super();
         }
 
         @Override

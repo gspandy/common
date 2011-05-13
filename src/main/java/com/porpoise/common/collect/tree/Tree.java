@@ -118,15 +118,15 @@ public class Tree {
      */
     public static class Node<T> implements Iterable<Node<T>>, TreeNode<T> {
 
-        private final String name;
+        private final String               name;
 
-        private T data;
+        private T                          data;
 
-        private final Node<T> parent;
+        private final Node<T>              parent;
 
         private final Map<String, Node<T>> childrenByName;
 
-        private Integer cachedDepth;
+        private Integer                    cachedDepth;
 
         protected Node(final Node<T> parentNode, final String nodeName) {
             this(parentNode, nodeName, null);
@@ -148,7 +148,6 @@ public class Tree {
          *            the slash-separated path for the node
          * @return the node at the given location or null if no node exists
          */
-        @SuppressWarnings({ "static-method" })
         public Node<T> findByPath(final String pathParam) {
             return (Node<T>) TreeTrait.findByPath(this, GetNodeName.INSTANCE, pathParam);
         }
@@ -346,7 +345,6 @@ public class Tree {
         /***
          * @return the root node
          */
-        @SuppressWarnings("static-method")
         public Node<T> getRoot() {
             return TreeTrait.getRoot(this);
         }
@@ -407,7 +405,6 @@ public class Tree {
         /**
          * @return the number of nodes in the tree
          */
-        @SuppressWarnings("static-method")
         public int size() {
             return TreeTrait.sizeOf(this);
         }
@@ -433,7 +430,6 @@ public class Tree {
         /**
          * @return the tree path as a string
          */
-        @SuppressWarnings("static-method")
         public String getPath() {
             final Function<TreeNode<?>, String> justName = GetNodeName.INSTANCE;
             return TreeTrait.toPathString(this, justName, TreeTrait.TREE_PATH_DELIM);

@@ -2,14 +2,13 @@ package com.porpoise.common.xml;
 
 import java.io.InputStream;
 
-import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
 /**
- * 
+ * resolver which will resolve imported schema files to files on the classpath
  */
 class ClasspathResolver implements LSResourceResolver {
 
@@ -29,16 +28,14 @@ class ClasspathResolver implements LSResourceResolver {
         return lsInput;
     }
 
-    /**
-     * @return
-     * @throws ClassNotFoundException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     */
     LSInput getLsInput() {
-        DOMImplementationRegistry registry;
+        final DOMImplementationLS ls = (DOMImplementationLS) registry().getDOMImplementation("LS 3.0");
+        return ls.createLSInput();
+    }
+
+    private DOMImplementationRegistry registry() {
         try {
-            registry = DOMImplementationRegistry.newInstance();
+            return DOMImplementationRegistry.newInstance();
         } catch (final ClassCastException e) {
             throw new RuntimeException(e);
         } catch (final ClassNotFoundException e) {
@@ -48,10 +45,6 @@ class ClasspathResolver implements LSResourceResolver {
         } catch (final IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        final DOMImplementation impl = registry.getDOMImplementation("LS 3.0");
-        final DOMImplementationLS ls = (DOMImplementationLS) impl;
-        final LSInput lsInput = ls.createLSInput();
-        return lsInput;
     }
 
 }
