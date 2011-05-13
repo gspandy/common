@@ -4,6 +4,9 @@ import com.google.common.base.Function;
 
 /**
  * @param <T>
+ *            the type which this metadata represents
+ * @param <V>
+ *            the type of the value returned
  */
 public interface Metadata<T, V> {
     /**
@@ -20,7 +23,6 @@ public interface Metadata<T, V> {
      * This method may not have any effect, or even be supported. If {@link #isMutable()} returns true, then this method
      * will return true if the property has changed as a result of this call.
      * 
-     * @param <V>
      * @param input
      *            The field holder -- an entity with a field represented by this metadata
      * @param newValue
