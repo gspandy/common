@@ -880,21 +880,22 @@ public enum TreeTrait {
                     this.depths.remove(depth);
                 }
                 final String indentation = indent(depth);
-                if (!isRoot(node)) {
-                    builder.append(indentation).append(" |").append(Strings2.NEW_LINE);
+                if (builder.length() > 0) {
+                    builder.append(indentation).append("| ").append(Strings2.NEW_LINE);
                 }
+
                 builder.append(indentation);
                 final String nodeString = toString.apply(node);
-                builder.append(" +-").append(nodeString).append(Strings2.NEW_LINE);
+                builder.append("+-").append(nodeString).append(Strings2.NEW_LINE);
             }
 
             private String indent(final int depth) {
                 final StringBuilder b = new StringBuilder();
                 for (int i = 0; i < depth; i++) {
                     if (this.depths.contains(Integer.valueOf(i))) {
-                        b.append(" | ");
+                        b.append("| ");
                     } else {
-                        b.append("   ");
+                        b.append("  ");
                     }
                 }
                 return b.toString();
@@ -911,7 +912,7 @@ public enum TreeTrait {
     public static <T, N extends TreeNode<T>> String toString(final N root) {
         final Function<N, String> toString;
         if (root instanceof Node<?>) {
-            final Node<?> node = (Node<?>) root;
+            final Node<T> node = (Node<T>) root;
             toString = (Function<N, String>) node.toStringFunction();
         } else {
             toString = new Function<N, String>() {
