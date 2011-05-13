@@ -4,6 +4,9 @@ import com.google.common.base.Preconditions;
 
 /**
  * @param <T>
+ *            The source object type - the delta type
+ * @param <P>
+ *            The type returned by this element's metadata's accessor
  */
 public class PathElement<T, P> {
     private final Delta<T> delta;

@@ -28,12 +28,19 @@ public class MetadataNode<T, V> implements TreeNode<Object> {
     }
 
     /**
-     * 
+     * @param child
+     *            the child to add
+     * @param <N>
+     *            the child type
+     * @return the added child
      */
     @SuppressWarnings("unchecked")
     public <N extends TreeNode<?>> N addChild(final N child) {
-        this.children.add((TreeNode<Object>) child);
+        if (child != null) {
+            this.children.add((TreeNode<Object>) child);
+        }
         return child;
+
     }
 
     /*

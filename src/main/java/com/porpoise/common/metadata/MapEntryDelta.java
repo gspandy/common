@@ -26,6 +26,12 @@ public class MapEntryDelta<K> extends Delta<Map<K, ?>> {
         return new MapEntryDelta<A>(prop, key, left, right);
     }
 
+    /**
+     * @param prop
+     * @param key
+     * @param left
+     * @param right
+     */
     public MapEntryDelta(final Metadata<?, ?> prop, final K key, final Map<K, ?> left, final Map<K, ?> right) {
         super(prop, left, right);
         this.key = key;
