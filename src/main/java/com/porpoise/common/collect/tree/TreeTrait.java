@@ -866,7 +866,8 @@ public enum TreeTrait {
      *            the function used to create text for a given node
      * @return a string representation of the tree
      */
-    public static <T, N extends TreeNode<T>> String toString(final N inputNode, final Function<N, String> toString) {
+    public static <T, N extends TreeNode<T>> String toString(final N inputNode,
+            final Function<? super N, String> toString) {
         final StringBuilder builder = new StringBuilder();
         depthFirst(inputNode, new TreeVisitor<N>() {
             final Set<Integer> depths = Sets.newHashSet();
