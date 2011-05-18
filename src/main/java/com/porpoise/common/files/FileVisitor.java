@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * File visitor
  */
-public interface IFileVisitor {
+public interface FileVisitor {
 
     /**
      * @param directory

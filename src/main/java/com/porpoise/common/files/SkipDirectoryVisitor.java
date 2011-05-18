@@ -11,7 +11,7 @@ import com.porpoise.common.log.Log;
  * visitor which can skip certain directories
  */
 public class SkipDirectoryVisitor extends FileVistiorAdapter {
-    private final IFileVisitor delegate;
+    private final FileVisitor delegate;
 
     final Collection<String> blackList;
 
@@ -19,7 +19,7 @@ public class SkipDirectoryVisitor extends FileVistiorAdapter {
      * @param visitor
      * @param ignore
      */
-    public SkipDirectoryVisitor(final IFileVisitor visitor, final String... ignore) {
+    public SkipDirectoryVisitor(final FileVisitor visitor, final String... ignore) {
         this.blackList = Lists.newArrayList();
         for (final String dir : ignore) {
             this.blackList.add(dir.trim().toLowerCase());

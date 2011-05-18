@@ -12,7 +12,7 @@ import com.porpoise.common.log.Log;
  */
 public class FileMatcherVisitor extends FileVistiorAdapter {
 
-    private final IFileVisitor delegate;
+    private final FileVisitor delegate;
 
     private final Predicate<String> filter;
 
@@ -22,7 +22,7 @@ public class FileMatcherVisitor extends FileVistiorAdapter {
      * @param visitor
      *            the visitor
      */
-    public FileMatcherVisitor(final Predicate<String> nameMatcher, final IFileVisitor visitor) {
+    public FileMatcherVisitor(final Predicate<String> nameMatcher, final FileVisitor visitor) {
         this.filter = Preconditions.checkNotNull(nameMatcher);
         this.delegate = Preconditions.checkNotNull(visitor);
     }

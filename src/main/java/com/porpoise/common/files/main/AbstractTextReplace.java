@@ -8,7 +8,7 @@ import com.google.common.base.Predicates;
 import com.porpoise.common.files.FileFunctions;
 import com.porpoise.common.files.FileIterator;
 import com.porpoise.common.files.FileMatcherVisitor;
-import com.porpoise.common.files.IFileVisitor;
+import com.porpoise.common.files.FileVisitor;
 import com.porpoise.common.files.SkipDirectoryVisitor;
 import com.porpoise.common.files.TextReplaceVisitor;
 
@@ -20,7 +20,7 @@ abstract class AbstractTextReplace {
     public void replace(final File directory, final String suffix) {
         final Function<String, String> replace = getTextReplaceFunction();
         final Function<File, File> newFileFunction = getFileFunctionForSuffix(suffix);
-        final IFileVisitor skipDirectoryVisitor = createJavaVisitor(replace, newFileFunction);
+        final FileVisitor skipDirectoryVisitor = createJavaVisitor(replace, newFileFunction);
 
         FileIterator.depthFirst(directory, skipDirectoryVisitor);
 
@@ -38,19 +38,19 @@ abstract class AbstractTextReplace {
         return newFileFunction;
     }
 
-    protected IFileVisitor createJavaVisitor(final Function<String, String> replace,
+    protected FileVisitor createJavaVisitor(final Function<String, String> replace,
             final Function<File, File> newFileFunction) {
-        final IFileVisitor renameVisitor = createTextReplaceVisitor(replace, newFileFunction);
+        final FileVisitor renameVisitor = createTextReplaceVisitor(replace, newFileFunction);
         final Predicate<String> nameMatcher = getFileNamePredicate();
-        final IFileVisitor fileMatcherVisitor = new FileMatcherVisitor(nameMatcher, renameVisitor);
+        final FileVisitor fileMatcherVisitor = new FileMatcherVisitor(nameMatcher, renameVisitor);
         final SkipDirectoryVisitor skipDirectoryVisitor = new SkipDirectoryVisitor(fileMatcherVisitor, ".git", "build",
                 "target", "dist", "target-platform", "org.junit");
         return skipDirectoryVisitor;
     }
 
-    private static IFileVisitor createTextReplaceVisitor(final Function<String, String> replace,
+    private static FileVisitor createTextReplaceVisitor(final Function<String, String> replace,
             final Function<File, File> newFileFunction) {
-        final IFileVisitor renameVisitor = new TextReplaceVisitor(replace, newFileFunction);
+        final FileVisitor renameVisitor = new TextReplaceVisitor(replace, newFileFunction);
         return renameVisitor;
     }
 

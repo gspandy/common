@@ -4,11 +4,11 @@ import java.io.File;
 
 /**
  */
-public class FileVistiorAdapter implements IFileVisitor {
+public class FileVistiorAdapter implements FileVisitor {
     /**
      * {@inheritDoc}
      * 
-     * @see com.porpoise.common.files.IFileVisitor#onDirectory(java.io.File)
+     * @see com.porpoise.common.files.FileVisitor#onDirectory(java.io.File)
      */
     @Override
     public boolean onDirectory(final File directory) {
@@ -18,7 +18,7 @@ public class FileVistiorAdapter implements IFileVisitor {
     /**
      * {@inheritDoc}
      * 
-     * @see com.porpoise.common.files.IFileVisitor#onFile(java.io.File)
+     * @see com.porpoise.common.files.FileVisitor#onFile(java.io.File)
      */
     @Override
     public void onFile(final File directory) {

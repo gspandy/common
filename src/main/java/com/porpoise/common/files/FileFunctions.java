@@ -1,16 +1,44 @@
 package com.porpoise.common.files;
 
 import java.io.File;
+import java.util.Arrays;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * A collection of file utilities
  */
 public enum FileFunctions {
     ;//
+
+    /**
+     * Predicate which returns true if the file is a file (not a directory, etc)
+     */
+    public static final Predicate<File> IS_FILE;
+
+    /**
+     * Function which will return the files in a directory
+     */
+    public static final Function<File, Iterable<File>> LIST_FILES;
+
+    static {
+        LIST_FILES = new Function<File, Iterable<File>>() {
+            @Override
+            public Iterable<File> apply(final File dir) {
+                return Iterables.filter(Arrays.asList(dir.listFiles()), FileFunctions.IS_FILE);
+            }
+        };
+
+        IS_FILE = new Predicate<File>() {
+            @Override
+            public boolean apply(final File input) {
+                return input != null && input.isFile();
+            }
+        };
+    }
 
     /**
      * @return a function which will return the same file input

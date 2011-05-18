@@ -16,7 +16,7 @@ public enum FileIterator {
      * @param directory
      * @param visitor
      */
-    public static void depthFirst(final File directory, final IFileVisitor visitor) {
+    public static void depthFirst(final File directory, final FileVisitor visitor) {
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory + " is not a directory");
         }
