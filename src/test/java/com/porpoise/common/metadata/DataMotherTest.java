@@ -2,6 +2,7 @@ package com.porpoise.common.metadata;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,6 +10,7 @@ import org.junit.Test;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Sets;
 
 /**
  * tests for {@link DataMother}
@@ -21,8 +23,8 @@ public class DataMotherTest {
      * internal test class
      */
     static class TestClass {
-        public final int integer;
-        public final float floatValue;
+        public final int    integer;
+        public final float  floatValue;
         public final String str;
 
         public TestClass(final int integer, final float floatValue, final String str) {
@@ -116,4 +118,28 @@ public class DataMotherTest {
         Assert.assertFalse(first.equals(second));
     }
 
+    /**
+     * Test for {@link DataMother#intWithin(int, int)}i
+     */
+    @SuppressWarnings("boxing")
+    @Test
+    public void testIntWithin() {
+        final Set<Integer> values = Sets.newHashSet();
+
+        // as intWithin is non-deterministic, we test that, over a large set of values,
+        // we still only get the two we're looking for
+        for (int i = 0; i < 10000; i++) {
+            values.add(this.dataMother.intWithin(3, 4));
+        }
+        Assert.assertTrue(values.remove(Integer.valueOf(3)));
+        Assert.assertTrue(values.remove(Integer.valueOf(4)));
+        Assert.assertTrue(values.isEmpty());
+
+        // assert consistent values if given a range. In practice calling this method with consistent args explicitly
+        // would be foolish, but the method should cope with it
+        Assert.assertEquals(0, this.dataMother.intWithin(0, 0));
+        Assert.assertEquals(-1, this.dataMother.intWithin(-1, -1));
+        Assert.assertEquals(Integer.MIN_VALUE, this.dataMother.intWithin(Integer.MIN_VALUE, Integer.MIN_VALUE));
+        Assert.assertEquals(Integer.MAX_VALUE, this.dataMother.intWithin(Integer.MAX_VALUE, Integer.MAX_VALUE));
+    }
 }

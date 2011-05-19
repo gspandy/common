@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
@@ -47,6 +48,8 @@ import com.porpoise.common.date.Dates;
 public class DataMother {
 
     private final Map<Class<?>, Supplier<?>> providerByClass;
+
+    private final Random                     random = new Random(System.currentTimeMillis());
 
     /**
      * @return a DataMother which will cycle through different values for the wrapped primitive classes (Integer, Long,
@@ -176,5 +179,17 @@ public class DataMother {
      */
     public <T> Set<T> setOf(final Class<T> c1ass) {
         return ImmutableSet.of(get(c1ass), get(c1ass), get(c1ass));
+    }
+
+    public int intWithin(final int min, final int max) {
+        if (max == min) {
+            return max;
+        }
+        if (max < min) {
+            return intWithin(max, min);
+        }
+        final int rangeExclusive = max - min;
+        final int rangeInclusive = rangeExclusive + 1;
+        return min + this.random.nextInt(rangeInclusive);
     }
 }
