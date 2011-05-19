@@ -1,7 +1,5 @@
 package com.porpoise.common.xml;
 
-import java.io.InputStream;
-
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSInput;
@@ -22,8 +20,7 @@ class ClasspathResolver implements LSResourceResolver {
     public LSInput resolveResource(final String type, final String namespaceURI, final String publicId,
             final String systemId, final String baseURI) {
         final LSInput lsInput = getLsInput();
-        final InputStream is = getClass().getResourceAsStream("/" + systemId);
-        lsInput.setByteStream(is);
+        lsInput.setByteStream(getClass().getResourceAsStream("/" + systemId));
         lsInput.setSystemId(systemId);
         return lsInput;
     }

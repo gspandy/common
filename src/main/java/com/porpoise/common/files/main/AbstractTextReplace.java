@@ -5,6 +5,7 @@ import java.io.File;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.porpoise.common.files.FileFunctions;
 import com.porpoise.common.files.FileIterator;
 import com.porpoise.common.files.FileMatcherVisitor;
@@ -17,6 +18,11 @@ import com.porpoise.common.files.TextReplaceVisitor;
  */
 abstract class AbstractTextReplace {
 
+    /**
+     * @param directory
+     * @param suffix
+     *            the suffix which will be applied to all files which have had their contents replaced
+     */
     public void replace(final File directory, final String suffix) {
         final Function<String, String> replace = getTextReplaceFunction();
         final Function<File, File> newFileFunction = getFileFunctionForSuffix(suffix);
@@ -30,7 +36,7 @@ abstract class AbstractTextReplace {
 
     protected static Function<File, File> getFileFunctionForSuffix(final String suffix) {
         Function<File, File> newFileFunction;
-        if (suffix == null) {
+        if (Strings.isNullOrEmpty(suffix)) {
             newFileFunction = FileFunctions.fileIdentity();
         } else {
             newFileFunction = FileFunctions.withSuffix(suffix);
@@ -43,8 +49,8 @@ abstract class AbstractTextReplace {
         final FileVisitor renameVisitor = createTextReplaceVisitor(replace, newFileFunction);
         final Predicate<String> nameMatcher = getFileNamePredicate();
         final FileVisitor fileMatcherVisitor = new FileMatcherVisitor(nameMatcher, renameVisitor);
-        final SkipDirectoryVisitor skipDirectoryVisitor = new SkipDirectoryVisitor(fileMatcherVisitor, ".git", "build",
-                "target", "dist", "target-platform", "org.junit");
+        final SkipDirectoryVisitor skipDirectoryVisitor = new SkipDirectoryVisitor(fileMatcherVisitor, ".svn", ".git",
+                "build", "target", "dist", "target-platform", "org.junit");
         return skipDirectoryVisitor;
     }
 
