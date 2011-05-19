@@ -30,4 +30,9 @@ public class FilesTest {
         }
         Assert.assertTrue(expected.isEmpty());
     }
+
+    @Test
+    public void testLeafDirs2() {
+
+    }
 }
