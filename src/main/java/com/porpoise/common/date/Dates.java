@@ -20,10 +20,10 @@ public enum Dates {
      */
     public static Date yearMonthDay(final int year, final int oneBasedMonth, final int day) {
         final Calendar cal = now();
+        cal.clear();
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, oneBasedMonth - 1);
         cal.set(Calendar.DATE, day);
-        cal.clear();
         return cal.getTime();
     }
 
