@@ -63,4 +63,34 @@ public enum Strings2 {
             }
         };
     }
+
+    /**
+     * @param string
+     *            the string to prepend
+     * @return a function which will prepend the given string to its input string
+     */
+    public static Function<String, String> prepender(final String string) {
+        return new Function<String, String>() {
+
+            @Override
+            public String apply(final String arg0) {
+                return string + arg0;
+            }
+        };
+    }
+
+    /**
+     * @param string
+     *            the string to append
+     * @return a function which will append the given string to its input string
+     */
+    public static Function<String, String> appender(final String string) {
+        return new Function<String, String>() {
+
+            @Override
+            public String apply(final String arg0) {
+                return arg0 + string;
+            }
+        };
+    }
 }
