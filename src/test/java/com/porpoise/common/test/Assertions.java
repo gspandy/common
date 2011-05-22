@@ -57,4 +57,20 @@ public enum Assertions {
         return errors;
     }
 
+    /**
+     * @param left
+     *            the left object
+     * @param right
+     *            the right object
+     * @return true if both are not null
+     */
+    public static boolean nullCheck(final Object left, final Object right) {
+        if (left == null) {
+            Assert.assertNull("left side was null, right was not", right);
+            return false;
+        }
+        Assert.assertNotNull("right was null", right);
+        return true;
+    }
+
 }
