@@ -49,7 +49,7 @@ public class DataMother {
 
     private final Map<Class<?>, Supplier<?>> providerByClass;
 
-    private final Random                     random = new Random(System.currentTimeMillis());
+    private final Random random = new Random(System.currentTimeMillis());
 
     /**
      * @return a DataMother which will cycle through different values for the wrapped primitive classes (Integer, Long,
@@ -181,6 +181,13 @@ public class DataMother {
         return ImmutableSet.of(get(c1ass), get(c1ass), get(c1ass));
     }
 
+    /**
+     * @param min
+     *            the minimum number to include
+     * @param max
+     *            the maximum number to include
+     * @return an integer value within the given range, inclusive
+     */
     public int intWithin(final int min, final int max) {
         if (max == min) {
             return max;
