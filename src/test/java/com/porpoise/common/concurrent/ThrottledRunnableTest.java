@@ -8,16 +8,19 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 /**
  * 
  */
 public class ThrottledRunnableTest {
 
-    private Runnable runnable;
+    private Runnable   runnable;
     private List<Long> callTimes;
 
     @Before
     public void setup() {
+        this.callTimes = Lists.newArrayList();
         this.runnable = new Runnable() {
             @Override
             public void run() {
@@ -38,6 +41,7 @@ public class ThrottledRunnableTest {
         final int expected = testDuration / interval;
         Assert.assertEquals(expected, this.callTimes.size());
 
-        final long firstTime = this.callTimes.get(0).longValue();
+        // TODO - assert all times are > duration apart
+        this.callTimes.get(0).longValue();
     }
 }

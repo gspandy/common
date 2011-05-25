@@ -22,8 +22,8 @@ public class FilesTest {
     public void testLeafDirs() {
         // call the method under test
         final Collection<File> leaves = Files.leafDirs(new File(".", "src/main/java"));
-        final Set<String> expected = Sets.newHashSet("tree", "concurrent", "core", "date", "exceptions", "main",
-                "functions", "log", "metadata", "xml", "swing", "strings");
+        final Set<String> expected = Sets.newHashSet("tree", "concurrent", "core", "date", "main", "functions", "log",
+                "metadata", "xml", "swing", "strings");
         for (final File leave : leaves) {
             Assert.assertTrue(leave.isDirectory());
             Assert.assertTrue("Unexpected leaf " + leave.getName(), expected.remove(leave.getName()));
