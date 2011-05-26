@@ -49,7 +49,7 @@ public class DataMother {
 
     private final Map<Class<?>, Supplier<?>> providerByClass;
 
-    private final Random random = new Random(System.currentTimeMillis());
+    private final Random                     random = new Random(System.currentTimeMillis());
 
     /**
      * @return a DataMother which will cycle through different values for the wrapped primitive classes (Integer, Long,
@@ -118,8 +118,8 @@ public class DataMother {
      *            the values to add for the given class type
      * @return the datamother instance
      */
-    public <T> DataMother add(final Class<T> class1, final T... values) {
-        return add(class1, new ValuesSupplier<T>(values));
+    public <T> DataMother add(final Class<? extends T> class1, final T... values) {
+        return addSupplier(class1, new ValuesSupplier<T>(values));
     }
 
     /**
@@ -131,7 +131,7 @@ public class DataMother {
      *            the supplier instance
      * @return the datamother instance
      */
-    public <T> DataMother add(final Class<T> type, final Supplier<T> supplier) {
+    public <T> DataMother addSupplier(final Class<T> type, final Supplier<T> supplier) {
         this.providerByClass.put(type, supplier);
         return this;
     }
@@ -154,6 +154,15 @@ public class DataMother {
     /**
      * @param <T>
      * @param c1ass
+     * @return a non-null instance of the given class type or throws a {@link NullPointerException}
+     */
+    public <T> T getNonNull(final Class<T> c1ass) {
+        return Preconditions.checkNotNull(get(c1ass), "No supplier was defined for %s", c1ass);
+    }
+
+    /**
+     * @param <T>
+     * @param c1ass
      *            the data type for which instances are to be returned
      * @return a collection of data of the given type
      */
@@ -168,7 +177,7 @@ public class DataMother {
      * @return a list of data of the given type
      */
     public <T> List<T> listOf(final Class<T> c1ass) {
-        return ImmutableList.of(get(c1ass), get(c1ass), get(c1ass));
+        return ImmutableList.of(getNonNull(c1ass), getNonNull(c1ass), getNonNull(c1ass));
     }
 
     /**
