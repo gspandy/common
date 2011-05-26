@@ -131,7 +131,7 @@ public class DataMother {
      *            the supplier instance
      * @return the datamother instance
      */
-    public <T> DataMother addSupplier(final Class<T> type, final Supplier<T> supplier) {
+    public <T> DataMother addSupplier(final Class<? extends T> type, final Supplier<T> supplier) {
         this.providerByClass.put(type, supplier);
         return this;
     }

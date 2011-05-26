@@ -108,7 +108,7 @@ public class DataMotherTest {
             }
         };
         Assert.assertNull(this.dataMother.get(TestClass.class));
-        this.dataMother.add(TestClass.class, supplier);
+        this.dataMother.addSupplier(TestClass.class, supplier);
 
         final TestClass first = this.dataMother.get(TestClass.class);
         final TestClass second = this.dataMother.get(TestClass.class);
