@@ -22,5 +22,12 @@ public class CharactersTest {
         Assert.assertEquals('F', iter.next().charValue());
         Assert.assertFalse(iter.hasNext());
 
+        // no idea what the ascii character values actually are - just make sure we don't blow up or loop forever
+        Assert.assertNotNull(Characters.range('1', 'a'));
+        Assert.assertNotNull(Characters.range('D', '7'));
+        Assert.assertNotNull(Characters.range(';', '_'));
+        Assert.assertNotNull(Characters.range('!', ' '));
+        Assert.assertNotNull(Characters.range('_', '!'));
+
     }
 }
