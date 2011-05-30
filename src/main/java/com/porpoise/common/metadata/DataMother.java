@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.porpoise.common.date.Dates;
+import com.porpoise.common.strings.Characters;
 
 /**
  * Data "Mother"
@@ -59,6 +60,8 @@ public class DataMother {
     public static DataMother withTestValues() {
         final DataMother mother = new DataMother();
 
+        mother.add(Character.class, Characters.upperAndLowerCaseLetters().toArray());
+        mother.add(Boolean.class, Boolean.TRUE, Boolean.FALSE);
         mother.add(String.class, "Alpha", " beta ", "Gamma", "DELTA");
         mother.add(Integer.class, Integer.MAX_VALUE, Integer.MIN_VALUE, -1, 0, 1, 1234);
         mother.add(Long.class, Long.valueOf(Long.MAX_VALUE), Long.valueOf(Long.MIN_VALUE), Long.valueOf(-1),
@@ -131,7 +134,7 @@ public class DataMother {
      *            the supplier instance
      * @return the datamother instance
      */
-    public <T> DataMother addSupplier(final Class<? extends T> type, final Supplier<T> supplier) {
+    public <T> DataMother addSupplier(final Class<? extends T> type, final Supplier<? extends T> supplier) {
         this.providerByClass.put(type, supplier);
         return this;
     }
