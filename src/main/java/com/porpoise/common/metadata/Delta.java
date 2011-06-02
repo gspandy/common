@@ -20,13 +20,13 @@ import com.porpoise.common.collect.Sequences;
  *            the root object type for the delta
  */
 public class Delta<T> {
-    static final String NULL_STRING = "null";
+    static final String                 NULL_STRING           = "null";
 
     private final Map<String, Delta<?>> childDeltasByProperty = Maps.newHashMap();
 
-    private final Metadata<?, ?> property;
-    private final T left;
-    private final T right;
+    private final Metadata<?, ?>        property;
+    private final T                     left;
+    private final T                     right;
 
     /**
      * @param <R>
@@ -228,5 +228,9 @@ public class Delta<T> {
      */
     public T getRight() {
         return this.right;
+    }
+
+    public boolean isEmpty() {
+        return this.property == null && isLeaf();
     }
 }
