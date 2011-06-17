@@ -26,6 +26,21 @@ public class FunctionSet<T> implements Set<T> {
     private final ConcurrentMap<Object, T> delegate;
 
     /**
+     * Convenience method for creating a FunctionSet
+     * 
+     * @param <T>
+     * @param first
+     * @param second
+     * @param keyFunctions
+     * @return
+     */
+    public static <T> FunctionSet<T> create(final Function<T, ? extends Object> first,
+            final Function<T, ? extends Object> second, final Function<T, ? extends Object>... keyFunctions) {
+        final Function<T, Object> composite = Keys.keyFunction(first, second, keyFunctions);
+        return new FunctionSet<T>(composite);
+    }
+
+    /**
      * @param keyFunction
      */
     public FunctionSet(final Function<T, ? extends Object> keyFunction) {
