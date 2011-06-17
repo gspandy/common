@@ -13,16 +13,6 @@ public enum Keys {
     ;// uninstantiable
 
     /**
-     * @param <T>
-     * @param functions
-     * @return a function which can create keys based on the given functions
-     */
-    public static <T> Function<T, Object> keyFunction(final Function<T, ?>... functions) {
-        final Iterable<Function<T, ?>> functionCollection = Arrays.asList(functions);
-        return keyFunction(functionCollection);
-    }
-
-    /**
      * Convenience method for creating key functions from at least two functions
      * 
      * @param <T>
