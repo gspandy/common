@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.porpoise</groupId>
+	<artifactId>porpoise-common</artifactId>
+	<version>0.0.3-SNAPSHOT</version>
+	<properties>
+		<git.url>scm:git:file:///Users/Aaron/dev/sandbox/common</git.url>
+		<publish.to.url>file:///Users/Aaron/.m2/repository</publish.to.url>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<distributionId>common</distributionId>
+		<javaDocVersion>2.5</javaDocVersion>
+		<findbugsVersion>2.3.2</findbugsVersion>
+	</properties>
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>Licensed under the Apache2 license</comments>
+		</license>
+	</licenses>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>${findbugsVersion}</version>
+			</plugin>
+		</plugins>
+	</reporting>
+	<scm>
+		<connection>${git.url}</connection>
+		<url>${git.url}</url>
+		<developerConnection>${git.url}</developerConnection>
+	</scm>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>r09</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<inherit>true</inherit>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<testFailureIgnore>false</testFailureIgnore>
+				</configuration>
+			</plugin>
+
+
+		</plugins>
+
+
+		<pluginManagement>
+			<plugins>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>dashboard-maven-plugin</artifactId>
+					<version>1.0-SNAPSHOT</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>2.0</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>2.0</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>${findbugsVersion}</version>
+					<configuration>
+						<findbugsXmlOutput>true</findbugsXmlOutput>
+						<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+						<xmlOutput>true</xmlOutput>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>${javaDocVersion}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<executions>
+						<execution>
+							<goals>
+								<goal>test-jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<includes>
+							<include>**/*Test.java</include>
+						</includes>
+					</configuration>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>maven repo</id>
+			<name>Local Repository</name>
+			<url>${publish.to.url}</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshot repo</id>
+			<name>Snapshot Repository Name</name>
+			<url>${publish.to.url}</url>
+		</snapshotRepository>
+	</distributionManagement>
+</project>

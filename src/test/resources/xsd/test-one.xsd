@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+targetNamespace="http://www.porpoiseltd.com"
+xmlns="http://www.porpoiseltd.com"
+xmlns:p="http://www.porpoiseltd.com"
+>
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace"/>
+	<xs:include schemaLocation="xsd/test-two.xsd"/>
+	<xs:element name="root" type="p:SomeType" />
+	<xs:complexType name="SomeType">
+		<xs:sequence>
+			<xs:element name="value" type="p:SomeString" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
