@@ -22,8 +22,7 @@ public class KeysTest {
      */
     @Test
     public void testKeyFunctionKeyOnSingleProperty() {
-        @SuppressWarnings("unchecked")
-        final Function<Grape, Object> keyOnColor = Keys.keyFunction(GrapeAccessors.GET_COLOR);
+        final Function<Grape, ? extends Object> keyOnColor = GrapeAccessors.GET_COLOR;
         final Set<Grape> set = new FunctionSet<Grape>(keyOnColor, this.a, this.b);
         Assert.assertSame(this.a, Iterables.getOnlyElement(set));
     }

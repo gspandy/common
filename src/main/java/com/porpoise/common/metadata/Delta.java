@@ -84,7 +84,7 @@ public class Delta<T> {
      */
     public <K> Delta<Map<? extends K, ?>> addMapDiff(final Metadata<?, ?> prop, final K key, final Map<? extends K, ?> alpha,
             final Map<? extends K, ?> beta) {
-        MapEntryDelta<K> child = new MapEntryDelta<K>(prop, key, alpha, beta);
+        final MapEntryDelta<K> child = new MapEntryDelta<K>(prop, key, alpha, beta);
         return addChild(child);
     }
 
@@ -133,6 +133,10 @@ public class Delta<T> {
         });
     }
 
+    /**
+     * @param parentPath
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private PathElement<T, ?> makePath(final PathElement<?, ?> parentPath) {
         if (getProperty() == null) {

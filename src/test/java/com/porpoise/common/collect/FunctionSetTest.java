@@ -146,4 +146,52 @@ public class FunctionSetTest {
         Assert.assertArrayEquals(new Object[] { "a", "see" }, array);
     }
 
+    /**
+     */
+    @Test
+    public void testCompositeFunction() {
+        class Bean {
+            private String str = "";
+            private Integer value = 1;
+            private Boolean test = true;
+
+            public Bean(final String s, final int v, final boolean b) {
+                this.str = s;
+                this.value = v;
+                this.test = b;
+            }
+        }
+        final Function<Bean, String> str = new Function<Bean, String>() {
+            @Override
+            public String apply(final Bean input) {
+                return input.str;
+            }
+        };
+        final Function<Bean, Integer> value = new Function<Bean, Integer>() {
+            @Override
+            public Integer apply(final Bean input) {
+                return input.value;
+            }
+        };
+        final Function<Bean, Boolean> test = new Function<Bean, Boolean>() {
+            @Override
+            public Boolean apply(final Bean input) {
+                return input.test;
+            }
+        };
+        @SuppressWarnings("unchecked")
+        final FunctionSet<Bean> set = FunctionSet.create(str, value, test);
+
+        Assert.assertTrue(set.add(new Bean("A", 1, true)));
+        Assert.assertFalse(set.add(new Bean("A", 1, true)));
+
+        Assert.assertTrue(set.add(new Bean("A", 1, false)));
+        Assert.assertFalse(set.add(new Bean("A", 1, false)));
+
+        Assert.assertTrue(set.add(new Bean("A", 2, false)));
+        Assert.assertFalse(set.add(new Bean("A", 2, false)));
+
+        Assert.assertTrue(set.add(new Bean("B", 2, false)));
+        Assert.assertFalse(set.add(new Bean("B", 2, false)));
+    }
 }
