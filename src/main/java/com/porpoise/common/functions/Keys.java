@@ -21,11 +21,10 @@ public enum Keys {
      * @param functions
      * @return
      */
-    public static <T> Function<T, Object> keyFunction(final Function<T, ?> first, final Function<T, ?> second,
+    public static <T> Function<T, Object> keyFunction(final Function<T, ?> first,
             final Function<T, ?>... functions) {
         final Collection<Function<T, ? extends Object>> all = Lists.newArrayList();
         all.add(first);
-        all.add(second);
         all.addAll(Arrays.asList(functions));
         return keyFunction(all);
     }

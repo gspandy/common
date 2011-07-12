@@ -34,9 +34,8 @@ public class FunctionSet<T> implements Set<T> {
      * @param keyFunctions
      * @return
      */
-    public static <T> FunctionSet<T> create(final Function<T, ? extends Object> first,
-            final Function<T, ? extends Object> second, final Function<T, ? extends Object>... keyFunctions) {
-        final Function<T, Object> composite = Keys.keyFunction(first, second, keyFunctions);
+    public static <T> FunctionSet<T> create(final Function<T, ? extends Object> first, final Function<T, ? extends Object>... keyFunctions) {
+        final Function<T, Object> composite = Keys.keyFunction(first, keyFunctions);
         return new FunctionSet<T>(composite);
     }
 
