@@ -10,14 +10,28 @@ import java.util.concurrent.ConcurrentMap;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.porpoise.common.collect.Sequences;
 
 /**
- * 
+ * A map implementation backed by a function which can convert an object of type T into a key for the map
  */
 public class FunctionMap<T> implements Map<Object, T> {
     private final Function<T, ? extends Object> keyFunction;
     private final ConcurrentMap<Object, T> delegate;
 
+    /**
+     * create a new function map
+     * @param firstFnc
+     * @param fnc
+     * @return a function map
+     */
+	public static <T> FunctionMap<T> create(Function<T, ? extends Object> firstFnc,
+			Function<T, ? extends Object> ... fnc) {
+		final Function<T, Object> key = Keys.keyFunction(firstFnc, fnc);
+		return new FunctionMap<T>(key);
+	}
+
+	
     /**
      * @param keyFunction
      */
@@ -51,10 +65,6 @@ public class FunctionMap<T> implements Map<Object, T> {
         putAllInternal(objects);
     }
 
-    /**
-     * @param c
-     * @return
-     */
     private boolean putAllInternal(final Iterable<? extends T> c) {
         boolean changed = false;
         if (c != null) {
@@ -67,113 +77,92 @@ public class FunctionMap<T> implements Map<Object, T> {
     }
 
     private boolean addInternal(final T e) {
-        final T existing = this.delegate.putIfAbsent(key(e), e);
+        final T existing = this.delegate.putIfAbsent(makeKey(e), e);
         return existing == null;
     }
 
-    /**
-     * @param e
-     * @return
-     */
-    private Object key(final T e) {
-        return e == null ? null : this.keyFunction.apply(e);
-    }
-
     @SuppressWarnings("unchecked")
-    private Object keyObj(final Object e) {
+    private Object makeKey(final Object e) {
         try {
-            return key((T) e);
+        	Object key = e == null ? null : this.keyFunction.apply((T)e);
+            return key;
         } catch (final ClassCastException e1) {
-            return null;
+            return e;
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Map#size()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int size() {
-        // TODO Auto-generated method stub
-        return 0;
+        return delegate.size();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Map#isEmpty()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
+        return delegate.isEmpty();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Map#containsKey(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean containsKey(final Object key) {
-        // TODO Auto-generated method stub
-        return false;
+        return delegate.containsKey(makeKey(key));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Map#containsValue(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean containsValue(final Object value) {
-        // TODO Auto-generated method stub
-        return false;
+        return delegate.containsValue(value);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Map#get(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public T get(final Object key) {
-        // TODO Auto-generated method stub
-        return null;
+        return delegate.get(makeKey(key));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Map#put(java.lang.Object, java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public T put(final Object key, final T value) {
-        // TODO Auto-generated method stub
-        return null;
+        return putInternal(key, value);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Map#remove(java.lang.Object)
+	private T putInternal(final Object key, final T value) {
+		return delegate.put(makeKey(key), value);
+	}
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public T remove(final Object key) {
-        // TODO Auto-generated method stub
-        return null;
+        return delegate.remove(makeKey(key));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Map#putAll(java.util.Map)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void putAll(final Map<? extends Object, ? extends T> m) {
-        // TODO Auto-generated method stub
-
+    	if (m == null)
+    	{
+    		return;
+    	}
+    	for (Object key : m.keySet()) {
+    		putInternal(key, m.get(key));
+    	}
     }
 
     /*
@@ -183,8 +172,7 @@ public class FunctionMap<T> implements Map<Object, T> {
      */
     @Override
     public void clear() {
-        // TODO Auto-generated method stub
-
+    	delegate.clear();
     }
 
     /*
@@ -194,29 +182,44 @@ public class FunctionMap<T> implements Map<Object, T> {
      */
     @Override
     public Set<Object> keySet() {
-        // TODO Auto-generated method stub
-        return null;
+        return Sequences.map(delegate.keySet(), new Function<Object, Object> () {
+			@Override
+			public Object apply(Object input) {
+				return makeKey(input);
+			}});
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Map#values()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public Collection<T> values() {
-        // TODO Auto-generated method stub
-        return null;
+        return delegate.values();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Map#entrySet()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public Set<java.util.Map.Entry<Object, T>> entrySet() {
-        // TODO Auto-generated method stub
-        return null;
+		return Sequences.map(delegate.entrySet(), new Function<Map.Entry<Object,T>, Map.Entry<Object,T>>() {
+			@Override
+			public java.util.Map.Entry<Object, T> apply(final java.util.Map.Entry<Object, T> input) {
+				return new java.util.Map.Entry<Object, T>() {
+					@Override
+					public Object getKey() {
+						return makeKey(input.getKey());
+					}
+
+					@Override
+					public T getValue() {
+						return input.getValue();
+					}
+					@Override
+					public T setValue(T value) {
+						return input.setValue(value);
+					}};
+			}
+		});
     }
 }

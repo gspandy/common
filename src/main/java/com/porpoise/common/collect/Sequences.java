@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -11,6 +12,7 @@ import java.util.Set;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
@@ -489,4 +491,16 @@ public enum Sequences {
         final Collection<T> result = Collections2.transform(source, function);
         return Collections2.filter(result, Predicates.notNull());
     }
+
+    /**
+     * @param set
+     * @param function
+     * @return a new set from the given set
+     */
+	public static <F, T> Set<T> map(Set<F> set,
+			Function<F, T> function) {
+		Set<T> newSet = Sets.newHashSet(Iterables.transform(set, function));
+		Preconditions.checkArgument(newSet.size() == set.size(), "Mapping function returns non-unique values");
+		return newSet;
+	}
 }
