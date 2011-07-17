@@ -57,8 +57,12 @@ public class KeysTest {
 		
 		Assertions.assertEquality(key1, key2);
     }
-    @Test
-    public void testKeysCanMakeKeys() {
+    
+    /**
+     */
+    @Test(expected=NullPointerException.class)
+    public void testKeysForNullInputThowsNullPointerException() {
+    	final Function<Grape, Key<Grape>> f = Keys.keyFunction(GrapeAccessors.GET_COLOR);
+    	f.apply(null);
     }
-
 }
