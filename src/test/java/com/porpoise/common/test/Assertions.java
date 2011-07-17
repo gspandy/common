@@ -13,9 +13,17 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.porpoise.common.collect.Sequences;
 
+/**
+ * Assertions utilities
+ */
 public enum Assertions {
     ; // uninstantiable
 
+    /**
+     * assert equals for the given objects, including transitive, reflexive and idempotent operations for the {@link Object#equals(Object)} and {@link Object#hashCode()}
+     * @param control
+     * @param experiment
+     */
     public static void assertEquality(final Object control, final Object experiment) {
         assertEquality("", control, experiment);
     }

@@ -7,7 +7,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 /**
- * Utility to create a
+ * Utility for creating new {@link Key} instances
  */
 public enum Keys {
     ;// uninstantiable

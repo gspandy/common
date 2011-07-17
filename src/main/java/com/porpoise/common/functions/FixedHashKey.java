@@ -14,7 +14,12 @@ import com.google.common.collect.Lists;
 /**
  * Object which can be used as the key in a map based on the given functions and input type
  */
-final class FixedHashKey<T> implements Key<T> {
+final class FixedHashKey<T> implements Key<T>, KeyFactory<T> {
+	
+	/** Any null values returned from key functions will be replaced with this null representation */
+	private static class NullValue { }
+	private static final NullValue NULL = new NullValue();
+	
     private final T input;
     private final int cachedHashCode;
     private final Collection<Object> precomputedValues;
@@ -28,7 +33,7 @@ final class FixedHashKey<T> implements Key<T> {
         final List<Object> values = Lists.newArrayList();
         int hashCode = 31;
         for (final Function<T, ?> fnc : functions) {
-            final Object object = fnc.apply(inputParam);
+            final Object object = Objects.firstNonNull(fnc.apply(inputParam), NULL);
             values.add(object);
             hashCode = 17 * hashCode + ((object == null) ? 0 : object.hashCode());
         }
@@ -92,6 +97,11 @@ final class FixedHashKey<T> implements Key<T> {
 
 	@Override
 	public int hash(T t) {
-		return Keys.keyFunction(functions).apply(t).hashCode();
+		return makeKeyFor(t).hashCode();
+	}
+
+	@Override
+	public Key<T> makeKeyFor(T input) {
+		return Keys.keyFunction(functions).apply(input);
 	}
 }

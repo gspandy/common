@@ -10,6 +10,7 @@ import com.google.common.collect.Iterables;
 import com.porpoise.common.functions.FunctionSet;
 import com.porpoise.common.functions.Key;
 import com.porpoise.common.functions.Keys;
+import com.porpoise.common.test.Assertions;
 
 /**
  * Test for {@link Keys}
@@ -41,5 +42,27 @@ public class KeysTest {
         Assert.assertTrue(intSet.contains(this.a));
         Assert.assertTrue(intSet.contains(this.b));
     }
-
+    
+    /**
+     * test we can key with null values
+     */
+    @Test
+    public void testKeyOnNullableProperty() {
+    	final Function<Grape, Key<Grape>> keyOnColor = Keys.keyFunction(GrapeAccessors.GET_COLOR);
+    	final Grape grape1 = new Grape(1,1,null);
+    	final Key<Grape> key1 = keyOnColor.apply(grape1);
+		
+    	final Grape grape2 = new Grape(2,2,null);
+    	final Key<Grape> key2 = keyOnColor.apply(grape2);
+		
+		Assertions.assertEquality(key1, key2);
+    }
+    
+    /**
+     */
+    @Test(expected=NullPointerException.class)
+    public void testKeysForNullInputThowsNullPointerException() {
+    	final Function<Grape, Key<Grape>> f = Keys.keyFunction(GrapeAccessors.GET_COLOR);
+    	f.apply(null);
+    }
 }
