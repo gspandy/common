@@ -11,6 +11,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.porpoise.common.collect.Sequences;
+import com.porpoise.common.core.Pair;
 
 /**
  * A map implementation backed by a function which can convert an object of type T into a key for the map
@@ -27,7 +28,7 @@ public class FunctionMap<T> implements Map<Object, T> {
      */
 	public static <T> FunctionMap<T> create(Function<T, ? extends Object> firstFnc,
 			Function<T, ? extends Object> ... fnc) {
-		final Function<T, Object> key = Keys.keyFunction(firstFnc, fnc);
+		final Function<T, Key<T>> key = Keys.keyFunction(firstFnc, fnc);
 		return new FunctionMap<T>(key);
 	}
 
@@ -84,12 +85,19 @@ public class FunctionMap<T> implements Map<Object, T> {
     @SuppressWarnings("unchecked")
     private Object makeKey(final Object e) {
         try {
-        	Object key = e == null ? null : this.keyFunction.apply((T)e);
-            return key;
+			return asKey((T)e);
         } catch (final ClassCastException e1) {
             return e;
         }
     }
+
+    /**
+     * @param input
+     * @return the key for the given input value
+     */
+	public Object asKey(T input) {
+		return input == null ? null : this.keyFunction.apply(input);
+	}
 
     /**
      * {@inheritDoc}
@@ -222,4 +230,14 @@ public class FunctionMap<T> implements Map<Object, T> {
 			}
 		});
     }
+
+    /**
+     * @param value
+     * @return the key and replaced object
+     */
+	public Pair<Object, T> put(T value) {
+		Object key = makeKey(value);
+		T replaced = putInternal(key, value);
+		return Pair.valueOf(key, replaced) ;
+	}
 }

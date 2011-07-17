@@ -8,10 +8,11 @@ import org.junit.Test;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.porpoise.common.functions.FunctionSet;
+import com.porpoise.common.functions.Key;
 import com.porpoise.common.functions.Keys;
 
 /**
- * 
+ * Test for {@link Keys}
  */
 public class KeysTest {
     private final Grape a = new Grape(1, 2, Color.Red);
@@ -33,7 +34,7 @@ public class KeysTest {
     @Test
     public void testKeyFunctionKeyOnMultipleProperties() {
         @SuppressWarnings("unchecked")
-        final Function<Grape, Object> keyOnInts = Keys.keyFunction(GrapeAccessors.GET_RADIUS,
+        final Function<Grape, Key<Grape>> keyOnInts = Keys.keyFunction(GrapeAccessors.GET_RADIUS,
                 GrapeAccessors.GET_RIPENESS);
         final Set<Grape> intSet = new FunctionSet<Grape>(keyOnInts, this.a, this.b);
         Assert.assertEquals(2, intSet.size());

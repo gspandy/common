@@ -59,7 +59,7 @@ public class FunctionMapTest {
 	 */
 	@Test
 	public void testPut() {
-		fail("Not yet implemented");
+		thingByValueAndLength.put(new Thing("one"));
 	}
 
 }

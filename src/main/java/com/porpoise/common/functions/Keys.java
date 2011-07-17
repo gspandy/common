@@ -21,7 +21,7 @@ public enum Keys {
      * @param functions
      * @return
      */
-    public static <T> Function<T, Object> keyFunction(final Function<T, ?> first,
+    public static <T> Function<T, Key<T>> keyFunction(final Function<T, ?> first,
             final Function<T, ?>... functions) {
         final Collection<Function<T, ? extends Object>> all = Lists.newArrayList();
         all.add(first);
@@ -33,10 +33,10 @@ public enum Keys {
      * @param functionCollection
      * @return a function which can create keys based on the given functions
      */
-    public static <T> Function<T, Object> keyFunction(final Iterable<Function<T, ?>> functionCollection) {
-        return new Function<T, Object>() {
+    public static <T> Function<T, Key<T>> keyFunction(final Iterable<Function<T, ?>> functionCollection) {
+        return new Function<T, Key<T>>() {
             @Override
-            public Object apply(final T input) {
+            public Key<T> apply(final T input) {
                 return new FixedHashKey<T>(functionCollection, input);
             }
         };

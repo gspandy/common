@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.base.Equivalence;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -13,13 +14,15 @@ import com.google.common.collect.Lists;
 /**
  * Object which can be used as the key in a map based on the given functions and input type
  */
-final class FixedHashKey<T> {
+final class FixedHashKey<T> implements Key<T> {
     private final T input;
     private final int cachedHashCode;
     private final Collection<Object> precomputedValues;
+	private final Iterable<Function<T, ?>> functions;
 
     FixedHashKey(final Iterable<Function<T, ?>> functions, final T inputParam) {
-        this.input = Preconditions.checkNotNull(inputParam);
+        this.functions = Preconditions.checkNotNull(functions);
+		this.input = Preconditions.checkNotNull(inputParam);
 
         // pre-compute our hashCode and values
         final List<Object> values = Lists.newArrayList();
@@ -79,4 +82,16 @@ final class FixedHashKey<T> {
         }
         return true;
     }
+
+	@Override
+	public boolean equivalent(T a, T b) {
+		final Key<T> first = Keys.keyFunction(functions).apply(a);
+		final Key<T> second = Keys.keyFunction(functions).apply(b);
+		return first.equals(second);
+	}
+
+	@Override
+	public int hash(T t) {
+		return Keys.keyFunction(functions).apply(t).hashCode();
+	}
 }
