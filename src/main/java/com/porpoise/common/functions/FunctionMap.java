@@ -10,234 +10,187 @@ import java.util.concurrent.ConcurrentMap;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.porpoise.common.collect.Sequences;
 import com.porpoise.common.core.Pair;
 
 /**
  * A map implementation backed by a function which can convert an object of type T into a key for the map
  */
-public class FunctionMap<T> implements Map<Object, T> {
-    private final Function<T, ? extends Object> keyFunction;
-    private final ConcurrentMap<Object, T> delegate;
+public class FunctionMap<T> implements Map<Key<T>, T> {
+	private final Function<T, Key<T>>	   keyFunction;
+	private final ConcurrentMap<Key<T>, T>	delegate;
 
-    /**
-     * create a new function map
-     * @param firstFnc
-     * @param fnc
-     * @return a function map
-     */
-	public static <T> FunctionMap<T> create(Function<T, ? extends Object> firstFnc,
-			Function<T, ? extends Object> ... fnc) {
+	/**
+	 * create a new function map
+	 * 
+	 * @param firstFnc
+	 * @param fnc
+	 * @return a function map
+	 */
+	public static <T> FunctionMap<T> create(final Function<T, ? extends Object> firstFnc,
+	        final Function<T, ? extends Object>... fnc) {
 		final Function<T, Key<T>> key = Keys.keyFunction(firstFnc, fnc);
 		return new FunctionMap<T>(key);
 	}
 
-	
-    /**
-     * @param keyFunction
-     */
-    public FunctionMap(final Function<T, ? extends Object> keyFunction) {
-        this.keyFunction = keyFunction;
-        this.delegate = Maps.newConcurrentMap();
-    }
+	/**
+	 * @param keyFunction
+	 */
+	public FunctionMap(final Function<T, Key<T>> keyFunction) {
+		this.keyFunction = keyFunction;
+		this.delegate = Maps.newConcurrentMap();
+	}
 
-    /**
-     * @param keyFunction
-     * @param first
-     * @param objects
-     */
-    public FunctionMap(final Function<T, ? extends Object> keyFunction, final T first, final T... objects) {
-        this(keyFunction, newList(first, objects));
-    }
+	/**
+	 * @param keyFunction
+	 * @param first
+	 * @param objects
+	 */
+	public FunctionMap(final Function<T, Key<T>> keyFunction, final T first, final T... objects) {
+		this(keyFunction, newList(first, objects));
+	}
 
-    @SuppressWarnings("unchecked")
-    private static <T> Iterable<T> newList(final T first, final T[] objects) {
-        final List<T> list = Lists.newArrayList(first);
-        list.addAll(Arrays.asList(objects));
-        return list;
-    }
+	@SuppressWarnings("unchecked")
+	private static <T> Iterable<T> newList(final T first, final T[] objects) {
+		final List<T> list = Lists.newArrayList(first);
+		list.addAll(Arrays.asList(objects));
+		return list;
+	}
 
-    /**
-     * @param keyFunction
-     * @param objects
-     */
-    public FunctionMap(final Function<T, ? extends Object> keyFunction, final Iterable<T> objects) {
-        this(keyFunction);
-        putAllInternal(objects);
-    }
+	/**
+	 * @param keyFunction
+	 * @param objects
+	 */
+	public FunctionMap(final Function<T, Key<T>> keyFunction, final Iterable<T> objects) {
+		this(keyFunction);
+		putAllInternal(objects);
+	}
 
-    private boolean putAllInternal(final Iterable<? extends T> c) {
-        boolean changed = false;
-        if (c != null) {
-            for (final T item : c) {
-                final boolean added = addInternal(item);
-                changed = changed || added;
-            }
-        }
-        return changed;
-    }
+	private boolean putAllInternal(final Iterable<? extends T> c) {
+		boolean changed = false;
+		if (c != null) {
+			for (final T item : c) {
+				final boolean added = addInternal(item);
+				changed = changed || added;
+			}
+		}
+		return changed;
+	}
 
-    private boolean addInternal(final T e) {
-        final T existing = this.delegate.putIfAbsent(makeKey(e), e);
-        return existing == null;
-    }
+	private boolean addInternal(final T e) {
+		final T existing = this.delegate.putIfAbsent(makeKey(e), e);
+		return existing == null;
+	}
 
-    @SuppressWarnings("unchecked")
-    private Object makeKey(final Object e) {
-        try {
-			return asKey((T)e);
-        } catch (final ClassCastException e1) {
-            return e;
-        }
-    }
+	@SuppressWarnings("unchecked")
+	private Key<T> makeKey(final Object e) {
+		try {
+			return asKey((T) e);
+		} catch (final ClassCastException e1) {
+			return null;
+		}
+	}
 
-    /**
-     * @param input
-     * @return the key for the given input value
-     */
-	public Object asKey(T input) {
+	/**
+	 * @param input
+	 * @return the key for the given input value
+	 */
+	public Key<T> asKey(final T input) {
 		return input == null ? null : this.keyFunction.apply(input);
 	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int size() {
-        return delegate.size();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isEmpty() {
-        return delegate.isEmpty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean containsKey(final Object key) {
-        return delegate.containsKey(makeKey(key));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean containsValue(final Object value) {
-        return delegate.containsValue(value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public T get(final Object key) {
-        return delegate.get(makeKey(key));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public T put(final Object key, final T value) {
-        return putInternal(key, value);
-    }
-
-	private T putInternal(final Object key, final T value) {
-		return delegate.put(makeKey(key), value);
+	@Override
+	public int size() {
+		return this.delegate.size();
 	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public T remove(final Object key) {
-        return delegate.remove(makeKey(key));
-    }
+	@Override
+	public boolean isEmpty() {
+		return this.delegate.isEmpty();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void putAll(final Map<? extends Object, ? extends T> m) {
-    	if (m == null)
-    	{
-    		return;
-    	}
-    	for (Object key : m.keySet()) {
-    		putInternal(key, m.get(key));
-    	}
-    }
+	@Override
+	public boolean containsKey(final Object key) {
+		return this.delegate.containsKey(makeKey(key));
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Map#clear()
-     */
-    @Override
-    public void clear() {
-    	delegate.clear();
-    }
+	@Override
+	public boolean containsValue(final Object value) {
+		return this.delegate.containsValue(value);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Map#keySet()
-     */
-    @Override
-    public Set<Object> keySet() {
-        return Sequences.map(delegate.keySet(), new Function<Object, Object> () {
-			@Override
-			public Object apply(Object input) {
-				return makeKey(input);
-			}});
-    }
+	@Override
+	public T get(final Object key) {
+		return this.delegate.get(makeKey(key));
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<T> values() {
-        return delegate.values();
-    }
+	@Override
+	public T put(final Key<T> key, final T value) {
+		return putInternal(key, value);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<java.util.Map.Entry<Object, T>> entrySet() {
-		return Sequences.map(delegate.entrySet(), new Function<Map.Entry<Object,T>, Map.Entry<Object,T>>() {
-			@Override
-			public java.util.Map.Entry<Object, T> apply(final java.util.Map.Entry<Object, T> input) {
-				return new java.util.Map.Entry<Object, T>() {
-					@Override
-					public Object getKey() {
-						return makeKey(input.getKey());
-					}
+	private T putInternal(final Object key, final T value) {
+		return this.delegate.put(makeKey(key), value);
+	}
 
-					@Override
-					public T getValue() {
-						return input.getValue();
-					}
-					@Override
-					public T setValue(T value) {
-						return input.setValue(value);
-					}};
-			}
-		});
-    }
+	@Override
+	public T remove(final Object key) {
+		return this.delegate.remove(makeKey(key));
+	}
 
-    /**
-     * @param value
-     * @return the key and replaced object
-     */
-	public Pair<Object, T> put(T value) {
-		Object key = makeKey(value);
-		T replaced = putInternal(key, value);
-		return Pair.valueOf(key, replaced) ;
+	@Override
+	public void putAll(final Map<? extends Key<T>, ? extends T> m) {
+		if (m == null) {
+			return;
+		}
+		for (final Object key : m.keySet()) {
+			putInternal(key, m.get(key));
+		}
+	}
+
+	@Override
+	public void clear() {
+		this.delegate.clear();
+	}
+
+	@Override
+	public Set<Key<T>> keySet() {
+		return this.delegate.keySet();
+	}
+
+	@Override
+	public Collection<T> values() {
+		return this.delegate.values();
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<Key<T>, T>> entrySet() {
+		return this.delegate.entrySet();
+		// return Sequences.map(, new Function<Map.Entry<Object, T>, Map.Entry<Object, T>>() {
+		// @Override
+		// public java.util.Map.Entry<Object, T> apply(final java.util.Map.Entry<Object, T> input) {
+		// return new java.util.Map.Entry<Object, T>() {
+		// @Override
+		// public Object getKey() {
+		// return makeKey(input.getKey());
+		// }
+		//
+		// @Override
+		// public T getValue() {
+		// return input.getValue();
+		// }
+		//
+		// @Override
+		// public T setValue(final T value) {
+		// return input.setValue(value);
+		// }
+		// };
+		// }
+		// });
+	}
+
+	public Pair<Key<T>, T> put(final T value) {
+		final Key<T> key = makeKey(value);
+		final T replaced = putInternal(key, value);
+		return Pair.valueOf(key, replaced);
 	}
 }
