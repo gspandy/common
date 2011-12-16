@@ -23,7 +23,7 @@ public class FunctionMapTest extends FunctionMapTestSupport {
 	public void testPutNullIntoEmptyMap() {
 		final FunctionMap<Thing> thingByStartsWithAndLength = newMapByFirstLetterAndLength();
 
-		Pair<Key<Thing>, Thing> result = thingByStartsWithAndLength.put(null);
+		final Pair<Key<Thing>, Thing> result = thingByStartsWithAndLength.put(null);
 		Assert.assertNull(result.getFirst());
 		Assert.assertNull(result.getSecond());
 
@@ -48,9 +48,11 @@ public class FunctionMapTest extends FunctionMapTestSupport {
 
 		// This entry is not the same as the first, but the functions will evaluate it to be equivalent as it has the
 		// same starting letter and length
-		verifyNotAdded(thingByStartsWithAndLength, new Thing("A2"));
+		final Thing newValue = new Thing("A2");
 
-		assertContents(thingByStartsWithAndLength, value);
+		Assert.assertSame(value, verifyNotAdded(thingByStartsWithAndLength, newValue).getSecond());
+
+		assertContents(thingByStartsWithAndLength, newValue);
 	}
 
 	@Test
