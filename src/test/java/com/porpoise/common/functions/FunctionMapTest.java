@@ -1,8 +1,9 @@
 package com.porpoise.common.functions;
 
-import static com.porpoise.common.functions.FunctionMapTestSupport.assertEmptyMap;
-
+import org.junit.Assert;
 import org.junit.Test;
+
+import com.porpoise.common.core.Pair;
 
 /**
  * Tests for {@link FunctionMap}
@@ -22,8 +23,9 @@ public class FunctionMapTest extends FunctionMapTestSupport {
 	public void testPutNullIntoEmptyMap() {
 		final FunctionMap<Thing> thingByStartsWithAndLength = newMapByFirstLetterAndLength();
 
-		final Thing value = verifyAdd(thingByStartsWithAndLength, null);
-		verifyNotAdded(thingByStartsWithAndLength, value);
+		Pair<Key<Thing>, Thing> result = thingByStartsWithAndLength.put(null);
+		Assert.assertNull(result.getFirst());
+		Assert.assertNull(result.getSecond());
 
 		assertEmptyMap(thingByStartsWithAndLength);
 	}

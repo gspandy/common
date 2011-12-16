@@ -104,7 +104,7 @@ class FunctionMapTestSupport {
 
 	private static <T> void assertValues(final FunctionMap<T> map, final T... values) {
 		final List<T> remainingValues = Lists.newArrayList(values);
-		Assert.assertEquals(values.length, map.values());
+		Assert.assertEquals(values.length, map.values().size());
 		Assert.assertTrue(remainingValues.removeAll(map.values()));
 		Assert.assertTrue(remainingValues.isEmpty());
 	}

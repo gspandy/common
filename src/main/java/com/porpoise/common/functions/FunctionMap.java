@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -16,8 +15,8 @@ import com.porpoise.common.core.Pair;
  * A map implementation backed by a function which can convert an object of type T into a key for the map
  */
 public class FunctionMap<T> implements Map<Key<T>, T> {
-	private final Function<T, Key<T>>	   keyFunction;
-	private final ConcurrentMap<Key<T>, T>	delegate;
+	private final Function<T, Key<T>>	keyFunction;
+	private final Map<Key<T>, T>	  delegate;
 
 	/**
 	 * create a new function map
@@ -37,7 +36,7 @@ public class FunctionMap<T> implements Map<Key<T>, T> {
 	 */
 	public FunctionMap(final Function<T, Key<T>> keyFunction) {
 		this.keyFunction = keyFunction;
-		this.delegate = Maps.newConcurrentMap();
+		this.delegate = Maps.newHashMap();
 	}
 
 	/**
@@ -77,7 +76,8 @@ public class FunctionMap<T> implements Map<Key<T>, T> {
 	}
 
 	private boolean addInternal(final T e) {
-		final T existing = this.delegate.putIfAbsent(makeKey(e), e);
+		final Key<T> key = makeKey(e);
+		final T existing = putInternal(key, e);
 		return existing == null;
 	}
 
@@ -110,12 +110,16 @@ public class FunctionMap<T> implements Map<Key<T>, T> {
 
 	@Override
 	public boolean containsKey(final Object key) {
-		return this.delegate.containsKey(makeKey(key));
+		if (key == null) {
+			return false;
+		}
+		final Key<T> wrappedKey = makeKey(key);
+		return wrappedKey != null && this.delegate.containsKey(wrappedKey);
 	}
 
 	@Override
 	public boolean containsValue(final Object value) {
-		return this.delegate.containsValue(value);
+		return value != null && this.delegate.containsValue(value);
 	}
 
 	@Override
@@ -128,8 +132,12 @@ public class FunctionMap<T> implements Map<Key<T>, T> {
 		return putInternal(key, value);
 	}
 
-	private T putInternal(final Object key, final T value) {
-		return this.delegate.put(makeKey(key), value);
+	private T putInternalRaw(final T key, final T value) {
+		return putInternal(makeKey(key), value);
+	}
+
+	private T putInternal(final Key<T> k, final T value) {
+		return k == null ? value : this.delegate.put(k, value);
 	}
 
 	@Override
@@ -142,7 +150,7 @@ public class FunctionMap<T> implements Map<Key<T>, T> {
 		if (m == null) {
 			return;
 		}
-		for (final Object key : m.keySet()) {
+		for (final Key<T> key : m.keySet()) {
 			putInternal(key, m.get(key));
 		}
 	}
