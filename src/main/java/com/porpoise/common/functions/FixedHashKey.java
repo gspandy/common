@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.base.Equivalence;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -13,7 +14,7 @@ import com.google.common.collect.Lists;
 /**
  * Object which can be used as the key in a map based on the given functions and input type
  */
-final class FixedHashKey<T> implements Key<T>, KeyFactory<T> {
+final class FixedHashKey<T> extends Equivalence<T> implements Key<T>, KeyFactory<T> {
 
 	/** Any null values returned from key functions will be replaced with this null representation */
 	private static class NullValue {
@@ -90,19 +91,19 @@ final class FixedHashKey<T> implements Key<T>, KeyFactory<T> {
 	}
 
 	@Override
-	public boolean equivalent(final T a, final T b) {
+	public Key<T> makeKeyFor(final T input) {
+		return Keys.keyFunction(this.functions).apply(input);
+	}
+
+	@Override
+	protected boolean doEquivalent(final T a, final T b) {
 		final Key<T> first = Keys.keyFunction(this.functions).apply(a);
 		final Key<T> second = Keys.keyFunction(this.functions).apply(b);
 		return first.equals(second);
 	}
 
 	@Override
-	public int hash(final T t) {
+	protected int doHash(final T t) {
 		return makeKeyFor(t).hashCode();
-	}
-
-	@Override
-	public Key<T> makeKeyFor(final T input) {
-		return Keys.keyFunction(this.functions).apply(input);
 	}
 }

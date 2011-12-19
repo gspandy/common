@@ -21,6 +21,6 @@ public class Functions2Test {
 		final Function<Object, String> alwaysNonNull = Functions2.orElse(Functions.constant("A"),
 		        Functions.constant("B"));
 		Assert.assertEquals("A", alwaysNonNull.apply("owt"));
-		Assert.assertEquals("B", alwaysNonNull.apply(null));
+		Assert.assertEquals("A", alwaysNonNull.apply(null));
 	}
 }
