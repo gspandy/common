@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +39,7 @@ public enum Sequences {
     /**
      * Function which will sum pairs of numbers
      */
-    public static final Function<Pair<Number, Number>, Number> SUM_NUM;
+    public static final Function<Pair<Number, Number>, Number>             SUM_NUM;
 
     static {
         SUM_DEC = new Function<Pair<BigDecimal, BigDecimal>, BigDecimal>() {
@@ -104,8 +103,8 @@ public enum Sequences {
      *            the right-side map to merge
      * @return the result of merging
      */
-    public static <KEY, VAL1, VAL2, RES> Map<KEY, RES> mergeMapsIntersection(
-            final Function<Pair<VAL1, VAL2>, RES> collate, final Map<KEY, VAL1> map1, final Map<KEY, VAL2> map2) {
+    public static <KEY, VAL1, VAL2, RES> Map<KEY, RES> mergeMapsIntersection(final Function<Pair<VAL1, VAL2>, RES> collate,
+            final Map<KEY, VAL1> map1, final Map<KEY, VAL2> map2) {
         final Map<KEY, RES> intersection = Maps.newHashMap();
         for (final KEY key : Sets.intersection(map1.keySet(), map2.keySet())) {
             final VAL1 value1 = map1.get(key);
@@ -132,13 +131,11 @@ public enum Sequences {
      *            the merging function
      * @return the merged map
      */
-    public static <K, V> Map<K, V> mergeMaps(final Map<K, V> map1, final Map<K, V> map2,
-            final Function<Pair<V, V>, V> collate) {
+    public static <K, V> Map<K, V> mergeMaps(final Map<K, V> map1, final Map<K, V> map2, final Function<Pair<V, V>, V> collate) {
         return mergeMapsInternal(ImmutableList.of(map1, map2), collate);
     }
 
-    private static <K, V> Map<K, V> mergeMapsInternal(final Iterable<Map<K, V>> mapsToMerge,
-            final Function<Pair<V, V>, V> collate) {
+    private static <K, V> Map<K, V> mergeMapsInternal(final Iterable<Map<K, V>> mapsToMerge, final Function<Pair<V, V>, V> collate) {
         final Function<Map<K, ?>, Set<K>> getKeys = getKeys();
         final Map<K, V> merged = Maps.newHashMap();
         for (final K key : flatMapSet(mapsToMerge, getKeys)) {
@@ -171,8 +168,7 @@ public enum Sequences {
      *            the function used to apply to all elements
      * @return the result of applying the initial condition + the function across all elements in the iterable
      */
-    public static <T, N> T foldLeft(final T initial, final Iterable<? extends N> things,
-            final Function<Pair<T, N>, T> fnc) {
+    public static <T, N> T foldLeft(final T initial, final Iterable<? extends N> things, final Function<Pair<T, N>, T> fnc) {
         T value = initial;
         for (final N next : things) {
             value = fnc.apply(Pair.valueOf(value, next));
@@ -191,11 +187,9 @@ public enum Sequences {
      *            the iterable to which the function should be applied
      * @param fnc
      *            the function used to apply to all elements
-     * @return the result of applying the initial condition + the function across all elements in the iterable, but
-     *         going from right to left
+     * @return the result of applying the initial condition + the function across all elements in the iterable, but going from right to left
      */
-    public static <T, N> T foldRight(final T initial, final Iterable<? extends N> things,
-            final Function<Pair<T, N>, T> fnc) {
+    public static <T, N> T foldRight(final T initial, final Iterable<? extends N> things, final Function<Pair<T, N>, T> fnc) {
         return foldLeft(initial, Lists.reverse(Lists.newArrayList(things)), fnc);
     }
 
@@ -208,8 +202,7 @@ public enum Sequences {
      *            the function
      * @return the big decimal result
      */
-    public static BigDecimal foldDec(final Iterable<BigDecimal> things,
-            final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> fnc) {
+    public static BigDecimal foldDec(final Iterable<BigDecimal> things, final Function<Pair<BigDecimal, BigDecimal>, BigDecimal> fnc) {
         return foldDec(BigDecimal.ZERO, things, fnc);
     }
 
@@ -237,8 +230,7 @@ public enum Sequences {
      *            the function
      * @return the numerical result
      */
-    public static Number foldNum(final Iterable<? extends Number> things,
-            final Function<Pair<Number, Number>, Number> fnc) {
+    public static Number foldNum(final Iterable<? extends Number> things, final Function<Pair<Number, Number>, Number> fnc) {
         return foldNum(Integer.valueOf(0), things, fnc);
     }
 
@@ -286,8 +278,7 @@ public enum Sequences {
         return addAll(flat, all);
     }
 
-    private static <C extends Collection<T>, T> C addAll(final C container,
-            final Iterable<? extends Iterable<T>> collections) {
+    private static <C extends Collection<T>, T> C addAll(final C container, final Iterable<? extends Iterable<T>> collections) {
         for (final Iterable<T> coll : collections) {
             Iterables.addAll(container, coll);
         }
@@ -307,8 +298,8 @@ public enum Sequences {
     }
 
     /**
-     * This function applies a function across all elements of a collection where each element itself is an iterable,
-     * returning a flattened result
+     * This function applies a function across all elements of a collection where each element itself is an iterable, returning a flattened
+     * result
      * 
      * @param <F>
      * @param <T>
@@ -316,15 +307,14 @@ public enum Sequences {
      * @param function
      * @return the flattened result
      */
-    public static <F, T> Collection<T> flatMap(final Iterable<F> from,
-            final Function<? super F, ? extends Iterable<T>> function) {
+    public static <F, T> Collection<T> flatMap(final Iterable<F> from, final Function<? super F, ? extends Iterable<T>> function) {
         final Iterable<Iterable<T>> transformed = Iterables.transform(from, function);
         return flatten(transformed);
     }
 
     /**
-     * This function applies a function across all elements of a collection where each element itself is an iterable,
-     * returning a flattened set result
+     * This function applies a function across all elements of a collection where each element itself is an iterable, returning a flattened
+     * set result
      * 
      * @param <F>
      * @param <T>
@@ -332,17 +322,15 @@ public enum Sequences {
      * @param function
      * @return a set of all results
      */
-    public static <F, T> Set<T> flatMapSet(final Iterable<F> from,
-            final Function<? super F, ? extends Iterable<T>> function) {
+    public static <F, T> Set<T> flatMapSet(final Iterable<F> from, final Function<? super F, ? extends Iterable<T>> function) {
         final Iterable<Iterable<T>> all = Iterables.transform(from, function);
         final Set<T> flat = Sets.newHashSet();
         return addAll(flat, all);
     }
 
     /**
-     * group the iterable using the given function to create the keys in the map. By calling this method, the caller is
-     * making the assertion that the function will only return unique results within the collection, otherwise as
-     * exception will be thrown.
+     * group the iterable using the given function to create the keys in the map. By calling this method, the caller is making the assertion
+     * that the function will only return unique results within the collection, otherwise as exception will be thrown.
      * 
      * @param <K>
      *            the key value of the map
@@ -383,8 +371,7 @@ public enum Sequences {
         return groupByInternal(collection, mapper);
     }
 
-    private static <K, V> Map<K, Collection<V>> groupByInternal(final Iterable<V> collection,
-            final Function<? super V, K> mapper) {
+    private static <K, V> Map<K, Collection<V>> groupByInternal(final Iterable<V> collection, final Function<? super V, K> mapper) {
         final Map<K, Collection<V>> mapped = Maps.newConcurrentMap();
         for (final V value : collection) {
             final K key = mapper.apply(value);
@@ -426,8 +413,8 @@ public enum Sequences {
     }
 
     /**
-     * Zip together both collections, returning a collection of both elements. If the iterables are of diffferent sizes,
-     * the extra elements will be represented as null values
+     * Zip together both collections, returning a collection of both elements. If the iterables are of diffferent sizes, the extra elements
+     * will be represented as null values
      * 
      * @param <A>
      * @param <B>
@@ -466,8 +453,12 @@ public enum Sequences {
     }
 
     /**
+     * A null-safe way of retrieving an iterator from an iterable. Null input values will result in empty iterators
+     * 
      * @param <T>
+     *            the Iterable type
      * @param iterable
+     *            the nullable iterable for which to return the iterator
      * @return an iterator for the given iterable. If the iterable is null, an empty iterator is returned
      */
     public static <T, C extends Iterable<T>> Iterator<T> iter(final C iterable) {
@@ -486,8 +477,7 @@ public enum Sequences {
      *            a function which returns either a valid mapping or a null value
      * @return a collection which contains only non-null values
      */
-    public static <F, T> Collection<T> collect(final Collection<? extends F> source,
-            final Function<? super F, T> function) {
+    public static <F, T> Collection<T> collect(final Collection<? extends F> source, final Function<? super F, T> function) {
         final Collection<T> result = Collections2.transform(source, function);
         return Collections2.filter(result, Predicates.notNull());
     }
@@ -497,10 +487,9 @@ public enum Sequences {
      * @param function
      * @return a new set from the given set
      */
-	public static <F, T> Set<T> map(Set<F> set,
-			Function<F, T> function) {
-		Set<T> newSet = Sets.newHashSet(Iterables.transform(set, function));
-		Preconditions.checkArgument(newSet.size() == set.size(), "Mapping function returns non-unique values");
-		return newSet;
-	}
+    public static <F, T> Set<T> map(final Set<F> set, final Function<F, T> function) {
+        final Set<T> newSet = Sets.newHashSet(Iterables.transform(set, function));
+        Preconditions.checkArgument(newSet.size() == set.size(), "Mapping function returns non-unique values");
+        return newSet;
+    }
 }
