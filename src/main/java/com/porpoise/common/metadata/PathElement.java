@@ -82,7 +82,7 @@ public class PathElement<T, P> {
     }
 
     /**
-     * @return the path string for this element
+     * @return the path string for this element, where the toString for each object pair in the path is used
      */
     public String getPathValueString() {
         String prefix = "";
@@ -93,7 +93,7 @@ public class PathElement<T, P> {
     }
 
     /**
-     * @return the path string for this element
+     * @return the path string for this element, but only the leave's 'toString' methods are used in output
      */
     public String getLeafValueString() {
         String prefix = "";
@@ -124,7 +124,7 @@ public class PathElement<T, P> {
      * @param property
      * @return true if this path element contains the given property within its chain
      */
-    public boolean contains(Metadata<?, ?> property) {
+    public boolean contains(final Metadata<?, ?> property) {
         return getProperty() == property || getParent() != null && getParent().contains(property);
     }
 }

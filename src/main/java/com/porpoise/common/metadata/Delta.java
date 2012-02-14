@@ -95,6 +95,9 @@ public class Delta<T> {
      * @return the new delta
      */
     public <C, D extends Delta<C>> D addChild(final D child) {
+        if (child == this) {
+            throw new IllegalArgumentException("Cannot add a delta to itself");
+        }
         this.childDeltasByProperty.put(child.getPropertyName(), child);
         // assert replaced == null : String.format("duplicate property '%s' found in %s", child.getPropertyName(),
         // this.property == null ? "root" : this.property.propertyName());
@@ -106,8 +109,7 @@ public class Delta<T> {
      */
     @Override
     public String toString() {
-        final List<String> pathStrings = Lists.newArrayList(Collections2.transform(paths(),
-                Functions.toStringFunction()));
+        final List<String> pathStrings = Lists.newArrayList(Collections2.transform(paths(), Functions.toStringFunction()));
         Collections.sort(pathStrings);
         return Sequences.toString(pathStrings);
     }
@@ -124,10 +126,10 @@ public class Delta<T> {
      * @return all paths which contain the given property
      */
     public Collection<PathElement<?, ?>> pathsWithProperty(final Metadata<?, ?> property) {
-        Collection<PathElement<?, ?>> allPaths = paths();
+        final Collection<PathElement<?, ?>> allPaths = paths();
         return Collections2.filter(allPaths, new Predicate<PathElement<?, ?>>() {
             @Override
-            public boolean apply(PathElement<?, ?> path) {
+            public boolean apply(final PathElement<?, ?> path) {
                 return path.contains(property);
             }
         });
@@ -181,8 +183,7 @@ public class Delta<T> {
     }
 
     /**
-     * This method should be overridden in subclasses to reflect, for instance, collection indices (e.g.
-     * "someListProperty[3]")
+     * This method should be overridden in subclasses to reflect, for instance, collection indices (e.g. "someListProperty[3]")
      * 
      * @return the property name
      */

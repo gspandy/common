@@ -12,7 +12,7 @@ public interface Metadata<T, V> {
     /**
      * @return the accessor function
      */
-    Function<T, V> accessor();
+    Function<? super T, V> accessor();
 
     /**
      * @return the property name
@@ -20,8 +20,8 @@ public interface Metadata<T, V> {
     String propertyName();
 
     /**
-     * This method may not have any effect, or even be supported. If {@link #isMutable()} returns true, then this method
-     * will return true if the property has changed as a result of this call.
+     * This method may not have any effect, or even be supported. If {@link #isMutable()} returns true, then this method will return true if
+     * the property has changed as a result of this call.
      * 
      * @param input
      *            The field holder -- an entity with a field represented by this metadata
