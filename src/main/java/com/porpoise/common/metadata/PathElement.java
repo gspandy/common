@@ -1,7 +1,6 @@
 package com.porpoise.common.metadata;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
 /**
  * @param <T>
