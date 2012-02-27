@@ -1,6 +1,7 @@
 package com.porpoise.common.metadata;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 /**
  * @param <T>
@@ -8,7 +9,7 @@ import com.google.common.base.Preconditions;
  * @param <P>
  *            The type returned by this element's metadata's accessor
  */
-public class PathElement<T, P> {
+public final class PathElement<T, P> {
     private final Delta<T>          delta;
     private final PathElement<?, T> parent;
 
@@ -54,11 +55,6 @@ public class PathElement<T, P> {
         return this.delta.getRight();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return getLeafValueString();
