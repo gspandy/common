@@ -33,7 +33,7 @@ public class PathElement<T, P> {
     }
 
     /**
-     * @return the left
+     * @return the left value of the difference
      */
     public T getLeft() {
         return this.delta.getLeft();
@@ -82,14 +82,30 @@ public class PathElement<T, P> {
     }
 
     /**
-     * @return the path string for this element, where the toString for each object pair in the path is used
+     * Returns the path string for this element, where the object for each element along the path has its 'toString' value displayed.
+     * 
+     * For example, if the properties for a path were:
+     * 
+     * <pre>
+     * BOOK.CHAPTER.PARAGRAPH.SENTENCE
+     * </pre>
+     * 
+     * The path value string would include the book, chapter, paragraph and sentence objects' toString values.
+     * 
+     * e.g.
+     * 
+     * BOOK{Book@123}.CHAPTER{Chapter@456}.PARAGRAPH{Paragraph@789}.SENTENCE{Sentence@101112}
+     * 
+     * 
+     * @return the path string for this element.
      */
     public String getPathValueString() {
         String prefix = "";
         if (this.parent != null) {
             prefix = String.format("%s.", this.parent.getPathValueString());
         }
-        return String.format("%s%s{%s != %s}", prefix, getProperty().propertyName(), getLeft(), getRight());
+        final String propertyName = getProperty() == null ? getPropertyName() : getProperty().propertyName();
+        return String.format("%s%s{%s != %s}", prefix, propertyName, getLeft(), getRight());
     }
 
     /**

@@ -54,4 +54,12 @@ public class IterableDelta<P> extends Delta<P> {
         }
         return toStringSafe(left);
     }
+
+    @Override
+    protected PathElement<P, ?> makePath(final PathElement<?, ?> parentPath) {
+        @SuppressWarnings("unchecked")
+        final PathElement<?, P> castedParent = (PathElement<?, P>) parentPath;
+        return new PathElement<P, Object>(castedParent, this);
+    }
+
 }

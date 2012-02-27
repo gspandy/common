@@ -126,21 +126,30 @@ public class Delta<T> {
      * @return all paths which contain the given property
      */
     public Collection<PathElement<?, ?>> pathsWithProperty(final Metadata<?, ?> property) {
+        final Predicate<PathElement<?, ?>> filter = pathContainsPredicate(property);
+        return filterPaths(filter);
+    }
+
+    public Collection<PathElement<?, ?>> filterPaths(final Predicate<PathElement<?, ?>> filter) {
         final Collection<PathElement<?, ?>> allPaths = paths();
-        return Collections2.filter(allPaths, new Predicate<PathElement<?, ?>>() {
+        return ImmutableList.copyOf(Collections2.filter(allPaths, filter));
+    }
+
+    /**
+     * @param property
+     * @return a predicate which returns true if the path element contains the given property
+     */
+    public Predicate<PathElement<?, ?>> pathContainsPredicate(final Metadata<?, ?> property) {
+        return new Predicate<PathElement<?, ?>>() {
             @Override
             public boolean apply(final PathElement<?, ?> path) {
                 return path.contains(property);
             }
-        });
+        };
     }
 
-    /**
-     * @param parentPath
-     * @return
-     */
     @SuppressWarnings("unchecked")
-    private PathElement<T, ?> makePath(final PathElement<?, ?> parentPath) {
+    protected PathElement<T, ?> makePath(final PathElement<?, ?> parentPath) {
         if (getProperty() == null) {
             return (PathElement<T, ?>) parentPath;
         }
@@ -161,7 +170,8 @@ public class Delta<T> {
         } else {
             paths = Lists.newArrayList();
             for (final Delta<?> child : this.childDeltasByProperty.values()) {
-                paths.addAll(child.paths(newParent));
+                final Collection<PathElement<?, ?>> childPaths = child.paths(newParent);
+                paths.addAll(childPaths);
             }
         }
         return paths;
